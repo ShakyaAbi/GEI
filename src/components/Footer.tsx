@@ -5,29 +5,29 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
-    research: [
-      { name: 'Climate & Health', href: '#' },
-      { name: 'Environmental Health', href: '#' },
-      { name: 'One Health', href: '#' },
-      { name: 'Sustainable Systems', href: '#' },
-      { name: 'Pollution & Health', href: '#' },
-      { name: 'Health Technology', href: '#' }
-    ],
     about: [
-      { name: 'Our Mission', href: '#about' },
-      { name: 'Faculty', href: '#faculty' },
-      { name: 'Publications', href: '#publications' },
-      { name: 'News & Events', href: '#news' },
-      { name: 'Careers', href: '#' },
-      { name: 'Contact Us', href: '#contact' }
+      { name: 'Our Mission', href: '/about#mission' },
+      { name: 'Our Team', href: '/about#team' },
+      { name: 'History', href: '/about#history' },
+      { name: 'Leadership', href: '/about#leadership' },
+      { name: 'Partnerships', href: '/about#partnerships' },
+      { name: 'Careers', href: '/about#careers' }
     ],
-    resources: [
-      { name: 'Research Database', href: '#' },
-      { name: 'Publication Archive', href: '#' },
-      { name: 'Grant Opportunities', href: '#' },
-      { name: 'Student Resources', href: '#' },
-      { name: 'Partnership Portal', href: '#' },
-      { name: 'Media Kit', href: '#' }
+    work: [
+      { name: 'Climate Action', href: '/our-work#climate' },
+      { name: 'Environmental Health', href: '/our-work#health' },
+      { name: 'Sustainable Development', href: '/our-work#development' },
+      { name: 'Research Projects', href: '/our-work#research' },
+      { name: 'Global Initiatives', href: '/our-work#initiatives' },
+      { name: 'Impact Stories', href: '/our-work#impact' }
+    ],
+    ideas: [
+      { name: 'Innovation Hub', href: '/ideas#innovation' },
+      { name: 'Policy Papers', href: '/ideas#policy' },
+      { name: 'Research Insights', href: '/ideas#insights' },
+      { name: 'Future Trends', href: '/ideas#trends' },
+      { name: 'Thought Leadership', href: '/ideas#leadership' },
+      { name: 'Publications', href: '/ideas#publications' }
     ]
   };
 
@@ -39,7 +39,9 @@ const Footer = () => {
   ];
 
   const handleLinkClick = (href: string) => {
-    if (href.startsWith('#')) {
+    if (href.startsWith('/')) {
+      window.location.href = href;
+    } else if (href.startsWith('#')) {
       const element = document.querySelector(href);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
@@ -55,17 +57,17 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-400 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-xl">P</span>
+                <span className="text-white font-bold text-xl">G</span>
               </div>
               <div>
-                <h3 className="text-2xl font-bold">PHRC</h3>
-                <p className="text-gray-400 text-sm">Planetary Health Research</p>
+                <h3 className="text-2xl font-bold">GEI</h3>
+                <p className="text-gray-400 text-sm">Global Environmental Initiative</p>
               </div>
             </div>
             
             <p className="text-gray-300 leading-relaxed mb-6">
-              Pioneering research in planetary health, fostering collaboration and advancing 
-              knowledge for a sustainable and healthy future for all.
+              Creating sustainable solutions that transform communities and protect our planet 
+              through innovative programs and collaborative partnerships.
             </p>
 
             {/* Social Links */}
@@ -86,65 +88,55 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Research Areas */}
+          {/* About Us */}
           <div>
-            <h4 className="text-lg font-semibold mb-6">Research Areas</h4>
-            <ul className="space-y-3">
-              {footerLinks.research.map((link, index) => (
-                <li key={index}>
-                  <a
-                    href={link.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleLinkClick(link.href);
-                    }}
-                    className="text-gray-300 hover:text-white transition-colors hover:translate-x-1 transform duration-200 flex items-center group"
-                  >
-                    {link.name}
-                    <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* About */}
-          <div>
-            <h4 className="text-lg font-semibold mb-6">About</h4>
+            <h4 className="text-lg font-semibold mb-6">About Us</h4>
             <ul className="space-y-3">
               {footerLinks.about.map((link, index) => (
                 <li key={index}>
-                  <a
-                    href={link.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleLinkClick(link.href);
-                    }}
+                  <button
+                    onClick={() => handleLinkClick(link.href)}
                     className="text-gray-300 hover:text-white transition-colors hover:translate-x-1 transform duration-200 flex items-center group"
                   >
                     {link.name}
-                    {link.href.startsWith('#') && (
-                      <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    )}
-                  </a>
+                    <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </button>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Resources */}
+          {/* Our Work */}
           <div>
-            <h4 className="text-lg font-semibold mb-6">Resources</h4>
+            <h4 className="text-lg font-semibold mb-6">Our Work</h4>
             <ul className="space-y-3">
-              {footerLinks.resources.map((link, index) => (
+              {footerLinks.work.map((link, index) => (
                 <li key={index}>
-                  <a
-                    href={link.href}
+                  <button
+                    onClick={() => handleLinkClick(link.href)}
                     className="text-gray-300 hover:text-white transition-colors hover:translate-x-1 transform duration-200 flex items-center group"
                   >
                     {link.name}
                     <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </a>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Ideas & Resources */}
+          <div>
+            <h4 className="text-lg font-semibold mb-6">Ideas & Innovation</h4>
+            <ul className="space-y-3">
+              {footerLinks.ideas.map((link, index) => (
+                <li key={index}>
+                  <button
+                    onClick={() => handleLinkClick(link.href)}
+                    className="text-gray-300 hover:text-white transition-colors hover:translate-x-1 transform duration-200 flex items-center group"
+                  >
+                    {link.name}
+                    <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </button>
                 </li>
               ))}
             </ul>
@@ -156,7 +148,7 @@ const Footer = () => {
                 Newsletter
               </h5>
               <p className="text-gray-400 text-sm mb-3">
-                Get planetary health research updates delivered to your inbox.
+                Get environmental insights delivered to your inbox.
               </p>
               <div className="flex">
                 <input
@@ -176,7 +168,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm mb-4 md:mb-0">
-              © {currentYear} Planetary Health Research Center. All rights reserved.
+              © {currentYear} Global Environmental Initiative. All rights reserved.
             </p>
             
             <div className="flex flex-wrap gap-6 text-sm text-gray-400">

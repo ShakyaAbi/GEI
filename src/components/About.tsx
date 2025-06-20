@@ -9,11 +9,11 @@ const About = () => {
           {/* Section Header */}
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              About PHRC
+              About GEI
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Established as a premier research institution, the Planetary Health Research Center is dedicated to 
-              understanding and addressing the interconnections between human health and environmental sustainability.
+              The Global Environmental Initiative is dedicated to creating sustainable solutions 
+              that transform communities and protect our planet through innovative programs and collaborative partnerships.
             </p>
           </div>
 
@@ -27,9 +27,9 @@ const About = () => {
                 <h3 className="text-2xl font-bold text-gray-900">Our Mission</h3>
               </div>
               <p className="text-gray-600 leading-relaxed">
-                To conduct groundbreaking research that addresses the complex relationships between 
-                planetary and human health, foster interdisciplinary collaboration, and train the next generation 
-                of researchers to tackle global environmental health challenges.
+                To create sustainable environmental solutions that empower communities, 
+                protect ecosystems, and drive positive change through innovative research, 
+                collaborative partnerships, and community-centered approaches.
               </p>
             </div>
 
@@ -41,9 +41,9 @@ const About = () => {
                 <h3 className="text-2xl font-bold text-gray-900">Our Vision</h3>
               </div>
               <p className="text-gray-600 leading-relaxed">
-                To be a globally recognized research center that drives scientific advancement in planetary health, 
-                creates innovative solutions for environmental challenges, and serves as a hub 
-                for collaborative research excellence in sustainability and human wellbeing.
+                A world where environmental sustainability and human prosperity coexist, 
+                where communities are resilient and empowered, and where innovative 
+                solutions create lasting positive impact for generations to come.
               </p>
             </div>
           </div>
@@ -58,7 +58,7 @@ const About = () => {
                 </div>
                 <h4 className="text-xl font-semibold mb-3">Innovation</h4>
                 <p className="text-green-100 text-sm">
-                  Pursuing creative solutions for planetary health challenges
+                  Pursuing creative solutions for environmental challenges
                 </p>
               </div>
 
@@ -68,7 +68,7 @@ const About = () => {
                 </div>
                 <h4 className="text-xl font-semibold mb-3">Collaboration</h4>
                 <p className="text-green-100 text-sm">
-                  Fostering partnerships across disciplines and institutions
+                  Fostering partnerships across communities and institutions
                 </p>
               </div>
 
@@ -78,7 +78,7 @@ const About = () => {
                 </div>
                 <h4 className="text-xl font-semibold mb-3">Excellence</h4>
                 <p className="text-green-100 text-sm">
-                  Maintaining the highest standards in research and education
+                  Maintaining the highest standards in all our programs
                 </p>
               </div>
 
@@ -88,7 +88,7 @@ const About = () => {
                 </div>
                 <h4 className="text-xl font-semibold mb-3">Impact</h4>
                 <p className="text-green-100 text-sm">
-                  Creating meaningful change for planetary and human health
+                  Creating meaningful change for communities and environment
                 </p>
               </div>
             </div>

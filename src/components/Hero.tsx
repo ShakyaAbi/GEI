@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Users, BookOpen, Award } from 'lucide-react';
+import { ArrowRight, Users, BookOpen, Award, MapPin } from 'lucide-react';
 
 const Hero = () => {
   const handleExploreClick = () => {
@@ -8,6 +8,12 @@ const Hero = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  const workingCountries = [
+    { name: 'Nepal', position: { top: '35%', left: '78%' } },
+    { name: 'India', position: { top: '42%', left: '75%' } },
+    { name: 'Cambodia', position: { top: '48%', left: '82%' } }
+  ];
 
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-green-800 via-green-700 to-blue-700 overflow-hidden">
@@ -18,55 +24,99 @@ const Hero = () => {
         }}></div>
       </div>
 
-      <div className="container mx-auto px-6 text-center relative z-10">
-        <div className="max-w-4xl mx-auto">
-          {/* Main Heading */}
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            Planetary Health
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-blue-300">
-              Research Center
-            </span>
-          </h1>
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
+          <div className="text-center lg:text-left">
+            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+              Global Environmental
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-blue-300">
+                Initiative
+              </span>
+            </h1>
 
-          {/* Subtitle */}
-          <p className="text-xl md:text-2xl text-green-100 mb-8 leading-relaxed max-w-3xl mx-auto">
-            Advancing planetary health through innovative research, fostering global collaboration, 
-            and driving scientific breakthroughs for a sustainable future.
-          </p>
+            <p className="text-xl md:text-2xl text-green-100 mb-8 leading-relaxed">
+              Driving sustainable change across the globe through innovative environmental solutions, 
+              community partnerships, and transformative research.
+            </p>
 
-          {/* CTA Button */}
-          <button
-            onClick={handleExploreClick}
-            className="inline-flex items-center px-8 py-4 bg-white text-green-900 font-semibold rounded-full hover:bg-green-50 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group"
-          >
-            Explore Our Research
-            <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
-          </button>
+            <button
+              onClick={handleExploreClick}
+              className="inline-flex items-center px-8 py-4 bg-white text-green-900 font-semibold rounded-full hover:bg-green-50 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group"
+            >
+              Explore Our Impact
+              <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
+            </button>
 
-          {/* Stats */}
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
-            <div className="text-center">
-              <div className="flex items-center justify-center w-16 h-16 bg-white/10 rounded-full mx-auto mb-4">
-                <Users className="w-8 h-8 text-white" />
+            {/* Stats */}
+            <div className="mt-12 grid grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white mb-2">50+</div>
+                <div className="text-green-200 text-sm">Countries</div>
               </div>
-              <div className="text-3xl font-bold text-white mb-2">150+</div>
-              <div className="text-green-200">Researchers</div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white mb-2">200+</div>
+                <div className="text-green-200 text-sm">Projects</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white mb-2">1M+</div>
+                <div className="text-green-200 text-sm">Lives Impacted</div>
+              </div>
             </div>
-            
-            <div className="text-center">
-              <div className="flex items-center justify-center w-16 h-16 bg-white/10 rounded-full mx-auto mb-4">
-                <BookOpen className="w-8 h-8 text-white" />
+          </div>
+
+          {/* Right Content - World Map */}
+          <div className="relative">
+            <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
+              <h3 className="text-2xl font-bold text-white mb-6 text-center">Where We Work</h3>
+              
+              {/* World Map Container */}
+              <div className="relative w-full h-80 bg-gray-200/20 rounded-2xl overflow-hidden">
+                {/* Simplified World Map SVG */}
+                <svg viewBox="0 0 1000 500" className="w-full h-full">
+                  {/* Continents - Simplified shapes */}
+                  <g fill="rgba(255,255,255,0.3)" stroke="rgba(255,255,255,0.5)" strokeWidth="1">
+                    {/* North America */}
+                    <path d="M150 100 L300 80 L320 150 L280 200 L200 220 L150 180 Z" />
+                    {/* South America */}
+                    <path d="M200 250 L280 240 L300 350 L250 400 L200 380 L180 300 Z" />
+                    {/* Europe */}
+                    <path d="M450 80 L550 70 L560 130 L500 140 L450 120 Z" />
+                    {/* Africa */}
+                    <path d="M480 150 L580 140 L600 300 L550 380 L480 370 L460 250 Z" />
+                    {/* Asia */}
+                    <path d="M600 80 L850 70 L880 200 L820 250 L600 240 L580 150 Z" />
+                    {/* Australia */}
+                    <path d="M750 350 L850 340 L860 380 L800 390 L750 380 Z" />
+                  </g>
+                </svg>
+
+                {/* Country Markers */}
+                {workingCountries.map((country, index) => (
+                  <div
+                    key={country.name}
+                    className="absolute transform -translate-x-1/2 -translate-y-1/2 group cursor-pointer"
+                    style={country.position}
+                  >
+                    <div className="relative">
+                      <div className="w-4 h-4 bg-yellow-400 rounded-full border-2 border-white shadow-lg animate-pulse"></div>
+                      <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white text-gray-900 px-2 py-1 rounded text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                        {country.name}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className="text-3xl font-bold text-white mb-2">500+</div>
-              <div className="text-green-200">Publications</div>
-            </div>
-            
-            <div className="text-center">
-              <div className="flex items-center justify-center w-16 h-16 bg-white/10 rounded-full mx-auto mb-4">
-                <Award className="w-8 h-8 text-white" />
+
+              <div className="mt-6 text-center">
+                <p className="text-green-100 text-sm mb-4">
+                  Currently active in Nepal, India, and Cambodia with expanding global presence
+                </p>
+                <div className="flex items-center justify-center space-x-2 text-yellow-400">
+                  <MapPin className="w-4 h-4" />
+                  <span className="text-sm font-medium">Active Regions</span>
+                </div>
               </div>
-              <div className="text-3xl font-bold text-white mb-2">25+</div>
-              <div className="text-green-200">Awards</div>
             </div>
           </div>
         </div>

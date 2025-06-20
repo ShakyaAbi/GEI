@@ -6,10 +6,12 @@ import About from './components/About';
 import Research from './components/Research';
 import Faculty from './components/Faculty';
 import Publications from './components/Publications';
-import News from './components/News';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import PublicationsAdmin from './components/admin/PublicationsAdmin';
+import AboutPage from './pages/AboutPage';
+import OurWorkPage from './pages/OurWorkPage';
+import IdeasPage from './pages/IdeasPage';
 
 function HomePage() {
   return (
@@ -20,7 +22,6 @@ function HomePage() {
       <Research />
       <Faculty />
       <Publications />
-      <News />
       <Contact />
       <Footer />
     </div>
@@ -32,6 +33,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/our-work" element={<OurWorkPage />} />
+        <Route path="/ideas" element={<IdeasPage />} />
         <Route path="/admin/publications" element={<PublicationsAdmin />} />
       </Routes>
     </Router>
