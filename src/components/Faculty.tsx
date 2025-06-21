@@ -146,17 +146,17 @@ const Faculty = () => {
           </div>
 
           {/* Join Our Team CTA */}
-          <div className="mt-16 bg-gradient-to-r from-green-700 to-blue-600 rounded-3xl p-8 md:p-12 text-center text-white">
-            <h3 className="text-3xl font-bold mb-4">Join Our Research Team</h3>
-            <p className="text-green-100 mb-8 max-w-2xl mx-auto">
+          <div className="mt-16 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl p-8 md:p-12 text-center text-white">
+            <h3 className="text-3xl font-bold font-playfair mb-4">Join Our Research Team</h3>
+            <p className="text-gray-300 mb-8 max-w-2xl mx-auto text-lg leading-relaxed">
               We're always looking for talented researchers, postdocs, and graduate students 
               to join our dynamic planetary health research community.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-3 bg-white text-green-700 font-semibold rounded-full hover:bg-green-50 transition-colors transform hover:scale-105">
+              <button className="px-8 py-4 bg-gradient-to-r from-teal-600 to-cyan-600 text-white font-semibold rounded-full hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
                 Faculty Positions
               </button>
-              <button className="px-8 py-3 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-green-700 transition-all transform hover:scale-105">
+              <button className="px-8 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-gray-900 transition-all duration-300 transform hover:scale-105">
                 Student Opportunities
               </button>
             </div>
