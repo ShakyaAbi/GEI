@@ -69,6 +69,24 @@ const Hero = () => {
     }
   ];
 
+  const getPopupPosition = (location: any) => {
+    // Determine if popup should appear above or below based on Y position
+    const shouldShowAbove = location.y > 50;
+    
+    // Determine horizontal alignment based on X position
+    let horizontalClass = 'left-1/2 transform -translate-x-1/2';
+    if (location.x < 30) {
+      horizontalClass = 'left-0';
+    } else if (location.x > 70) {
+      horizontalClass = 'right-0';
+    }
+
+    return {
+      vertical: shouldShowAbove ? 'bottom-16' : 'top-16',
+      horizontal: horizontalClass
+    };
+  };
+
   return (
     <>
       {/* Hero Section */}
@@ -143,7 +161,7 @@ const Hero = () => {
       </section>
 
       {/* Global Presence Section */}
-      <section className="py-24 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800">
+      <section className="py-24 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <div className="text-center mb-16 reveal">
             <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-white mb-6">
@@ -157,7 +175,7 @@ const Hero = () => {
 
           {/* Interactive World Map */}
           <div className="relative reveal">
-            <div className="relative w-full h-[500px] bg-gradient-to-br from-slate-700 to-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+            <div className="relative w-full h-[600px] bg-gradient-to-br from-slate-700 to-slate-800 rounded-3xl overflow-hidden shadow-2xl">
               {/* World Map Background */}
               <div className="absolute inset-0 p-8">
                 <img 
@@ -168,84 +186,87 @@ const Hero = () => {
               </div>
 
               {/* Location Markers */}
-              {locations.map((location) => (
-                <div
-                  key={location.id}
-                  className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group z-10"
-                  style={{ left: `${location.x}%`, top: `${location.y}%` }}
-                  onClick={() => setActiveLocation(activeLocation === location.id ? null : location.id)}
-                >
-                  {/* Enhanced Marker */}
-                  <div className="relative">
-                    {/* Outer Glow Ring */}
-                    <div className={`absolute inset-0 w-16 h-16 bg-gradient-to-r ${location.color} rounded-full opacity-20 animate-ping transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2`}></div>
-                    
-                    {/* Middle Ring */}
-                    <div className={`absolute inset-0 w-12 h-12 bg-gradient-to-r ${location.color} rounded-full opacity-40 animate-pulse transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2`} style={{ animationDelay: '0.5s' }}></div>
-                    
-                    {/* Main Marker */}
-                    <div className={`relative w-10 h-10 bg-gradient-to-r ${location.color} rounded-full flex items-center justify-center text-white font-bold text-sm shadow-2xl transform group-hover:scale-125 transition-all duration-300 border-3 border-white group-hover:border-4`}>
-                      <div className="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
-                      <span className="relative z-10">{location.id}</span>
-                    </div>
-                    
-                    {/* Hover Effect Ring */}
-                    <div className="absolute inset-0 w-10 h-10 bg-white rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-300 animate-ping"></div>
-                  </div>
-
-                  {/* Location Popup */}
-                  {activeLocation === location.id && (
-                    <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-96 bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden z-20 animate-fadeInUp">
-                      {/* Close Button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveLocation(null);
-                        }}
-                        className="absolute top-4 right-4 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors z-30"
-                      >
-                        <X className="w-4 h-4 text-gray-600" />
-                      </button>
-
-                      {/* Image Header */}
-                      <div className="relative h-40 overflow-hidden">
-                        <img
-                          src={location.image}
-                          alt={location.country}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-                        <div className="absolute bottom-4 left-6 text-white">
-                          <div className="flex items-center gap-2 mb-2">
-                            <MapPin className="w-4 h-4" />
-                            <span className="text-sm font-medium opacity-90">{location.country}</span>
-                          </div>
-                          <h3 className="font-bold text-xl">{location.name}</h3>
-                        </div>
+              {locations.map((location) => {
+                const popupPosition = getPopupPosition(location);
+                return (
+                  <div
+                    key={location.id}
+                    className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer group z-10"
+                    style={{ left: `${location.x}%`, top: `${location.y}%` }}
+                    onClick={() => setActiveLocation(activeLocation === location.id ? null : location.id)}
+                  >
+                    {/* Enhanced Marker */}
+                    <div className="relative">
+                      {/* Outer Glow Ring */}
+                      <div className={`absolute inset-0 w-20 h-20 bg-gradient-to-r ${location.color} rounded-full opacity-20 animate-ping transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2`}></div>
+                      
+                      {/* Middle Ring */}
+                      <div className={`absolute inset-0 w-16 h-16 bg-gradient-to-r ${location.color} rounded-full opacity-30 animate-pulse transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2`} style={{ animationDelay: '0.5s' }}></div>
+                      
+                      {/* Main Marker */}
+                      <div className={`relative w-12 h-12 bg-gradient-to-r ${location.color} rounded-full flex items-center justify-center text-white font-bold text-lg shadow-2xl transform group-hover:scale-125 transition-all duration-300 border-4 border-white group-hover:border-4`}>
+                        <div className="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
+                        <span className="relative z-10">{location.id}</span>
                       </div>
                       
-                      {/* Content */}
-                      <div className="p-6">
-                        <p className="text-gray-600 leading-relaxed mb-4">
-                          {location.description}
-                        </p>
-                        
-                        {/* Impact Badge */}
-                        <div className={`inline-flex items-center px-4 py-2 bg-gradient-to-r ${location.color} text-white text-sm font-medium rounded-full mb-4 shadow-lg`}>
-                          <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
-                          {location.impact}
+                      {/* Hover Effect Ring */}
+                      <div className="absolute inset-0 w-12 h-12 bg-white rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-300 animate-ping"></div>
+                    </div>
+
+                    {/* Location Popup */}
+                    {activeLocation === location.id && (
+                      <div className={`absolute ${popupPosition.vertical} ${popupPosition.horizontal} w-80 sm:w-96 bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden z-50 animate-fadeInUp`}>
+                        {/* Close Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveLocation(null);
+                          }}
+                          className="absolute top-4 right-4 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors z-30"
+                        >
+                          <X className="w-4 h-4 text-gray-600" />
+                        </button>
+
+                        {/* Image Header */}
+                        <div className="relative h-40 overflow-hidden">
+                          <img
+                            src={location.image}
+                            alt={location.country}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                          <div className="absolute bottom-4 left-6 text-white">
+                            <div className="flex items-center gap-2 mb-2">
+                              <MapPin className="w-4 h-4" />
+                              <span className="text-sm font-medium opacity-90">{location.country}</span>
+                            </div>
+                            <h3 className="font-bold text-xl">{location.name}</h3>
+                          </div>
                         </div>
                         
-                        {/* Action Button */}
-                        <button className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-slate-800 to-slate-700 text-white font-medium rounded-xl hover:from-slate-700 hover:to-slate-600 transition-all duration-300 transform hover:scale-105 group/btn">
-                          Learn More About Our Work
-                          <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                        </button>
+                        {/* Content */}
+                        <div className="p-6">
+                          <p className="text-gray-600 leading-relaxed mb-4">
+                            {location.description}
+                          </p>
+                          
+                          {/* Impact Badge */}
+                          <div className={`inline-flex items-center px-4 py-2 bg-gradient-to-r ${location.color} text-white text-sm font-medium rounded-full mb-4 shadow-lg`}>
+                            <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
+                            {location.impact}
+                          </div>
+                          
+                          {/* Action Button */}
+                          <button className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-slate-800 to-slate-700 text-white font-medium rounded-xl hover:from-slate-700 hover:to-slate-600 transition-all duration-300 transform hover:scale-105 group/btn">
+                            Learn More About Our Work
+                            <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
