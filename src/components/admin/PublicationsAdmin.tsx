@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2, Save, X, Loader2, BookOpen, Users, Tag } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, Loader2, BookOpen, Users, Tag, FileText, Eye } from 'lucide-react';
 import { usePublications } from '../../hooks/usePublications';
 import { useCategories } from '../../hooks/useCategories';
 import { publicationsApi, authorsApi } from '../../lib/apiClient';
+import { fileUploadService } from '../../lib/fileUpload';
+import FileUpload from './FileUpload';
 import type { Publication, Author } from '../../lib/supabase';
 
 const PublicationsAdmin = () => {
@@ -12,6 +14,10 @@ const PublicationsAdmin = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPublication, setEditingPublication] = useState<Publication | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState<string>('');
   const [formData, setFormData] = useState({
     title: '',
     abstract: '',
@@ -71,12 +77,49 @@ const PublicationsAdmin = () => {
         author_ids: []
       });
     }
+    setSelectedFile(null);
+    setUploadError('');
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingPublication(null);
+    setSelectedFile(null);
+    setUploadError('');
+  };
+
+  const handleFileSelect = (file: File) => {
+    const validation = fileUploadService.validatePDF(file);
+    if (!validation.valid) {
+      setUploadError(validation.error || 'Invalid file');
+      return;
+    }
+    
+    setSelectedFile(file);
+    setUploadError('');
+  };
+
+  const handleFileRemove = () => {
+    setSelectedFile(null);
+    setUploadError('');
+  };
+
+  const uploadFile = async (): Promise<string> => {
+    if (!selectedFile) return formData.pdf_url;
+
+    setUploading(true);
+    setUploadProgress(0);
+
+    try {
+      const result = await fileUploadService.uploadPDF(selectedFile, setUploadProgress);
+      return result.url;
+    } catch (error) {
+      setUploadError('Failed to upload file. Please try again.');
+      throw error;
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -84,6 +127,9 @@ const PublicationsAdmin = () => {
     setIsSubmitting(true);
 
     try {
+      // Upload file if selected
+      const pdfUrl = await uploadFile();
+
       const publicationData = {
         title: formData.title,
         abstract: formData.abstract || undefined,
@@ -91,7 +137,7 @@ const PublicationsAdmin = () => {
         publication_year: formData.publication_year,
         publication_type: formData.publication_type,
         doi: formData.doi || undefined,
-        pdf_url: formData.pdf_url || undefined,
+        pdf_url: pdfUrl || undefined,
         citations: formData.citations,
         category_id: formData.category_id || undefined,
         is_featured: formData.is_featured
@@ -116,7 +162,9 @@ const PublicationsAdmin = () => {
       closeModal();
     } catch (error) {
       console.error('Failed to save publication:', error);
-      alert('Failed to save publication. Please try again.');
+      if (!uploadError) {
+        alert('Failed to save publication. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -143,6 +191,10 @@ const PublicationsAdmin = () => {
     }));
   };
 
+  const viewPublication = (publication: Publication) => {
+    window.open(`/publications/${publication.id}`, '_blank');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-6">
@@ -152,7 +204,7 @@ const PublicationsAdmin = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Publications Admin</h1>
-                <p className="text-gray-600">Manage planetary health research publications and authors</p>
+                <p className="text-gray-600">Manage research publications, upload PDFs, and organize content</p>
               </div>
               <button
                 onClick={() => openModal()}
@@ -202,6 +254,12 @@ const PublicationsAdmin = () => {
                               Featured
                             </span>
                           )}
+                          {publication.pdf_url && (
+                            <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                              <FileText className="w-3 h-3 mr-1" />
+                              PDF
+                            </span>
+                          )}
                         </div>
                         
                         <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
@@ -242,14 +300,23 @@ const PublicationsAdmin = () => {
 
                       <div className="flex items-center gap-2 ml-4">
                         <button
+                          onClick={() => viewPublication(publication)}
+                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="View Publication"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button
                           onClick={() => openModal(publication)}
                           className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                          title="Edit Publication"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(publication.id)}
                           className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Delete Publication"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -308,6 +375,27 @@ const PublicationsAdmin = () => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
                     placeholder="Enter publication abstract"
                   />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    PDF Document
+                  </label>
+                  <FileUpload
+                    onFileSelect={handleFileSelect}
+                    onFileRemove={handleFileRemove}
+                    selectedFile={selectedFile}
+                    uploading={uploading}
+                    uploadProgress={uploadProgress}
+                    error={uploadError}
+                  />
+                  {formData.pdf_url && !selectedFile && (
+                    <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-sm text-blue-700">
+                        Current PDF: <a href={formData.pdf_url} target="_blank" rel="noopener noreferrer" className="underline">View existing document</a>
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -387,19 +475,6 @@ const PublicationsAdmin = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    PDF URL
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.pdf_url}
-                    onChange={(e) => setFormData(prev => ({ ...prev, pdf_url: e.target.value }))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    placeholder="https://example.com/paper.pdf"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Citations
                   </label>
                   <input
@@ -453,13 +528,13 @@ const PublicationsAdmin = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || uploading}
                   className="inline-flex items-center px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
                 >
-                  {isSubmitting ? (
+                  {isSubmitting || uploading ? (
                     <>
                       <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Saving...
+                      {uploading ? 'Uploading...' : 'Saving...'}
                     </>
                   ) : (
                     <>

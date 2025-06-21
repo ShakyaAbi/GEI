@@ -12,6 +12,7 @@ import PublicationsAdmin from './components/admin/PublicationsAdmin';
 import AboutPage from './pages/AboutPage';
 import OurWorkPage from './pages/OurWorkPage';
 import IdeasPage from './pages/IdeasPage';
+import PublicationDetailPage from './pages/PublicationDetailPage';
 
 function HomePage() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/our-work" element={<OurWorkPage />} />
         <Route path="/ideas" element={<IdeasPage />} />
+        <Route path="/publications/:id" element={<PublicationDetailPage />} />
         <Route path="/admin/publications" element={<PublicationsAdmin />} />
       </Routes>
     </Router>
