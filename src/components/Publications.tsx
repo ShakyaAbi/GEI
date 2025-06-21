@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { BookOpen, ExternalLink, Calendar, Users, Filter, Loader2, AlertCircle, Download } from 'lucide-react';
+import { BookOpen, ExternalLink, Calendar, Users, Filter, Loader2, AlertCircle, Download, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { usePublications } from '../hooks/usePublications';
 import { useCategories } from '../hooks/useCategories';
 
 const Publications = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('all');
   
   const { publications, loading: publicationsLoading, error: publicationsError } = usePublications({
@@ -44,6 +46,10 @@ const Publications = () => {
       'Energy Systems': 'bg-yellow-100 text-yellow-800 border-yellow-200'
     };
     return colors[categoryName] || 'bg-gray-100 text-gray-800 border-gray-200';
+  };
+
+  const viewPublication = (publicationId: string) => {
+    navigate(`/publications/${publicationId}`);
   };
 
   if (publicationsError) {
@@ -181,7 +187,8 @@ const Publications = () => {
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4 group-hover:text-teal-700 transition-colors leading-tight">
+                    <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4 group-hover:text-teal-700 transition-colors leading-tight cursor-pointer"
+                        onClick={() => viewPublication(publication.id)}>
                       {publication.title}
                     </h3>
 
@@ -207,7 +214,7 @@ const Publications = () => {
 
                     {/* Abstract */}
                     {publication.abstract && (
-                      <p className="text-gray-600 leading-relaxed mb-4">
+                      <p className="text-gray-600 leading-relaxed mb-4 line-clamp-3">
                         {publication.abstract}
                       </p>
                     )}
@@ -230,6 +237,15 @@ const Publications = () => {
                     </div>
                     
                     <div className="flex lg:flex-col gap-3">
+                      <button
+                        onClick={() => viewPublication(publication.id)}
+                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-medium rounded-full hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        View Details
+                        <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                      </button>
+                      
                       {publication.pdf_url && (
                         <a
                           href={publication.pdf_url}
@@ -242,10 +258,6 @@ const Publications = () => {
                           <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                         </a>
                       )}
-                      <button className="inline-flex items-center px-6 py-3 bg-white text-gray-700 text-sm font-medium rounded-full hover:bg-gray-50 transition-all duration-300 border border-gray-200 hover:border-teal-300 group/btn">
-                        View Details
-                        <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                      </button>
                     </div>
                   </div>
                 </div>
