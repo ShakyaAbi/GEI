@@ -97,7 +97,7 @@ const Header = () => {
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ease-in-out ${
           isScrolled 
             ? 'glass-effect shadow-lg border-b border-white/20' 
-            : 'bg-transparent'
+            : 'bg-white/10 backdrop-blur-sm'
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
@@ -109,12 +109,12 @@ const Header = () => {
               </div>
               <div>
                 <h1 className={`text-xl font-bold transition-colors duration-300 ${
-                  isScrolled ? 'text-gray-900' : 'text-white'
+                  isScrolled ? 'text-gray-900' : 'text-gray-900'
                 }`}>
                   GEI
                 </h1>
                 <p className={`text-xs leading-none transition-colors duration-300 ${
-                  isScrolled ? 'text-gray-600' : 'text-teal-100'
+                  isScrolled ? 'text-gray-600' : 'text-gray-700'
                 }`}>
                   Global Environmental Initiative
                 </p>
@@ -131,7 +131,7 @@ const Header = () => {
                     className={`flex items-center space-x-1 font-medium transition-all duration-300 hover:scale-105 ${
                       isScrolled 
                         ? 'text-gray-700 hover:text-teal-600' 
-                        : 'text-white hover:text-teal-200'
+                        : 'text-gray-900 hover:text-teal-600'
                     }`}
                   >
                     <span>{item.label}</span>
@@ -151,7 +151,7 @@ const Header = () => {
               className={`lg:hidden p-2 rounded-xl transition-all duration-300 ${
                 isScrolled 
                   ? 'text-gray-700 hover:bg-gray-100' 
-                  : 'text-white hover:bg-white/10'
+                  : 'text-gray-900 hover:bg-white/20'
               }`}
             >
               {isMobileMenuOpen ? (
