@@ -75,31 +75,49 @@ const Header = () => {
   ];
 
   const handleNavClick = (href: string) => {
-    if (href.startsWith('/') && !href.includes('#')) {
-      // Navigate to new page
-      window.location.href = href;
-    } else if (href.startsWith('/#')) {
+    // Close dropdowns and mobile menu
+    setActiveDropdown(null);
+    setIsMobileMenuOpen(false);
+    
+    if (href.startsWith('/#')) {
       // Navigate to home page section
       if (window.location.pathname !== '/') {
         window.location.href = href;
       } else {
-        const element = document.querySelector(href.substring(1));
+        const sectionId = href.substring(2); // Remove '/#'
+        const element = document.querySelector(`#${sectionId}`);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
         }
       }
     } else if (href.includes('#')) {
       // Navigate to section on specific page
+      const [path, hash] = href.split('#');
+      if (window.location.pathname === path) {
+        // Already on the correct page, just scroll to section
+        const element = document.querySelector(`#${hash}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        // Navigate to page with hash
+        window.location.href = href;
+      }
+    } else if (href.startsWith('/')) {
+      // Navigate to page
       window.location.href = href;
     } else {
-      // Default scroll behavior for current page
+      // Default scroll behavior for current page sections
       const element = document.querySelector(href);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       }
     }
-    setIsMobileMenuOpen(false);
-    setActiveDropdown(null);
+  };
+
+  const handleMainNavClick = (item: any) => {
+    // For main navigation items, go to the main page
+    handleNavClick(item.href);
   };
 
   const toggleDropdown = (label: string) => {
