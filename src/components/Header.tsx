@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown, ArrowRight } from 'lucide-react';
+import { Menu, X, ChevronDown, ArrowRight, Leaf } from 'lucide-react';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -14,11 +14,11 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close dropdown when clicking outside or pressing escape
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setActiveDropdown(null);
+        setIsMobileMenuOpen(false);
       }
     };
 
@@ -58,8 +58,7 @@ const Header = () => {
         { name: 'Sustainable Development', href: '/our-work#development', description: 'Sustainable livelihood programs' },
         { name: 'Research Projects', href: '/our-work#research', description: 'Scientific research and innovation' },
         { name: 'Publications', href: '#publications', description: 'Research papers and publications' },
-        { name: 'Global Initiatives', href: '/our-work#initiatives', description: 'Large-scale impact programs' },
-        { name: 'Impact Stories', href: '/our-work#impact', description: 'Success stories from the field' }
+        { name: 'Global Initiatives', href: '/our-work#initiatives', description: 'Large-scale impact programs' }
       ]
     },
     {
@@ -70,8 +69,7 @@ const Header = () => {
         { name: 'Policy Papers', href: '/ideas#policy', description: 'Research-backed policy recommendations' },
         { name: 'Research Insights', href: '/ideas#insights', description: 'Latest findings and analysis' },
         { name: 'Future Trends', href: '/ideas#trends', description: 'Emerging trends in sustainability' },
-        { name: 'Thought Leadership', href: '/ideas#leadership', description: 'Expert opinions and perspectives' },
-        { name: 'Publications', href: '/ideas#publications', description: 'Academic papers and reports' }
+        { name: 'Thought Leadership', href: '/ideas#leadership', description: 'Expert opinions and perspectives' }
       ]
     }
   ];
@@ -98,25 +96,25 @@ const Header = () => {
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ease-in-out ${
           isScrolled 
-            ? 'bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-100' 
+            ? 'glass-effect shadow-lg border-b border-white/20' 
             : 'bg-transparent'
         }`}
       >
-        <div className="container mx-auto px-6">
-          <div className="flex items-center justify-between h-20">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center space-x-3 group cursor-pointer" onClick={() => handleNavClick('/')}>
-              <div className="w-12 h-12 bg-gradient-to-br from-green-600 to-blue-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
-                <span className="text-white font-bold text-xl">G</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-teal-600 to-cyan-600 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 motion-pulse">
+                <Leaf className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className={`text-2xl font-bold transition-colors duration-300 ${
+                <h1 className={`text-xl font-bold transition-colors duration-300 ${
                   isScrolled ? 'text-gray-900' : 'text-white'
                 }`}>
                   GEI
                 </h1>
-                <p className={`text-sm leading-none transition-colors duration-300 ${
-                  isScrolled ? 'text-gray-600' : 'text-green-100'
+                <p className={`text-xs leading-none transition-colors duration-300 ${
+                  isScrolled ? 'text-gray-600' : 'text-teal-100'
                 }`}>
                   Global Environmental Initiative
                 </p>
@@ -132,8 +130,8 @@ const Header = () => {
                     onMouseEnter={() => setActiveDropdown(item.label)}
                     className={`flex items-center space-x-1 font-medium transition-all duration-300 hover:scale-105 ${
                       isScrolled 
-                        ? 'text-gray-700 hover:text-green-600' 
-                        : 'text-white hover:text-green-200'
+                        ? 'text-gray-700 hover:text-teal-600' 
+                        : 'text-white hover:text-teal-200'
                     }`}
                   >
                     <span>{item.label}</span>
@@ -166,58 +164,56 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Dropdown Overlay - positioned below header */}
+      {/* Dropdown Overlay */}
       {activeDropdown && (
         <div 
-          className="fixed inset-x-0 bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200 z-40"
-          style={{ top: '80px' }}
+          className="fixed inset-x-0 glass-effect shadow-lg border-b border-white/20 z-40"
+          style={{ top: '64px' }}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="container mx-auto px-6 py-8">
-            <div className="max-w-6xl mx-auto">
-              {navigationItems.map((item) => (
-                activeDropdown === item.label && (
-                  <div key={item.label} className="animate-in fade-in duration-300">
-                    <div className="text-center mb-8">
-                      <h2 className="text-3xl font-bold text-gray-900 mb-3">{item.label}</h2>
-                      <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                        {item.label === 'About Us' && 'Learn more about our mission, team, and journey'}
-                        {item.label === 'Our Work' && 'Explore our programs, research, and global impact'}
-                        {item.label === 'Ideas' && 'Discover innovative solutions and thought leadership'}
-                      </p>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {item.dropdown.map((dropdownItem, index) => (
-                        <button
-                          key={index}
-                          onClick={() => handleNavClick(dropdownItem.href)}
-                          className="group bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-left border border-gray-100 hover:border-green-200"
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-lg font-bold text-gray-900 group-hover:text-green-700 transition-colors">
-                              {dropdownItem.name}
-                            </h3>
-                            <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
-                          </div>
-                          <p className="text-gray-600 text-sm leading-relaxed">
-                            {dropdownItem.description}
-                          </p>
-                        </button>
-                      ))}
-                    </div>
+          <div className="max-w-7xl mx-auto px-6 lg:px-10 py-8">
+            {navigationItems.map((item) => (
+              activeDropdown === item.label && (
+                <div key={item.label} className="animate-fadeInUp">
+                  <div className="text-center mb-8">
+                    <h2 className="text-3xl font-bold font-playfair text-gray-900 mb-3">{item.label}</h2>
+                    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                      {item.label === 'About Us' && 'Learn more about our mission, team, and journey'}
+                      {item.label === 'Our Work' && 'Explore our programs, research, and global impact'}
+                      {item.label === 'Ideas' && 'Discover innovative solutions and thought leadership'}
+                    </p>
                   </div>
-                )
-              ))}
-            </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {item.dropdown.map((dropdownItem, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleNavClick(dropdownItem.href)}
+                        className="group bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-left border border-gray-100 hover:border-teal-200"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-lg font-bold text-gray-900 group-hover:text-teal-700 transition-colors">
+                            {dropdownItem.name}
+                          </h3>
+                          <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-all" />
+                        </div>
+                        <p className="text-gray-600 text-sm leading-relaxed">
+                          {dropdownItem.description}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )
+            ))}
           </div>
         </div>
       )}
 
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-white lg:hidden" style={{ top: '80px' }}>
-          <nav className="container mx-auto px-6 py-8 space-y-6">
+        <div className="fixed inset-0 z-40 bg-white lg:hidden" style={{ top: '64px' }}>
+          <nav className="max-w-7xl mx-auto px-6 py-8 space-y-6">
             {navigationItems.map((item) => (
               <div key={item.label}>
                 <button
@@ -242,7 +238,7 @@ const Header = () => {
                       <button
                         key={index}
                         onClick={() => handleNavClick(dropdownItem.href)}
-                        className="block w-full text-left py-3 px-4 text-gray-700 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-200"
+                        className="block w-full text-left py-3 px-4 text-gray-700 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors duration-200"
                       >
                         <div className="font-medium">{dropdownItem.name}</div>
                         <div className="text-sm text-gray-500 mt-1">{dropdownItem.description}</div>

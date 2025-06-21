@@ -5,8 +5,116 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Global Environmental Initiative - GEI</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" />
+    
+    <style>
+      .font-playfair { font-family: 'Playfair Display', serif !important; }
+      .font-inter { font-family: 'Inter', sans-serif !important; }
+      
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      
+      @keyframes pulse-scale {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes slideInLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      
+      @keyframes slideInRight {
+        from {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      
+      @media (prefers-reduced-motion: reduce) {
+        .motion-float, .motion-pulse, .animate-fadeInUp, .animate-slideInLeft, .animate-slideInRight {
+          animation: none !important;
+          transform: none !important;
+        }
+      }
+      
+      .motion-float { animation: float 6s ease-in-out infinite; }
+      .motion-pulse { animation: pulse-scale 4s ease-in-out infinite; }
+      .animate-fadeInUp { animation: fadeInUp 0.8s ease-out forwards; }
+      .animate-slideInLeft { animation: slideInLeft 0.8s ease-out forwards; }
+      .animate-slideInRight { animation: slideInRight 0.8s ease-out forwards; }
+      
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease-out;
+      }
+      
+      .reveal.revealed {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      .gradient-text {
+        background: linear-gradient(135deg, #0f766e, #0891b2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      
+      .hover-lift {
+        transition: all 0.3s ease;
+      }
+      
+      .hover-lift:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      }
+      
+      .btn-primary {
+        background: linear-gradient(135deg, #0f766e, #0891b2);
+        transition: all 0.3s ease;
+      }
+      
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #0d5d56, #0c7489);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(15, 118, 110, 0.3);
+      }
+    </style>
   </head>
-  <body>
+  <body class="font-inter">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
