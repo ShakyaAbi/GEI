@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowRight, Globe, Users, Zap, MapPin, ExternalLink } from 'lucide-react';
+import { ArrowRight, Globe, Users, Zap, MapPin, ExternalLink, X } from 'lucide-react';
 
 const Hero = () => {
   const [activeLocation, setActiveLocation] = useState<number | null>(null);
@@ -40,7 +40,8 @@ const Hero = () => {
       image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=400&q=80',
       description: 'Supporting climate-resilient agriculture and sustainable water management systems for mountain communities.',
       impact: '15,000+ farmers supported',
-      icon: Globe
+      icon: Globe,
+      color: 'from-emerald-500 to-teal-500'
     },
     {
       id: 2,
@@ -51,7 +52,8 @@ const Hero = () => {
       image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=400&q=80',
       description: 'Implementing renewable energy solutions and sustainable development programs in rural communities.',
       impact: '50,000+ people with clean energy',
-      icon: Zap
+      icon: Zap,
+      color: 'from-yellow-500 to-orange-500'
     },
     {
       id: 3,
@@ -62,7 +64,8 @@ const Hero = () => {
       image: 'https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=400&q=80',
       description: 'Building water security infrastructure and training communities in environmental conservation practices.',
       impact: '25,000+ people with clean water',
-      icon: Users
+      icon: Users,
+      color: 'from-blue-500 to-cyan-500'
     }
   ];
 
@@ -172,44 +175,72 @@ const Hero = () => {
                   style={{ left: `${location.x}%`, top: `${location.y}%` }}
                   onClick={() => setActiveLocation(activeLocation === location.id ? null : location.id)}
                 >
-                  {/* Marker */}
+                  {/* Enhanced Marker */}
                   <div className="relative">
-                    <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-slate-800 font-bold text-sm shadow-lg transform group-hover:scale-110 transition-all duration-300 animate-pulse border-2 border-white">
-                      {location.id}
+                    {/* Outer Glow Ring */}
+                    <div className={`absolute inset-0 w-16 h-16 bg-gradient-to-r ${location.color} rounded-full opacity-20 animate-ping transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2`}></div>
+                    
+                    {/* Middle Ring */}
+                    <div className={`absolute inset-0 w-12 h-12 bg-gradient-to-r ${location.color} rounded-full opacity-40 animate-pulse transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2`} style={{ animationDelay: '0.5s' }}></div>
+                    
+                    {/* Main Marker */}
+                    <div className={`relative w-10 h-10 bg-gradient-to-r ${location.color} rounded-full flex items-center justify-center text-white font-bold text-sm shadow-2xl transform group-hover:scale-125 transition-all duration-300 border-3 border-white group-hover:border-4`}>
+                      <div className="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
+                      <span className="relative z-10">{location.id}</span>
                     </div>
                     
-                    {/* Ripple Effect */}
-                    <div className="absolute inset-0 w-10 h-10 bg-yellow-400 rounded-full opacity-30 animate-ping"></div>
+                    {/* Hover Effect Ring */}
+                    <div className="absolute inset-0 w-10 h-10 bg-white rounded-full opacity-0 group-hover:opacity-30 transition-opacity duration-300 animate-ping"></div>
                   </div>
 
                   {/* Location Popup */}
                   {activeLocation === location.id && (
-                    <div className="absolute top-12 left-1/2 transform -translate-x-1/2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden z-20 animate-fadeInUp">
-                      <div className="relative h-32 overflow-hidden">
+                    <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-96 bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden z-20 animate-fadeInUp">
+                      {/* Close Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveLocation(null);
+                        }}
+                        className="absolute top-4 right-4 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors z-30"
+                      >
+                        <X className="w-4 h-4 text-gray-600" />
+                      </button>
+
+                      {/* Image Header */}
+                      <div className="relative h-40 overflow-hidden">
                         <img
                           src={location.image}
                           alt={location.country}
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                        <div className="absolute bottom-3 left-4 text-white">
-                          <h3 className="font-bold text-lg">{location.country}</h3>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                        <div className="absolute bottom-4 left-6 text-white">
+                          <div className="flex items-center gap-2 mb-2">
+                            <MapPin className="w-4 h-4" />
+                            <span className="text-sm font-medium opacity-90">{location.country}</span>
+                          </div>
+                          <h3 className="font-bold text-xl">{location.name}</h3>
                         </div>
                       </div>
                       
-                      <div className="p-4">
-                        <p className="text-gray-600 text-sm leading-relaxed mb-3">
+                      {/* Content */}
+                      <div className="p-6">
+                        <p className="text-gray-600 leading-relaxed mb-4">
                           {location.description}
                         </p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-medium text-teal-600 bg-teal-50 px-2 py-1 rounded-full">
-                            {location.impact}
-                          </span>
-                          <button className="inline-flex items-center text-teal-600 hover:text-teal-700 text-sm font-medium group/btn">
-                            Learn more
-                            <ExternalLink className="w-3 h-3 ml-1 group-hover/btn:translate-x-1 transition-transform" />
-                          </button>
+                        
+                        {/* Impact Badge */}
+                        <div className={`inline-flex items-center px-4 py-2 bg-gradient-to-r ${location.color} text-white text-sm font-medium rounded-full mb-4 shadow-lg`}>
+                          <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
+                          {location.impact}
                         </div>
+                        
+                        {/* Action Button */}
+                        <button className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-slate-800 to-slate-700 text-white font-medium rounded-xl hover:from-slate-700 hover:to-slate-600 transition-all duration-300 transform hover:scale-105 group/btn">
+                          Learn More About Our Work
+                          <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                        </button>
                       </div>
                     </div>
                   )}
@@ -225,7 +256,7 @@ const Hero = () => {
               return (
                 <div key={location.id} className="bg-white rounded-2xl p-8 shadow-lg hover-lift border border-gray-100 reveal" style={{ animationDelay: `${index * 0.1}s` }}>
                   <div className="flex items-center mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full flex items-center justify-center mr-4 shadow-lg motion-pulse">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${location.color} rounded-full flex items-center justify-center mr-4 shadow-lg motion-pulse`}>
                       <IconComponent className="w-6 h-6 text-white" />
                     </div>
                     <h3 className="text-xl font-bold text-gray-900">{location.name}</h3>
@@ -233,9 +264,9 @@ const Hero = () => {
                   <p className="text-gray-600 leading-relaxed mb-4">
                     {location.description}
                   </p>
-                  <div className="flex items-center text-sm text-teal-600 font-medium">
-                    <div className="w-2 h-2 bg-teal-500 rounded-full mr-2"></div>
-                    {location.impact}
+                  <div className="flex items-center text-sm font-medium">
+                    <div className={`w-2 h-2 bg-gradient-to-r ${location.color} rounded-full mr-2`}></div>
+                    <span className="text-gray-700">{location.impact}</span>
                   </div>
                 </div>
               );
