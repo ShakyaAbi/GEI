@@ -166,39 +166,39 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Full-screen Dropdown Overlay */}
+      {/* Dropdown Overlay - positioned below header */}
       {activeDropdown && (
         <div 
-          className="fixed inset-0 z-40 bg-white/95 backdrop-blur-lg"
+          className="fixed inset-x-0 bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200 z-40"
           style={{ top: '80px' }}
           onMouseLeave={() => setActiveDropdown(null)}
         >
-          <div className="container mx-auto px-6 py-12">
+          <div className="container mx-auto px-6 py-8">
             <div className="max-w-6xl mx-auto">
               {navigationItems.map((item) => (
                 activeDropdown === item.label && (
                   <div key={item.label} className="animate-in fade-in duration-300">
-                    <div className="text-center mb-12">
-                      <h2 className="text-4xl font-bold text-gray-900 mb-4">{item.label}</h2>
-                      <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                    <div className="text-center mb-8">
+                      <h2 className="text-3xl font-bold text-gray-900 mb-3">{item.label}</h2>
+                      <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                         {item.label === 'About Us' && 'Learn more about our mission, team, and journey'}
                         {item.label === 'Our Work' && 'Explore our programs, research, and global impact'}
                         {item.label === 'Ideas' && 'Discover innovative solutions and thought leadership'}
                       </p>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {item.dropdown.map((dropdownItem, index) => (
                         <button
                           key={index}
                           onClick={() => handleNavClick(dropdownItem.href)}
-                          className="group bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 text-left border border-gray-100 hover:border-green-200"
+                          className="group bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 text-left border border-gray-100 hover:border-green-200"
                         >
-                          <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center justify-between mb-2">
                             <h3 className="text-lg font-bold text-gray-900 group-hover:text-green-700 transition-colors">
                               {dropdownItem.name}
                             </h3>
-                            <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
+                            <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all" />
                           </div>
                           <p className="text-gray-600 text-sm leading-relaxed">
                             {dropdownItem.description}
