@@ -68,113 +68,162 @@ const Hero = () => {
         </div>
       </section>
 
-      {/* Our Offices Section */}
-      <section className="py-20 bg-gray-800">
+      {/* Global Presence Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
         <div className="container mx-auto px-6">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                Our Offices
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                Our Global Presence
               </h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
                 Working across continents to create sustainable solutions and lasting environmental impact 
                 in communities worldwide.
               </p>
             </div>
 
-            {/* Dotted World Map */}
-            <div className="relative bg-gray-700 rounded-3xl p-8 overflow-hidden">
-              <svg viewBox="0 0 1200 600" className="w-full h-auto">
-                {/* World map made of dots */}
+            {/* World Map Container */}
+            <div className="relative bg-white rounded-3xl shadow-2xl p-8 overflow-hidden">
+              <svg viewBox="0 0 1000 500" className="w-full h-auto">
+                {/* Gradient definitions */}
                 <defs>
-                  <pattern id="dots" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
-                    <circle cx="4" cy="4" r="1.5" fill="#9CA3AF" opacity="0.6"/>
-                  </pattern>
+                  <linearGradient id="landGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#E5E7EB" />
+                    <stop offset="100%" stopColor="#D1D5DB" />
+                  </linearGradient>
+                  <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#F0F9FF" />
+                    <stop offset="100%" stopColor="#E0F2FE" />
+                  </linearGradient>
+                  <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="2" dy="2" stdDeviation="3" floodColor="#00000020"/>
+                  </filter>
                 </defs>
                 
-                {/* Continents as dotted shapes */}
-                {/* North America */}
-                <path d="M150 120 Q200 100 280 110 Q320 120 350 140 Q360 180 340 220 Q300 240 250 250 Q200 260 160 240 Q130 200 140 160 Z" fill="url(#dots)" />
+                {/* Ocean background */}
+                <rect width="1000" height="500" fill="url(#oceanGradient)" />
                 
-                {/* South America */}
-                <path d="M280 280 Q320 270 340 290 Q360 320 370 380 Q375 440 365 480 Q350 500 330 495 Q310 490 295 470 Q280 440 275 400 Q270 360 275 320 Z" fill="url(#dots)" />
-                
-                {/* Europe */}
-                <path d="M480 100 Q520 90 560 100 Q580 110 590 130 Q585 150 570 160 Q540 170 510 165 Q485 155 480 135 Z" fill="url(#dots)" />
-                
-                {/* Africa */}
-                <path d="M520 180 Q560 170 590 185 Q610 200 620 240 Q625 290 620 340 Q615 390 600 420 Q580 440 560 435 Q540 430 525 410 Q510 380 505 340 Q500 300 505 260 Q510 220 520 190 Z" fill="url(#dots)" />
-                
-                {/* Asia */}
-                <path d="M620 120 Q720 110 820 125 Q880 140 920 165 Q940 190 935 220 Q925 250 900 270 Q860 285 800 280 Q740 275 680 265 Q640 250 620 220 Q610 190 615 160 Z" fill="url(#dots)" />
-                
-                {/* Australia */}
-                <path d="M820 380 Q870 370 900 385 Q915 400 910 420 Q900 435 885 440 Q865 445 845 440 Q825 435 820 420 Q815 405 820 390 Z" fill="url(#dots)" />
+                {/* World continents with realistic shapes */}
+                <g fill="url(#landGradient)" stroke="#9CA3AF" strokeWidth="0.5" filter="url(#shadow)">
+                  {/* North America */}
+                  <path d="M50 80 Q80 60 120 70 Q160 75 200 85 Q240 95 260 120 Q270 150 265 180 Q255 210 240 230 Q220 245 190 250 Q160 255 130 245 Q100 235 80 215 Q60 195 55 165 Q50 135 55 105 Z" />
+                  
+                  {/* South America */}
+                  <path d="M180 260 Q200 250 220 265 Q235 280 245 310 Q250 340 255 370 Q260 400 255 430 Q250 450 240 465 Q225 475 210 470 Q195 465 185 450 Q175 435 170 420 Q165 405 165 390 Q165 375 170 360 Q175 345 175 330 Q175 315 175 300 Q175 285 175 270 Z" />
+                  
+                  {/* Europe */}
+                  <path d="M420 70 Q450 65 480 75 Q510 85 530 100 Q540 115 535 130 Q530 145 520 155 Q505 165 485 160 Q465 155 450 145 Q435 135 425 120 Q415 105 415 90 Z" />
+                  
+                  {/* Africa */}
+                  <path d="M450 160 Q480 150 510 165 Q540 180 560 200 Q575 220 580 250 Q585 280 580 310 Q575 340 570 370 Q565 400 555 425 Q545 445 530 455 Q515 465 500 460 Q485 455 475 445 Q465 435 460 420 Q455 405 450 390 Q445 375 445 360 Q445 345 445 330 Q445 315 445 300 Q445 285 445 270 Q445 255 445 240 Q445 225 445 210 Q445 195 445 180 Z" />
+                  
+                  {/* Asia */}
+                  <path d="M550 80 Q600 70 650 80 Q700 90 750 105 Q800 120 830 140 Q850 160 855 185 Q860 210 850 235 Q840 260 825 280 Q810 300 790 315 Q770 330 745 335 Q720 340 695 335 Q670 330 645 320 Q620 310 600 295 Q580 280 565 260 Q550 240 545 220 Q540 200 540 180 Q540 160 545 140 Q550 120 550 100 Z" />
+                  
+                  {/* Australia */}
+                  <path d="M720 350 Q750 345 780 355 Q800 365 815 380 Q825 395 820 410 Q815 425 805 435 Q790 445 775 440 Q760 435 750 425 Q740 415 735 400 Q730 385 730 370 Z" />
+                </g>
 
-                {/* Office locations with yellow markers */}
+                {/* Office locations with enhanced markers */}
                 {/* Nepal */}
-                <circle cx="780" cy="200" r="12" fill="#FCD34D" stroke="#F59E0B" strokeWidth="3">
-                  <animate attributeName="r" values="12;16;12" dur="2s" repeatCount="indefinite"/>
-                </circle>
-                <text x="780" y="185" textAnchor="middle" fill="#FCD34D" fontSize="12" fontWeight="bold">Nepal</text>
+                <g>
+                  <circle cx="680" cy="180" r="8" fill="#F59E0B" stroke="#FFFFFF" strokeWidth="3" filter="url(#shadow)">
+                    <animate attributeName="r" values="8;12;8" dur="3s" repeatCount="indefinite"/>
+                  </circle>
+                  <circle cx="680" cy="180" r="16" fill="#F59E0B" opacity="0.3">
+                    <animate attributeName="r" values="16;24;16" dur="3s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.3;0;0.3" dur="3s" repeatCount="indefinite"/>
+                  </circle>
+                  <text x="680" y="165" textAnchor="middle" fill="#1F2937" fontSize="14" fontWeight="bold">Nepal</text>
+                </g>
                 
                 {/* India */}
-                <circle cx="750" cy="230" r="12" fill="#FCD34D" stroke="#F59E0B" strokeWidth="3">
-                  <animate attributeName="r" values="12;16;12" dur="2s" repeatCount="indefinite" begin="0.5s"/>
-                </circle>
-                <text x="750" y="215" textAnchor="middle" fill="#FCD34D" fontSize="12" fontWeight="bold">India</text>
+                <g>
+                  <circle cx="650" cy="210" r="8" fill="#F59E0B" stroke="#FFFFFF" strokeWidth="3" filter="url(#shadow)">
+                    <animate attributeName="r" values="8;12;8" dur="3s" repeatCount="indefinite" begin="1s"/>
+                  </circle>
+                  <circle cx="650" cy="210" r="16" fill="#F59E0B" opacity="0.3">
+                    <animate attributeName="r" values="16;24;16" dur="3s" repeatCount="indefinite" begin="1s"/>
+                    <animate attributeName="opacity" values="0.3;0;0.3" dur="3s" repeatCount="indefinite" begin="1s"/>
+                  </circle>
+                  <text x="650" y="195" textAnchor="middle" fill="#1F2937" fontSize="14" fontWeight="bold">India</text>
+                </g>
                 
                 {/* Cambodia */}
-                <circle cx="820" cy="260" r="12" fill="#FCD34D" stroke="#F59E0B" strokeWidth="3">
-                  <animate attributeName="r" values="12;16;12" dur="2s" repeatCount="indefinite" begin="1s"/>
-                </circle>
-                <text x="820" y="245" textAnchor="middle" fill="#FCD34D" fontSize="12" fontWeight="bold">Cambodia</text>
+                <g>
+                  <circle cx="720" cy="240" r="8" fill="#F59E0B" stroke="#FFFFFF" strokeWidth="3" filter="url(#shadow)">
+                    <animate attributeName="r" values="8;12;8" dur="3s" repeatCount="indefinite" begin="2s"/>
+                  </circle>
+                  <circle cx="720" cy="240" r="16" fill="#F59E0B" opacity="0.3">
+                    <animate attributeName="r" values="16;24;16" dur="3s" repeatCount="indefinite" begin="2s"/>
+                    <animate attributeName="opacity" values="0.3;0;0.3" dur="3s" repeatCount="indefinite" begin="2s"/>
+                  </circle>
+                  <text x="720" y="225" textAnchor="middle" fill="#1F2937" fontSize="14" fontWeight="bold">Cambodia</text>
+                </g>
 
-                {/* Connection lines */}
-                <g stroke="#FCD34D" strokeWidth="2" strokeDasharray="5,5" opacity="0.7">
-                  <line x1="780" y1="200" x2="750" y2="230">
-                    <animate attributeName="stroke-dashoffset" values="0;10" dur="1s" repeatCount="indefinite"/>
-                  </line>
-                  <line x1="750" y1="230" x2="820" y2="260">
-                    <animate attributeName="stroke-dashoffset" values="0;10" dur="1s" repeatCount="indefinite"/>
-                  </line>
+                {/* Connection lines with animation */}
+                <g stroke="#10B981" strokeWidth="2" strokeDasharray="8,4" opacity="0.7" fill="none">
+                  <path d="M680,180 Q665,195 650,210">
+                    <animate attributeName="stroke-dashoffset" values="0;12" dur="2s" repeatCount="indefinite"/>
+                  </path>
+                  <path d="M650,210 Q685,225 720,240">
+                    <animate attributeName="stroke-dashoffset" values="0;12" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+                  </path>
                 </g>
               </svg>
             </div>
 
-            {/* Office Details */}
+            {/* Office Details Cards */}
             <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-gray-700 rounded-2xl p-6 text-center hover:bg-gray-600 transition-colors duration-300">
-                <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-gray-800 font-bold text-lg">1</span>
+              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                <div className="flex items-center mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-yellow-500 rounded-full flex items-center justify-center mr-4 shadow-lg">
+                    <span className="text-white font-bold text-lg">1</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900">Nepal Office</h3>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">Nepal Office</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">
+                <p className="text-gray-600 leading-relaxed mb-4">
                   Supporting climate-resilient agriculture and sustainable water management 
                   systems for mountain communities.
                 </p>
+                <div className="flex items-center text-sm text-green-600 font-medium">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                  15,000+ farmers supported
+                </div>
               </div>
 
-              <div className="bg-gray-700 rounded-2xl p-6 text-center hover:bg-gray-600 transition-colors duration-300">
-                <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-gray-800 font-bold text-lg">2</span>
+              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                <div className="flex items-center mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-yellow-500 rounded-full flex items-center justify-center mr-4 shadow-lg">
+                    <span className="text-white font-bold text-lg">2</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900">India Office</h3>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">India Office</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">
+                <p className="text-gray-600 leading-relaxed mb-4">
                   Implementing renewable energy solutions and sustainable development 
                   programs in rural communities.
                 </p>
+                <div className="flex items-center text-sm text-green-600 font-medium">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                  50,000+ people with clean energy
+                </div>
               </div>
 
-              <div className="bg-gray-700 rounded-2xl p-6 text-center hover:bg-gray-600 transition-colors duration-300">
-                <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-gray-800 font-bold text-lg">3</span>
+              <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
+                <div className="flex items-center mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-yellow-500 rounded-full flex items-center justify-center mr-4 shadow-lg">
+                    <span className="text-white font-bold text-lg">3</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900">Cambodia Office</h3>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">Cambodia Office</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">
+                <p className="text-gray-600 leading-relaxed mb-4">
                   Building water security infrastructure and training communities 
                   in environmental conservation practices.
                 </p>
+                <div className="flex items-center text-sm text-green-600 font-medium">
+                  <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                  25,000+ people with clean water
+                </div>
               </div>
             </div>
           </div>
