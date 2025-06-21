@@ -57,7 +57,7 @@ const Header = () => {
         { name: 'Environmental Health', href: '/our-work#health', description: 'Community health and environment initiatives' },
         { name: 'Sustainable Development', href: '/our-work#development', description: 'Sustainable livelihood programs' },
         { name: 'Research Projects', href: '/our-work#research', description: 'Scientific research and innovation' },
-        { name: 'Publications', href: '#publications', description: 'Research papers and publications' },
+        { name: 'Publications', href: '/#publications', description: 'Research papers and publications' },
         { name: 'Global Initiatives', href: '/our-work#initiatives', description: 'Large-scale impact programs' }
       ]
     },
@@ -75,9 +75,24 @@ const Header = () => {
   ];
 
   const handleNavClick = (href: string) => {
-    if (href.startsWith('/')) {
+    if (href.startsWith('/') && !href.includes('#')) {
+      // Navigate to new page
+      window.location.href = href;
+    } else if (href.startsWith('/#')) {
+      // Navigate to home page section
+      if (window.location.pathname !== '/') {
+        window.location.href = href;
+      } else {
+        const element = document.querySelector(href.substring(1));
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    } else if (href.includes('#')) {
+      // Navigate to section on specific page
       window.location.href = href;
     } else {
+      // Default scroll behavior for current page
       const element = document.querySelector(href);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
