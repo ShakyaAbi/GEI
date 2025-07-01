@@ -1,0 +1,313 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum ProjectStatus {
+  active
+  completed
+  on_hold
+  cancelled
+}
+
+enum MediaType {
+  image
+  document
+}
+
+enum StakeholderType {
+  team_member
+  partner
+  beneficiary
+}
+
+// Models
+model ResearchCategory {
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String        @unique
+  slug        String        @unique
+  description String?
+  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  publications Publication[]
+
+  @@map("research_categories")
+}
+
+model Author {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String
+  email             String?             @unique
+  affiliation       String?
+  bio               String?
+  createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  publicationAuthors PublicationAuthor[]
+
+  @@map("authors")
+}
+
+model Publication {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title             String
+  abstract          String?
+  journal           String?
+  publicationYear   Int?                @map("publication_year")
+  publicationType   String              @default("Journal Article") @map("publication_type")
+  doi               String?
+  pdfUrl            String?             @map("pdf_url")
+  citations         Int                 @default(0)
+  categoryId        String?             @map("category_id") @db.Uuid
+  isFeatured        Boolean             @default(false) @map("is_featured")
+  createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime            @default(now()) @map("updated_at") @db.Timestamptz(6)
+  category          ResearchCategory?   @relation(fields: [categoryId], references: [id])
+  publicationAuthors PublicationAuthor[]
+
+  @@map("publications")
+}
+
+model PublicationAuthor {
+  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  publicationId String      @map("publication_id") @db.Uuid
+  authorId      String      @map("author_id") @db.Uuid
+  authorOrder   Int         @default(1) @map("author_order")
+  createdAt     DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  publication   Publication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+  author        Author      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@unique([publicationId, authorId])
+  @@map("publication_authors")
+}
+
+model ProgramArea {
+  id               String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String                  @unique
+  slug             String                  @unique
+  description      String?
+  heroImage        String?                 @map("hero_image")
+  seoTitle         String?                 @map("seo_title")
+  seoDescription   String?                 @map("seo_description")
+  orderIndex       Int                     @default(0) @map("order_index")
+  createdAt        DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime                @default(now()) @map("updated_at") @db.Timestamptz(6)
+  projects         Project[]
+  teamMembers      ProgramAreaTeamMember[]
+  partners         ProgramAreaPartner[]
+
+  @@map("program_areas")
+}
+
+model Project {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  programAreaId     String?             @map("program_area_id") @db.Uuid
+  title             String
+  description       String?
+  location          String?
+  duration          String?
+  status            ProjectStatus       @default(active)
+  budget            String?
+  beneficiaries     String?
+  impactMetrics     String[]            @map("impact_metrics")
+  image             String?
+  heroImage         String?             @map("hero_image")
+  orderIndex        Int                 @default(0) @map("order_index")
+  startDate         DateTime?           @map("start_date") @db.Date
+  endDate           DateTime?           @map("end_date") @db.Date
+  slug              String?             @unique
+  createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime            @default(now()) @map("updated_at") @db.Timestamptz(6)
+  programArea       ProgramArea?        @relation(fields: [programAreaId], references: [id], onDelete: Cascade)
+  customFields      ProjectCustomField[]
+  media             ProjectMedia[]
+  stakeholders      ProjectStakeholder[]
+  updates           ProjectUpdate[]
+  projectContent    ProjectContent[]
+
+  @@map("projects")
+}
+
+model ProjectCustomField {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId   String   @map("project_id") @db.Uuid
+  fieldName   String   @map("field_name")
+  fieldValue  String   @map("field_value")
+  fieldType   String   @default("text") @map("field_type")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_custom_fields")
+}
+
+model ProjectMedia {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId   String    @map("project_id") @db.Uuid
+  fileUrl     String    @map("file_url")
+  fileType    MediaType @map("file_type")
+  fileName    String?   @map("file_name")
+  fileSize    Int?      @map("file_size")
+  caption     String?
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_media")
+}
+
+model ProjectStakeholder {
+  id           String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId    String          @map("project_id") @db.Uuid
+  name         String
+  email        String?
+  phone        String?
+  organization String?
+  role         String?
+  type         StakeholderType @default(team_member)
+  createdAt    DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  project      Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_stakeholders")
+}
+
+model ProjectUpdate {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId   String   @map("project_id") @db.Uuid
+  title       String
+  description String?
+  updateDate  DateTime @default(now()) @map("update_date") @db.Date
+  milestone   Boolean  @default(false)
+  createdBy   String?  @map("created_by") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_updates")
+}
+
+model ProgramAreaTeamMember {
+  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  programAreaId  String     @map("program_area_id") @db.Uuid
+  name           String
+  title          String?
+  role           String?
+  image          String?
+  email          String?
+  bio            String?
+  orderIndex     Int        @default(0) @map("order_index")
+  createdAt      DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  programArea    ProgramArea @relation(fields: [programAreaId], references: [id], onDelete: Cascade)
+
+  @@map("program_area_team_members")
+}
+
+model ProgramAreaPartner {
+  id             String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  programAreaId  String     @map("program_area_id") @db.Uuid
+  name           String
+  logo           String?
+  website        String?
+  description    String?
+  orderIndex     Int        @default(0) @map("order_index")
+  createdAt      DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  programArea    ProgramArea @relation(fields: [programAreaId], references: [id], onDelete: Cascade)
+
+  @@map("program_area_partners")
+}
+
+model User {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("user")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("users")
+}
+
+model TimelineEvent {
+  id          Int      @id @default(autoincrement())
+  year        Int
+  title       String   @db.VarChar(255)
+  description String
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  @@map("timeline_events")
+}
+
+model GlobeData {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  description String?
+  latitude    Decimal  @db.Decimal(10, 8)
+  longitude   Decimal  @db.Decimal(11, 8)
+  category    String?  @db.VarChar(100)
+  color       String?  @default("#0066cc") @db.VarChar(7)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  @@map("globe_data")
+}
+
+model Report {
+  id          Int          @id @default(autoincrement())
+  title       String       @db.VarChar(255)
+  description String
+  uploadDate  DateTime?    @default(now()) @map("upload_date") @db.Timestamp(6)
+  published   Boolean?     @default(false)
+  createdAt   DateTime?    @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt   DateTime?    @default(now()) @map("updated_at") @db.Timestamp(6)
+  files       ReportFile[]
+  photos      ReportPhoto[]
+
+  @@map("reports")
+}
+
+model ReportFile {
+  id           Int      @id @default(autoincrement())
+  reportId     Int?     @map("report_id")
+  filename     String   @db.VarChar(255)
+  originalName String   @map("original_name") @db.VarChar(255)
+  filePath     String   @map("file_path") @db.VarChar(500)
+  fileSize     Int?     @map("file_size")
+  mimeType     String?  @map("mime_type") @db.VarChar(100)
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  report       Report?   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@map("report_files")
+}
+
+model ReportPhoto {
+  id           Int      @id @default(autoincrement())
+  reportId     Int?     @map("report_id")
+  filename     String   @db.VarChar(255)
+  originalName String   @map("original_name") @db.VarChar(255)
+  filePath     String   @map("file_path") @db.VarChar(500)
+  altText      String?  @map("alt_text") @db.VarChar(255)
+  sortOrder    Int?     @default(0) @map("sort_order")
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  report       Report?   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@map("report_photos")
+}
+
+model ProjectContent {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId    String   @map("project_id") @db.Uuid
+  title        String
+  content      String
+  contentType  String   @map("content_type")
+  orderIndex   Int      @default(0) @map("order_index")
+  isPublished  Boolean  @default(true) @map("is_published")
+  author       String?
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_content")
+}
