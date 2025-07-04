@@ -35,6 +35,11 @@ router.get('/', async (req, res) => {
     const { limit, offset } = req.query;
     
     const programAreas = await prisma.programArea.findMany({
+      include: {
+        _count: {
+          select: { projects: true }
+        }
+      },
       orderBy: {
         orderIndex: 'asc'
       },
@@ -42,7 +47,13 @@ router.get('/', async (req, res) => {
       take: limit ? parseInt(limit) : undefined
     });
     
-    res.json({ error: false, data: programAreas.map(mapHeroImageField) });
+    // Map the response to include project count
+    const mappedProgramAreas = programAreas.map(area => ({
+      ...mapHeroImageField(area),
+      projectCount: area._count.projects
+    }));
+    
+    res.json({ error: false, data: mappedProgramAreas });
   } catch (error) {
     console.error('Get program areas error:', error);
     res.status(500).json({ error: true, message: 'Server error' });

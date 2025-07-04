@@ -70,7 +70,7 @@ export class ProjectsAPI {
     }
   }
 
-  async uploadProjectMedia(projectId: string, file: File): Promise<string | null> {
+  async uploadProjectMedia(projectId: string, file: File): Promise<ProjectMedia> {
     try {
       // Create form data
       const formData = new FormData();
@@ -83,10 +83,28 @@ export class ProjectsAPI {
         }
       });
       
-      return response.data.data.fileUrl;
+      return response.data.data;
     } catch (error) {
       console.error('Error in uploadProjectMedia:', error);
-      return null;
+      throw error;
+    }
+  }
+
+  async deleteProjectMedia(projectId: string, mediaId: string): Promise<void> {
+    try {
+      await api.delete(`/uploads/project-media/${projectId}/${mediaId}`);
+    } catch (error) {
+      console.error('Error in deleteProjectMedia:', error);
+      throw error;
+    }
+  }
+
+  async reorderProjectMedia(projectId: string, mediaOrder: string[]): Promise<void> {
+    try {
+      await api.put(`/projects/${projectId}/media/reorder`, { mediaOrder });
+    } catch (error) {
+      console.error('Error in reorderProjectMedia:', error);
+      throw error;
     }
   }
 }

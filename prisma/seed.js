@@ -1,116 +1,169 @@
+
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Starting seed...');
+  try {
+    console.log('Starting GEI seed...');
 
-  // Create admin user
-  const adminPassword = await bcrypt.hash('admin123', 10);
-  const admin = await prisma.user.upsert({
-    where: { email: 'admin@gei.org' },
-    update: {},
-    create: {
-      email: 'admin@gei.org',
-      password: adminPassword,
-      name: 'Admin User',
-      role: 'admin'
+    // Create admin user
+    const adminPassword = await bcrypt.hash('admin123', 10);
+    const admin = await prisma.user.upsert({
+      where: { email: 'admin@gei.org' },
+      update: {},
+      create: {
+        email: 'admin@gei.org',
+        password: adminPassword,
+        name: 'Admin User',
+        role: 'admin'
+      }
+    });
+    console.log('Created admin user:', admin.email);
+
+    // Create research categories
+    const categories = [
+      {
+        name: 'Artificial Intelligence for Public Health',
+        slug: 'ai-public-health',
+        description: 'Leveraging AI and machine learning to advance healthcare delivery, disease surveillance, and community-level insights.'
+      },
+      {
+        name: 'Quantum Technology & Systems',
+        slug: 'quantum-tech',
+        description: 'Emerging quantum applications for global development, including secure communications and environmental modeling.'
+      },
+      {
+        name: 'Climate and Planetary Health',
+        slug: 'climate-planetary-health',
+        description: 'Cross-cutting climate research on adaptation, mitigation, air quality, and ecological resilience.'
+      },
+      {
+        name: 'Human-Centered Robotics',
+        slug: 'human-robotics',
+        description: 'Autonomous systems for environmental monitoring, health logistics, and disaster response.'
+      },
+      {
+        name: 'Biotechnology & Genomics',
+        slug: 'biotech-genomics',
+        description: 'Equitable innovations in genetic research, diagnostics, and biosystems for underserved populations.'
+      },
+      {
+        name: 'Sustainable Energy & Smart Grids',
+        slug: 'sustainable-energy',
+        description: 'Renewable energy research, smart grid systems, and low-carbon community solutions.'
+      }
+    ];
+
+    for (const category of categories) {
+      await prisma.researchCategory.upsert({
+        where: { slug: category.slug },
+        update: {},
+        create: category
+      });
     }
-  });
-  console.log('Created admin user:', admin.email);
+    console.log(`Created ${categories.length} research categories`);
 
-  // Create research categories
-  const categories = [
-    { name: 'Artificial Intelligence', slug: 'ai', description: 'Machine learning, neural networks, and cognitive computing systems' },
-    { name: 'Quantum Computing', slug: 'quantum', description: 'Quantum algorithms, quantum information processing, and quantum technologies' },
-    { name: 'Climate Science', slug: 'climate', description: 'Environmental monitoring, climate modeling, and sustainability research' },
-    { name: 'Robotics', slug: 'robotics', description: 'Autonomous systems, human-robot interaction, and robotic applications' },
-    { name: 'Biotechnology', slug: 'biotech', description: 'Genetic engineering, synthetic biology, and biomedical applications' },
-    { name: 'Energy Systems', slug: 'energy', description: 'Renewable energy, energy storage, and smart grid technologies' }
-  ];
+    // Create authors
+    const authors = [
+      {
+        name: 'Dr. Sarah Chen',
+        email: 'sarah.chen@gei.edu',
+        affiliation: 'GEI Behavioral Science & AI Lab',
+        bio: 'Leads the application of artificial intelligence in behavior-driven health and development research.'
+      },
+      {
+        name: 'Dr. Michael Rodriguez',
+        email: 'michael.rodriguez@gei.edu',
+        affiliation: 'GEI Quantum Systems Research Hub',
+        bio: 'Expert in computational physics and quantum systems for low-resource innovations.'
+      },
+      {
+        name: 'Dr. Emma Thompson',
+        email: 'emma.thompson@gei.edu',
+        affiliation: 'GEI Climate Resilience Center',
+        bio: 'Designs community-based climate monitoring and early warning systems in high-altitude regions.'
+      },
+      {
+        name: 'Dr. James Wilson',
+        email: 'james.wilson@gei.edu',
+        affiliation: 'GEI Robotics & Diagnostics Lab',
+        bio: 'Focuses on robotics for maternal-child health delivery and logistics in remote geographies.'
+      },
+      {
+        name: 'Dr. Lisa Park',
+        email: 'lisa.park@gei.edu',
+        affiliation: 'GEI Life Sciences Division',
+        bio: 'Biotechnologist working on nutritional genomics and maternal health diagnostics.'
+      },
+      {
+        name: 'Dr. David Kumar',
+        email: 'david.kumar@gei.edu',
+        affiliation: 'GEI Renewable Energy Division',
+        bio: 'Develops low-cost solar and biomass solutions for off-grid communities.'
+      }
+    ];
 
-  for (const category of categories) {
-    await prisma.researchCategory.upsert({
-      where: { slug: category.slug },
-      update: {},
-      create: category
-    });
-  }
-  console.log(`Created ${categories.length} research categories`);
-
-  // Create authors
-  const authors = [
-    { name: 'Dr. Sarah Chen', email: 'sarah.chen@gei.edu', affiliation: 'GEI Research Center', bio: 'Director & Principal Investigator specializing in AI and machine learning' },
-    { name: 'Dr. Michael Rodriguez', email: 'michael.rodriguez@gei.edu', affiliation: 'GEI Research Center', bio: 'Senior Research Scientist in quantum computing and information theory' },
-    { name: 'Dr. Emma Thompson', email: 'emma.thompson@gei.edu', affiliation: 'GEI Research Center', bio: 'Associate Director focusing on climate science and environmental modeling' },
-    { name: 'Dr. James Wilson', email: 'james.wilson@gei.edu', affiliation: 'GEI Research Center', bio: 'Principal Investigator in robotics and autonomous systems' },
-    { name: 'Dr. Lisa Park', email: 'lisa.park@gei.edu', affiliation: 'GEI Research Center', bio: 'Research Scientist in biotechnology and genetic engineering' },
-    { name: 'Dr. David Kumar', email: 'david.kumar@gei.edu', affiliation: 'GEI Research Center', bio: 'Senior Researcher in energy systems and renewable technologies' }
-  ];
-
-  for (const author of authors) {
-    await prisma.author.upsert({
-      where: { email: author.email },
-      update: {},
-      create: author
-    });
-  }
-  console.log(`Created ${authors.length} authors`);
-
-  // Create program areas
-  const programAreas = [
-    {
-      name: 'Climate Action',
-      slug: 'climate-action',
-      description: 'Building climate resilience in vulnerable communities through innovative adaptation strategies, sustainable practices, and community-centered solutions that protect lives and livelihoods.',
-      seoTitle: 'Climate Action Programs | GEI',
-      seoDescription: 'Discover our comprehensive climate action initiatives that help communities adapt to climate change and build resilience for the future.',
-      orderIndex: 1
-    },
-    {
-      name: 'Water & Sanitation',
-      slug: 'water-sanitation',
-      description: 'Ensuring access to clean water and sustainable sanitation systems for underserved communities through innovative technologies and community-centered approaches.',
-      seoTitle: 'Water & Sanitation Programs | GEI',
-      seoDescription: 'Learn about our water and sanitation programs that provide clean water access and improve health outcomes in communities worldwide.',
-      orderIndex: 2
-    },
-    {
-      name: 'Renewable Energy',
-      slug: 'renewable-energy',
-      description: 'Developing sustainable energy solutions that reduce carbon emissions and provide reliable power access to remote and underserved communities.',
-      seoTitle: 'Renewable Energy Programs | GEI',
-      seoDescription: 'Explore our renewable energy initiatives that bring clean, sustainable power to communities while protecting the environment.',
-      orderIndex: 3
-    },
-    {
-      name: 'Forest Conservation',
-      slug: 'forest-conservation',
-      description: 'Protecting and restoring forest ecosystems through community-based conservation, sustainable forestry practices, and biodiversity preservation.',
-      seoTitle: 'Forest Conservation Programs | GEI',
-      seoDescription: 'Discover our forest conservation efforts that protect biodiversity and support sustainable livelihoods in forest communities.',
-      orderIndex: 4
+    for (const author of authors) {
+      await prisma.author.upsert({
+        where: { email: author.email },
+        update: {},
+        create: author
+      });
     }
-  ];
+    console.log(`Created ${authors.length} authors`);
 
-  for (const area of programAreas) {
-    await prisma.programArea.upsert({
-      where: { slug: area.slug },
-      update: {},
-      create: area
-    });
+    // Create program areas
+    const programAreas = [
+      {
+        name: 'Climate Resilience & Action',
+        slug: 'climate-resilience',
+        description: 'Accelerating climate adaptation and disaster preparedness for vulnerable communities through ecosystem restoration, resilient infrastructure, and risk data integration.',
+        seoTitle: 'Climate Resilience & Action | GEI Programs',
+        seoDescription: 'Explore GEI’s community-driven climate resilience programs that tackle the frontlines of climate vulnerability through innovation and inclusion.',
+        orderIndex: 1
+      },
+      {
+        name: 'Water, Sanitation & Hygiene (WASH)',
+        slug: 'wash',
+        description: 'Deploying community-led and tech-enabled solutions to ensure universal access to clean water and improved sanitation in underserved and high-altitude regions.',
+        seoTitle: 'WASH Programs | GEI',
+        seoDescription: 'Discover GEI’s pioneering WASH initiatives that address water quality, sanitation infrastructure, and hygiene behavior change.',
+        orderIndex: 2
+      },
+      {
+        name: 'Renewable Energy & Green Innovation',
+        slug: 'green-energy',
+        description: 'Empowering remote areas with sustainable energy through decentralized solar mini-grids, clean cookstoves, and training local green technicians.',
+        seoTitle: 'Renewable Energy for Development | GEI',
+        seoDescription: 'Learn how GEI transforms energy access through inclusive and clean energy innovations.',
+        orderIndex: 3
+      },
+      {
+        name: 'Forest and Ecosystem Conservation',
+        slug: 'ecosystem-conservation',
+        description: 'Preserving critical biodiversity through traditional land-use practices, reforestation, permaculture, and indigenous-led forest governance.',
+        seoTitle: 'Community Forest & Ecosystem Conservation | GEI',
+        seoDescription: 'GEI integrates community forestry, ecological restoration, and conservation education to preserve vital ecosystems.',
+        orderIndex: 4
+      }
+    ];
+
+    for (const area of programAreas) {
+      await prisma.programArea.upsert({
+        where: { slug: area.slug },
+        update: {},
+        create: area
+      });
+    }
+    console.log(`Created ${programAreas.length} program areas`);
+  } catch (error) {
+    console.error('Error during GEI seed:', error);
+    process.exit(1);
+  } finally {
+    await prisma.$disconnect();
   }
-  console.log(`Created ${programAreas.length} program areas`);
-
-  console.log('Seed completed successfully!');
 }
 
-main()
-  .catch((e) => {
-    console.error('Error during seeding:', e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main();

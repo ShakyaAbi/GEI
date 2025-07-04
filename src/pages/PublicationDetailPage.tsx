@@ -21,8 +21,8 @@ import {
   ChevronRight
 } from 'lucide-react';
 import Footer from '../components/Footer';
-import { publicationsApi } from '../lib/apiClient';
-import type { Publication } from '../lib/supabase';
+import { publicationsApi } from '../lib/prismaApi';
+import type { Publication } from '../types/prisma';
 
 const PublicationDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -160,19 +160,19 @@ const PublicationDetailPage = () => {
             <div className="flex flex-wrap items-center gap-4 mb-6">
               <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-light-blue/20 to-analogous-teal/20 text-base-blue text-sm font-medium rounded-full border border-base-blue/20">
                 <BookOpen className="w-4 h-4 mr-1" />
-                {publication.publication_type}
+                {publication.publicationType}
               </span>
               <span className="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-700 text-sm font-medium rounded-full border border-gray-200">
                 <Calendar className="w-4 h-4 mr-1" />
-                {formatDate(publication.publication_year)}
+                {formatDate(publication.publicationYear)}
               </span>
-              {publication.research_categories && (
-                <span className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-full border ${getCategoryColor(publication.research_categories.name)}`}>
+              {publication.category && (
+                <span className={`inline-flex items-center px-3 py-1 text-sm font-medium rounded-full border ${getCategoryColor(publication.category.name)}`}>
                   <Tag className="w-4 h-4 mr-1" />
-                  {publication.research_categories.name}
+                  {publication.category.name}
                 </span>
               )}
-              {publication.is_featured && (
+              {publication.isFeatured && (
                 <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-yellow-100 to-orange-100 text-yellow-800 text-sm font-medium rounded-full border border-yellow-200">
                   Featured
                 </span>
@@ -185,17 +185,17 @@ const PublicationDetailPage = () => {
             </h1>
 
             {/* Authors */}
-            {publication.publication_authors && publication.publication_authors.length > 0 && (
+            {publication.publicationAuthors && publication.publicationAuthors.length > 0 && (
               <div className="flex items-center gap-2 mb-6">
                 <Users className="w-5 h-5 text-gray-500" />
                 <div className="flex flex-wrap gap-2">
-                  {publication.publication_authors
-                    .sort((a, b) => a.author_order - b.author_order)
-                    .map((pa, index) => (
-                      <span key={pa.authors.id} className="text-gray-700">
-                        {pa.authors.name}
-                        {index < publication.publication_authors!.length - 1 && ', '}
-                      </span>
+                  {publication.publicationAuthors
+                    .sort((a: { authorOrder: number }, b: { authorOrder: number }) => a.authorOrder - b.authorOrder)
+                    .map((pa: { author?: { id: string; name: string } }, index) => (
+                      <div key={pa.author?.id} className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-gray-400" />
+                        <span className="text-sm text-gray-700">{pa.author?.name}</span>
+                      </div>
                     ))}
                 </div>
               </div>
@@ -210,9 +210,9 @@ const PublicationDetailPage = () => {
 
             {/* Actions */}
             <div className="flex flex-wrap items-center gap-4">
-              {publication.pdf_url && (
+              {publication.pdfUrl && (
                 <a
-                  href={publication.pdf_url}
+                  href={publication.pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-base-blue to-muted-blue text-white font-semibold rounded-lg hover:from-dark-blue hover:to-base-blue transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group"
@@ -310,24 +310,16 @@ const PublicationDetailPage = () => {
                 <h3 className="text-lg font-semibold text-gray-900 mb-8">Publication Details</h3>
                 
                 <div className="space-y-6 mb-8">
-                  {/* Citations */}
-                  <div className="text-center p-4 bg-gradient-to-br from-teal-50 to-cyan-50 rounded-lg border border-teal-100">
-                    <div className="text-3xl font-bold gradient-text mb-1">
-                      {publication.citations}
-                    </div>
-                    <div className="text-sm text-gray-600 font-medium">Citations</div>
-                  </div>
-
                   {/* Publication Year */}
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
                     <span className="text-sm font-medium text-gray-600">Year</span>
-                    <span className="text-sm text-gray-900">{formatDate(publication.publication_year)}</span>
+                    <span className="text-sm text-gray-900">{formatDate(publication.publicationYear)}</span>
                   </div>
 
                   {/* Publication Type */}
                   <div className="flex justify-between items-center py-2 border-b border-gray-100">
                     <span className="text-sm font-medium text-gray-600">Type</span>
-                    <span className="text-sm text-gray-900">{publication.publication_type}</span>
+                    <span className="text-sm text-gray-900">{publication.publicationType}</span>
                   </div>
 
                   {/* Journal */}
@@ -339,25 +331,25 @@ const PublicationDetailPage = () => {
                   )}
 
                   {/* Category */}
-                  {publication.research_categories && (
+                  {publication.category && (
                     <div className="flex justify-between items-center py-2 border-b border-gray-100">
                       <span className="text-sm font-medium text-gray-600">Category</span>
-                      <span className="text-sm text-gray-900">{publication.research_categories.name}</span>
+                      <span className="text-sm text-gray-900">{publication.category.name}</span>
                     </div>
                   )}
 
                   {/* Authors */}
-                  {publication.publication_authors && publication.publication_authors.length > 0 && (
+                  {publication.publicationAuthors && publication.publicationAuthors.length > 0 && (
                     <div className="pt-4">
                       <h4 className="text-sm font-medium text-gray-600 mb-3">Authors</h4>
                       <div className="space-y-2">
-                        {publication.publication_authors
-                          .sort((a, b) => a.author_order - b.author_order)
+                        {publication.publicationAuthors
+                          .sort((a, b) => a.authorOrder - b.authorOrder)
                           .map((pa) => (
-                            <div key={pa.authors.id} className="text-sm text-gray-900">
-                              {pa.authors.name}
-                              {pa.authors.affiliation && (
-                                <div className="text-xs text-gray-500">{pa.authors.affiliation}</div>
+                            <div key={pa.author?.id} className="text-sm text-gray-900">
+                              {pa.author?.name}
+                              {pa.author?.affiliation && (
+                                <div className="text-xs text-gray-500">{pa.author?.affiliation}</div>
                               )}
                             </div>
                           ))}
@@ -367,10 +359,10 @@ const PublicationDetailPage = () => {
                 </div>
 
                 {/* PDF Download */}
-                {publication.pdf_url && (
+                {publication.pdfUrl && (
                   <div className="mt-8 pt-8 border-t border-gray-200">
                     <a
-                      href={publication.pdf_url}
+                      href={publication.pdfUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-base-blue to-muted-blue text-white font-medium rounded-lg hover:from-dark-blue hover:to-base-blue transition-all duration-300 transform hover:scale-105 group"

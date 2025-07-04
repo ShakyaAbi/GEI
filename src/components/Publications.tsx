@@ -3,6 +3,7 @@ import { BookOpen, ExternalLink, Calendar, Users, Filter, Loader2, AlertCircle, 
 import { useNavigate } from 'react-router-dom';
 import { usePublications } from '../hooks/usePublications';
 import { useCategories } from '../hooks/useCategories';
+import type { Publication, PublicationAuthor } from '../types/prisma';
 
 const Publications = () => {
   const navigate = useNavigate();
@@ -56,7 +57,7 @@ const Publications = () => {
   const filteredPublications = selectedCategory === 'all'
     ? publications // Show all, including those with no category
     : publications.filter(
-        (pub) => pub.research_categories && pub.research_categories.slug === selectedCategory
+        (pub) => pub.category && pub.category.slug === selectedCategory
       );
 
   if (publicationsError) {
@@ -175,18 +176,18 @@ const Publications = () => {
                     <div className="flex items-center gap-3 mb-4">
                       <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 text-xs font-medium rounded-full border border-blue-200">
                         <BookOpen className="w-3 h-3 mr-1" />
-                        {publication.publication_type}
+                        {publication.publicationType}
                       </span>
                       <span className="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full border border-gray-200">
                         <Calendar className="w-3 h-3 mr-1" />
-                        {formatDate(publication.publication_year)}
+                        {formatDate(publication.publicationYear)}
                       </span>
-                      {publication.research_categories && (
-                        <span className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full border ${getCategoryColor(publication.research_categories.name)}`}>
-                          {publication.research_categories.name}
+                      {publication.category && (
+                        <span className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full border ${getCategoryColor(publication.category.name)}`}>
+                          {publication.category.name}
                         </span>
                       )}
-                      {publication.is_featured && (
+                      {publication.isFeatured && (
                         <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-amber/10 to-amber/20 text-amber text-xs font-medium rounded-full border border-amber/20">
                           Featured
                         </span>
@@ -200,13 +201,13 @@ const Publications = () => {
                     </h3>
 
                     {/* Authors */}
-                    {publication.publication_authors && publication.publication_authors.length > 0 && (
+                    {publication.publicationAuthors && publication.publicationAuthors.length > 0 && (
                       <div className="flex items-center gap-2 mb-4">
                         <Users className="w-4 h-4 text-gray-500" />
                         <p className="text-gray-600 text-sm">
-                          {publication.publication_authors
-                            .sort((a, b) => a.author_order - b.author_order)
-                            .map(pa => pa.authors.name)
+                          {publication.publicationAuthors
+                            .sort((a: PublicationAuthor, b: PublicationAuthor) => a.authorOrder - b.authorOrder)
+                            .map((pa: PublicationAuthor) => pa.author?.name)
                             .join(', ')}
                         </p>
                       </div>
@@ -236,13 +237,6 @@ const Publications = () => {
 
                   {/* Stats & Actions */}
                   <div className="lg:text-right lg:min-w-[200px]">
-                    <div className="mb-6">
-                      <div className="text-3xl font-bold bg-gradient-to-r from-base-blue to-analogous-teal bg-clip-text text-transparent">
-                        {publication.citations}
-                      </div>
-                      <div className="text-sm text-gray-600 font-medium">Citations</div>
-                    </div>
-                    
                     <div className="flex lg:flex-col gap-3">
                       <button
                         onClick={() => viewPublication(publication.id)}
@@ -253,9 +247,9 @@ const Publications = () => {
                         <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                       </button>
                       
-                      {publication.pdf_url && (
+                      {publication.pdfUrl && (
                         <a
-                          href={publication.pdf_url}
+                          href={publication.pdfUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-base-blue to-muted-blue text-white text-sm font-medium rounded-full hover:from-dark-blue hover:to-base-blue transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"

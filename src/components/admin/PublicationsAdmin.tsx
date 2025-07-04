@@ -5,7 +5,7 @@ import { useCategories } from '../../hooks/useCategories';
 import FileUpload from './FileUpload';
 import { publicationsApi, authorsApi } from '../../lib/apiClient';
 import { fileUploadService } from '../../lib/fileUpload';
-import type { Publication, Author } from '../../lib/supabase';
+import type { Publication, Author } from '../../types/prisma';
 
 const PublicationsAdmin = () => {
   const { publications, loading, refetch } = usePublications();
@@ -22,14 +22,13 @@ const PublicationsAdmin = () => {
     title: '',
     abstract: '',
     journal: '',
-    publication_year: new Date().getFullYear(),
-    publication_type: 'Journal Article',
+    publicationYear: new Date().getFullYear(),
+    publicationType: 'Journal Article',
     doi: '',
-    pdf_url: '',
-    citations: 0,
-    category_id: '',
-    is_featured: false,
-    author_ids: [] as string[]
+    pdfUrl: '',
+    categoryId: '',
+    isFeatured: false,
+    authorIds: [] as string[]
   });
 
   React.useEffect(() => {
@@ -52,14 +51,13 @@ const PublicationsAdmin = () => {
         title: publication.title,
         abstract: publication.abstract || '',
         journal: publication.journal || '',
-        publication_year: publication.publication_year || new Date().getFullYear(),
-        publication_type: publication.publication_type,
+        publicationYear: publication.publicationYear || new Date().getFullYear(),
+        publicationType: publication.publicationType,
         doi: publication.doi || '',
-        pdf_url: publication.pdf_url || '',
-        citations: publication.citations,
-        category_id: publication.category_id || '',
-        is_featured: publication.is_featured,
-        author_ids: publication.publication_authors?.map(pa => pa.authors.id) || []
+        pdfUrl: publication.pdfUrl || '',
+        categoryId: publication.categoryId || '',
+        isFeatured: publication.isFeatured,
+        authorIds: publication.publicationAuthors?.map(pa => pa.authorId) || []
       });
     } else {
       setEditingPublication(null);
@@ -67,14 +65,13 @@ const PublicationsAdmin = () => {
         title: '',
         abstract: '',
         journal: '',
-        publication_year: new Date().getFullYear(),
-        publication_type: 'Journal Article',
+        publicationYear: new Date().getFullYear(),
+        publicationType: 'Journal Article',
         doi: '',
-        pdf_url: '',
-        citations: 0,
-        category_id: '',
-        is_featured: false,
-        author_ids: []
+        pdfUrl: '',
+        categoryId: '',
+        isFeatured: false,
+        authorIds: []
       });
     }
     setSelectedFile(null);
@@ -106,13 +103,14 @@ const PublicationsAdmin = () => {
   };
 
   const uploadFile = async (): Promise<string> => {
-    if (!selectedFile) return formData.pdf_url;
+    if (!selectedFile) return formData.pdfUrl;
 
     setUploading(true);
     setUploadProgress(0);
 
     try {
       const result = await fileUploadService.uploadPDF(selectedFile, setUploadProgress);
+      setFormData(prev => ({ ...prev, pdfUrl: result.url }));
       return result.url;
     } catch (error) {
       setUploadError('Failed to upload file. Please try again.');
@@ -125,40 +123,27 @@ const PublicationsAdmin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setUploadError(""); // Clear previous errors
-
+    setUploadError("");
     try {
-      // Upload file if selected
       const pdfUrl = await uploadFile();
-
       const publicationData = {
         title: formData.title,
         abstract: formData.abstract || undefined,
         journal: formData.journal || undefined,
-        publication_year: formData.publication_year,
-        publication_type: formData.publication_type,
+        publicationYear: formData.publicationYear,
+        publicationType: formData.publicationType,
         doi: formData.doi || undefined,
-        pdf_url: pdfUrl || undefined,
-        citations: formData.citations,
-        is_featured: formData.is_featured,
-        ...(formData.category_id ? { category_id: formData.category_id } : {}),
+        pdfUrl: pdfUrl || formData.pdfUrl || undefined,
+        isFeatured: formData.isFeatured,
+        categoryId: formData.categoryId || undefined,
+        authorIds: formData.authorIds,
       };
-
-      let publication: Publication;
-
+      let publication;
       if (editingPublication) {
         publication = await publicationsApi.updatePublication(editingPublication.id, publicationData);
-        // Remove existing authors and add new ones
-        await publicationsApi.removeAuthorsFromPublication(editingPublication.id);
       } else {
         publication = await publicationsApi.createPublication(publicationData);
       }
-
-      // Add authors to publication
-      if (formData.author_ids.length > 0) {
-        await publicationsApi.addAuthorsToPublication(publication.id, formData.author_ids);
-      }
-
       await refetch();
       closeModal();
     } catch (error) {
@@ -192,9 +177,9 @@ const PublicationsAdmin = () => {
   const handleAuthorToggle = (authorId: string) => {
     setFormData(prev => ({
       ...prev,
-      author_ids: prev.author_ids.includes(authorId)
-        ? prev.author_ids.filter(id => id !== authorId)
-        : [...prev.author_ids, authorId]
+      authorIds: prev.authorIds.includes(authorId)
+        ? prev.authorIds.filter(id => id !== authorId)
+        : [...prev.authorIds, authorId]
     }));
   };
 
@@ -256,12 +241,12 @@ const PublicationsAdmin = () => {
                           <h3 className="text-lg font-semibold text-gray-900">
                             {publication.title}
                           </h3>
-                          {publication.is_featured && (
+                          {publication.isFeatured && (
                             <span className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
                               Featured
                             </span>
                           )}
-                          {publication.pdf_url && (
+                          {publication.pdfUrl && (
                             <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
                               <FileIcon className="w-3 h-3 mr-1" />
                               PDF
@@ -270,36 +255,34 @@ const PublicationsAdmin = () => {
                         </div>
                         
                         <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
-                          <span>{publication.publication_type}</span>
+                          <span>{publication.publicationType}</span>
                           <span>•</span>
-                          <span>{publication.publication_year}</span>
+                          <span>{publication.publicationYear}</span>
                           {publication.journal && (
                             <>
                               <span>•</span>
                               <span className="text-blue-600">{publication.journal}</span>
                             </>
                           )}
-                          <span>•</span>
-                          <span>{publication.citations} citations</span>
                         </div>
 
-                        {publication.publication_authors && publication.publication_authors.length > 0 && (
+                        {publication.publicationAuthors && publication.publicationAuthors.length > 0 && (
                           <div className="flex items-center gap-2 mb-2">
                             <Users className="w-4 h-4 text-gray-400" />
                             <span className="text-sm text-gray-600">
-                              {publication.publication_authors
-                                .sort((a, b) => a.author_order - b.author_order)
-                                .map(pa => pa.authors.name)
+                              {publication.publicationAuthors
+                                .sort((a, b) => a.authorOrder - b.authorOrder)
+                                .map(pa => pa.author.name)
                                 .join(', ')}
                             </span>
                           </div>
                         )}
 
-                        {publication.research_categories && (
+                        {publication.researchCategories && (
                           <div className="flex items-center gap-2">
                             <Tag className="w-4 h-4 text-gray-400" />
                             <span className="text-sm text-gray-600">
-                              {publication.research_categories.name}
+                              {publication.researchCategories.name}
                             </span>
                           </div>
                         )}
@@ -396,10 +379,10 @@ const PublicationsAdmin = () => {
                     uploadProgress={uploadProgress}
                     error={uploadError}
                   />
-                  {formData.pdf_url && !selectedFile && (
+                  {formData.pdfUrl && !selectedFile && (
                     <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                       <p className="text-sm text-blue-700">
-                        Current PDF: <a href={formData.pdf_url} target="_blank" rel="noopener noreferrer" className="underline">View existing document</a>
+                        Current PDF: <a href={formData.pdfUrl} target="_blank" rel="noopener noreferrer" className="underline">View existing document</a>
                       </p>
                     </div>
                   )}
@@ -426,8 +409,8 @@ const PublicationsAdmin = () => {
                     type="number"
                     min="1900"
                     max={new Date().getFullYear() + 10}
-                    value={formData.publication_year}
-                    onChange={(e) => setFormData(prev => ({ ...prev, publication_year: parseInt(e.target.value) }))}
+                    value={formData.publicationYear}
+                    onChange={(e) => setFormData(prev => ({ ...prev, publicationYear: parseInt(e.target.value) }))}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -437,8 +420,8 @@ const PublicationsAdmin = () => {
                     Publication Type
                   </label>
                   <select
-                    value={formData.publication_type}
-                    onChange={(e) => setFormData(prev => ({ ...prev, publication_type: e.target.value }))}
+                    value={formData.publicationType}
+                    onChange={(e) => setFormData(prev => ({ ...prev, publicationType: e.target.value }))}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="Journal Article">Journal Article</option>
@@ -454,8 +437,8 @@ const PublicationsAdmin = () => {
                     Category
                   </label>
                   <select
-                    value={formData.category_id}
-                    onChange={(e) => setFormData(prev => ({ ...prev, category_id: e.target.value }))}
+                    value={formData.categoryId}
+                    onChange={(e) => setFormData(prev => ({ ...prev, categoryId: e.target.value }))}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value="">Select a category</option>
@@ -481,24 +464,11 @@ const PublicationsAdmin = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Citations
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={formData.citations}
-                    onChange={(e) => setFormData(prev => ({ ...prev, citations: parseInt(e.target.value) || 0 }))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-
-                <div>
                   <label className="flex items-center">
                     <input
                       type="checkbox"
-                      checked={formData.is_featured}
-                      onChange={(e) => setFormData(prev => ({ ...prev, is_featured: e.target.checked }))}
+                      checked={formData.isFeatured}
+                      onChange={(e) => setFormData(prev => ({ ...prev, isFeatured: e.target.checked }))}
                       className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
                     <span className="ml-2 text-sm font-medium text-gray-700">Featured Publication</span>
@@ -514,7 +484,7 @@ const PublicationsAdmin = () => {
                       <label key={author.id} className="flex items-center">
                         <input
                           type="checkbox"
-                          checked={formData.author_ids.includes(author.id)}
+                          checked={formData.authorIds.includes(author.id)}
                           onChange={() => handleAuthorToggle(author.id)}
                           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                         />

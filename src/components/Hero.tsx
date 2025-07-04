@@ -5,6 +5,15 @@ import ImageGalleryCarousel from './ImageGalleryCarousel';
 const Hero = () => {
   const [activeLocation, setActiveLocation] = useState<number | null>(null);
 
+  // Define partner logos for the trust bar
+  const partnerLogos = [
+    { name: 'UNESCO', className: 'text-2xl font-bold text-gray-400' },
+    { name: 'UNEP', className: 'text-2xl font-bold text-gray-400' },
+    { name: 'WWF', className: 'text-2xl font-bold text-gray-400' },
+    { name: 'Greenpeace', className: 'text-2xl font-bold text-gray-400' },
+    { name: 'IUCN', className: 'text-2xl font-bold text-gray-400' },
+  ];
+
   useEffect(() => {
     // Intersection Observer for reveal animations
     const observer = new IntersectionObserver(
@@ -73,17 +82,17 @@ const Hero = () => {
   // Gallery images for the carousel
   const galleryImages = [
     {
-      src: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=1200&h=675&fit=crop',
+      src: './public/image1.jpeg',
       alt: 'Community members working together on environmental project',
       caption: 'Community-led environmental initiatives creating lasting change'
     },
     {
-      src: 'https://images.pexels.com/photos/2886937/pexels-photo-2886937.jpeg?auto=compress&cs=tinysrgb&w=1200&h=675&fit=crop',
+      src: './public/image2.jpg',
       alt: 'Solar panels installation in rural community',
       caption: 'Renewable energy solutions powering sustainable development'
     },
     {
-      src: 'https://images.pexels.com/photos/1072824/pexels-photo-1072824.jpeg?auto=compress&cs=tinysrgb&w=1200&h=675&fit=crop',
+      src: './public/image1.jpeg',
       alt: 'Clean water access project in developing region',
       caption: 'Clean water infrastructure transforming communities'
     },
@@ -92,16 +101,7 @@ const Hero = () => {
       alt: 'Reforestation and conservation efforts',
       caption: 'Forest conservation protecting biodiversity and climate'
     },
-    {
-      src: 'https://images.pexels.com/photos/2886937/pexels-photo-2886937.jpeg?auto=compress&cs=tinysrgb&w=1200&h=675&fit=crop',
-      alt: 'Agricultural training and sustainable farming',
-      caption: 'Climate-smart agriculture ensuring food security'
-    },
-    {
-      src: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=1200&h=675&fit=crop',
-      alt: 'Educational programs and capacity building',
-      caption: 'Education and training building local expertise'
-    }
+  
   ];
 
   return (
@@ -134,12 +134,26 @@ const Hero = () => {
           </div>
           
           <div className="reveal flex items-center justify-center">
-            <img
-              src="/crystal-ball.gif"
-              alt="Animated crystal ball globe"
-              className="rounded-2xl shadow-2xl w-full max-w-xl"
-              style={{ background: 'transparent' }}
-            />
+            <div className="relative w-full max-w-xl">
+              <div 
+                className="absolute inset-0 bg-gradient-to-br from-light-blue/10 to-analogous-teal/10 rounded-2xl blur-3xl"
+                style={{ transform: 'scale(0.8)' }}
+              />
+              <img
+                src="/crystal-ball.gif"
+                alt="Animated crystal ball globe"
+                className="relative w-full h-auto rounded-2xl shadow-2xl"
+                style={{
+                  backfaceVisibility: 'hidden',
+                  transform: 'translate3d(0, 0, 0)',
+                  imageRendering: '-webkit-optimize-contrast',
+                  background: 'transparent',
+                  willChange: 'transform'
+                }}
+                loading="eager"
+                decoding="async"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -150,12 +164,24 @@ const Hero = () => {
           <p className="text-center uppercase text-sm tracking-wider text-gray-500 mb-8 font-medium">
             Trusted by forward-thinking partners
           </p>
-          <div className="flex flex-wrap justify-center items-center gap-12 opacity-60">
-            <div className="text-2xl font-bold text-gray-400">UNESCO</div>
-            <div className="text-2xl font-bold text-gray-400">UNEP</div>
-            <div className="text-2xl font-bold text-gray-400">WWF</div>
-            <div className="text-2xl font-bold text-gray-400">Greenpeace</div>
-            <div className="text-2xl font-bold text-gray-400">IUCN</div>
+          {/* Scrolling Logos Container */}
+          <div className="relative w-full overflow-hidden opacity-60">
+            <div 
+              className="flex flex-nowrap items-center w-max animate-scroll-left"
+              style={{ '--scroll-duration': '30s' } as React.CSSProperties} // Set duration via CSS variable
+            >
+              {/* Duplicate logos to create continuous scroll effect */}
+              {partnerLogos.map((logo, index) => (
+                <div key={`logo-1-${index}`} className={`flex-shrink-0 mx-6 ${logo.className}`}>
+                  {logo.name}
+                </div>
+              ))}
+              {partnerLogos.map((logo, index) => (
+                <div key={`logo-2-${index}`} className={`flex-shrink-0 mx-6 ${logo.className}`}>
+                  {logo.name}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -197,9 +223,9 @@ const Hero = () => {
               {/* World Map Background */}
               <div className="absolute inset-0 p-8">
                 <img 
-                  src="/kyg9_108f_220222.jpg" 
+                  src="./public/2987330-01.png" 
                   alt="World Map showing global presence" 
-                  className="w-full h-full object-contain rounded-2xl"
+                  className="w-full h-full object-cover rounded-2xl"
                 />
               </div>
 
@@ -243,29 +269,7 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Office Details Cards */}
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-            {locations.map((location, index) => {
-              const IconComponent = location.icon;
-              return (
-                <div key={location.id} className="bg-white rounded-2xl p-8 shadow-lg hover-lift border border-gray-100 reveal" style={{ animationDelay: `${index * 0.1}s` }}>
-                  <div className="flex items-center mb-6">
-                    <div className={`w-12 h-12 bg-gradient-to-br ${location.color} rounded-full flex items-center justify-center mr-4 shadow-lg motion-pulse`}>
-                      <IconComponent className="w-6 h-6 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900">{location.name}</h3>
-                  </div>
-                  <p className="text-gray-600 leading-relaxed mb-4">
-                    {location.description}
-                  </p>
-                  <div className="flex items-center text-sm font-medium">
-                    <div className={`w-2 h-2 bg-gradient-to-r ${location.color} rounded-full mr-2`}></div>
-                    <span className="text-gray-700">{location.impact}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          {/* Office Details Cards are hidden for now */}
         </div>
       </section>
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { categoriesApi } from '../lib/apiClient'
-import type { ResearchCategory } from '../lib/supabase'
+import { categoriesApi } from '../lib/prismaApi'
+import type { ResearchCategory } from '../types/prisma'
 
 export function useCategories() {
   const [categories, setCategories] = useState<ResearchCategory[]>([])

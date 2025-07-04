@@ -12,6 +12,7 @@ import ProgramAreaDetailPage from './pages/ProgramAreaDetailPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/admin/ProtectedRoute';
+import ResearchPublicationsPage from './pages/ResearchPublicationsPage';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           } />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/areas/:slug" element={<ProgramAreaDetailPage />} />
+          <Route path="/our-work/research-publications" element={<ResearchPublicationsPage />} />
         </Routes>
       </div>
     </Router>

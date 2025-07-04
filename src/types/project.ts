@@ -62,11 +62,13 @@ export interface ProjectTeamMember {
 
 export interface ProjectMedia {
   id: string;
-  project_id: string;
-  file_url: string;
-  file_name: string;
-  file_type: string;
-  created_at: string;
+  fileUrl: string;
+  fileName: string;
+  fileType: string;
+  caption?: string;
+  projectId: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ProjectStakeholder {

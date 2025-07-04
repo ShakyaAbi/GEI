@@ -66,6 +66,7 @@ const About = () => {
         </div>
 
         {/* Values Section */}
+        {/*
         <div className="bg-gradient-to-b from-base-blue to-muted-blue rounded-3xl p-8 lg:p-12 text-white reveal">
           <h3 className="text-3xl font-bold font-playfair text-center mb-12">Our Core Values</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -78,7 +79,6 @@ const About = () => {
                 Pursuing creative solutions for environmental challenges through cutting-edge research and technology
               </p>
             </div>
-
             <div className="text-center group">
               <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                 <Users className="w-8 h-8" />
@@ -88,7 +88,6 @@ const About = () => {
                 Fostering partnerships across communities, institutions, and sectors for maximum impact
               </p>
             </div>
-
             <div className="text-center group">
               <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                 <Award className="w-8 h-8" />
@@ -98,7 +97,6 @@ const About = () => {
                 Maintaining the highest standards in research, implementation, and community engagement
               </p>
             </div>
-
             <div className="text-center group">
               <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                 <Target className="w-8 h-8" />
@@ -108,7 +106,6 @@ const About = () => {
                 Creating measurable, sustainable change for communities and the environment
               </p>
             </div>
-
             <div className="text-center group">
               <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                 <Heart className="w-8 h-8" />
@@ -118,7 +115,6 @@ const About = () => {
                 Approaching every challenge with empathy and understanding for all stakeholders
               </p>
             </div>
-
             <div className="text-center group">
               <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                 <Eye className="w-8 h-8" />
@@ -130,6 +126,7 @@ const About = () => {
             </div>
           </div>
         </div>
+        */}
       </div>
     </section>
   );

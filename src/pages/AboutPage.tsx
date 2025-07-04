@@ -461,17 +461,20 @@ const AboutPage = () => {
 
           <div className="relative">
             {/* Timeline Line */}
-            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 to-indigo-500 hidden md:block"></div>
+            <div className="absolute left-8 top-8 bottom-8 w-0.5 bg-gradient-to-b from-blue-500 to-indigo-500 hidden md:block"></div>
             
             <div className="space-y-12">
               {milestones.map((milestone, index) => (
                 <div
                   key={index}
-                  className="relative flex items-start space-x-8 reveal"
-                  style={{ animationDelay: `${index * 0.2}s` }}
+                  className={
+                    `relative flex items-center space-x-8 reveal timeline-animate opacity-0 translate-y-8 transition-all duration-700` +
+                    ` delay-[${index * 200}ms]`
+                  }
+                  style={{ transitionDelay: `${index * 200}ms` }}
                 >
                   {/* Timeline Dot */}
-                  <div className={`w-16 h-16 bg-gradient-to-br ${milestone.color} rounded-full flex items-center justify-center flex-shrink-0 shadow-lg motion-pulse border-4 border-white`}>
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-800 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg motion-pulse border-4 border-white">
                     <span className="text-white font-bold text-sm">{milestone.year}</span>
                   </div>
                   
@@ -479,7 +482,7 @@ const AboutPage = () => {
                   <div className="flex-1 bg-white rounded-2xl p-8 shadow-lg hover-lift border border-gray-100">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-2xl font-bold text-gray-900 font-playfair">{milestone.title}</h3>
-                      <span className={`px-4 py-2 bg-gradient-to-r ${milestone.color} text-white text-sm font-medium rounded-full`}>
+                      <span className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-800 text-white text-sm font-medium rounded-full">
                         {milestone.impact}
                       </span>
                     </div>
@@ -524,11 +527,38 @@ const AboutPage = () => {
               </p>
             </div>
           </div>
+
+          {/* Trusted Partners Bar */}
+          <div className="mt-20">
+            <p className="text-center uppercase text-sm tracking-wider text-gray-500 mb-8 font-medium">
+              Trusted by forward-thinking partners
+            </p>
+            <div className="relative w-full overflow-hidden opacity-60">
+              <div 
+                className="flex flex-nowrap items-center w-max animate-scroll-left"
+                style={{ '--scroll-duration': '30s' } as React.CSSProperties}
+              >
+                {[...Array(5)].map((_, setIndex) => (
+                  [
+                    { name: 'UNESCO', className: 'text-2xl font-bold text-gray-400' },
+                    { name: 'UNEP', className: 'text-2xl font-bold text-gray-400' },
+                    { name: 'WWF', className: 'text-2xl font-bold text-gray-400' },
+                    { name: 'Greenpeace', className: 'text-2xl font-bold text-gray-400' },
+                    { name: 'IUCN', className: 'text-2xl font-bold text-gray-400' },
+                  ].map((logo, logoIndex) => (
+                    <div key={`logo-${setIndex}-${logoIndex}`} className={`flex-shrink-0 mx-6 ${logo.className}`}>
+                      {logo.name}
+                    </div>
+                  ))
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Call to Action */}
-      <section className="py-24 bg-gradient-to-br from-blue-700 via-blue-600 to-indigo-600 relative overflow-hidden">
+      <section className="py-24 bg-gradient-to-br from-blue-500 to-blue-800 relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
@@ -542,7 +572,7 @@ const AboutPage = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="px-8 py-4 bg-white text-blue-700 font-semibold rounded-full hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg">
-              Explore Careers
+              Make a Difference
             </button>
             <button className="px-8 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-blue-700 transition-all duration-300 transform hover:scale-105">
               Partner With Us

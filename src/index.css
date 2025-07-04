@@ -24,6 +24,18 @@
   }
 }
 
+/* Custom animation for horizontal scrolling logos */
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* Scrolls half the track (one set of logos) */
+}
+
+.animate-scroll-left {
+  animation: scroll-left var(--scroll-duration, 30s) linear infinite;
+  /* Adjust --scroll-duration for speed */
+  white-space: nowrap; /* Ensures flex items don't wrap */
+}
+
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -36,4 +48,14 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.timeline-animate {
+  opacity: 0;
+  transform: translateY(2rem);
+  transition: opacity 0.7s cubic-bezier(0.4,0,0.2,1), transform 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+.timeline-animate.revealed {
+  opacity: 1;
+  transform: translateY(0);
 }

@@ -32,6 +32,7 @@ const Header: React.FC = () => {
       hasDropdown: true,
       dropdownItems: [
         { name: 'All Programs', path: '/our-work', description: 'All program areas' },
+        { name: 'Research & Publications', path: '/our-work/research-publications', description: 'Explore our research and publications' },
         ...(programAreas && programAreas.length > 0
           ? programAreas.map(area => ({
               name: area.name,
@@ -129,7 +130,7 @@ const Header: React.FC = () => {
 
   return (
     <>
-      <nav className={`sticky top-0 z-50 transition-all duration-500 ease-in-out animate-in ${
+      <nav className={`relative z-50 transition-all duration-500 ease-in-out animate-in ${
         isScrolled 
           ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200' 
           : 'bg-white shadow-sm border-b border-gray-100'
@@ -139,16 +140,16 @@ const Header: React.FC = () => {
             {/* Logo */}
             <Link 
               to="/" 
-              className="flex items-center space-x-3 group hover:opacity-80 transition-all duration-200"
+              className="flex items-center space-x-4 group hover:opacity-80 transition-all duration-200"
             >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow bg-white overflow-hidden">
-                <img src="/GEI_Envirohealth_Icon[1].png" alt="Global Envirohealth Initiative Logo" className="w-10 h-10 object-contain" />
+              <div className="w-14 h-14 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow bg-white overflow-hidden">
+                <img src="/GEI_Envirohealth_Icon[1].png" alt="Global Envirohealth Initiative Logo" className="w-12 h-12 object-contain" />
               </div>
-              <div className="hidden sm:block">
-                <div className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+              <div className="flex flex-col justify-center">
+                <div className="text-2xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight">
                   GEI
                 </div>
-                <div className="text-sm text-gray-600 -mt-1 group-hover:text-blue-500 transition-colors">
+                <div className="text-base text-gray-600 group-hover:text-blue-500 transition-colors leading-tight">
                   Global Envirohealth Initiative
                 </div>
               </div>

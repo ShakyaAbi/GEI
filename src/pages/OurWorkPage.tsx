@@ -5,13 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import ImageGalleryCarousel from '../components/ImageGalleryCarousel';
 import { useProgramAreas } from '../hooks/useProgramAreas';
-import Header from '../components/Header';
 import { Link } from 'react-router-dom';
+import type { ProgramArea } from '../lib/programAreasApi';
 
 const OurWorkPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [sortBy, setSortBy] = useState<'title' | 'created_at' | 'start_date'>('created_at');
+  const [sortBy, setSortBy] = useState<'name' | 'created_at' | 'order_index'>('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   
   const { programAreas, loading, error } = useProgramAreas();
@@ -59,14 +59,11 @@ const OurWorkPage = () => {
     return true; // Show all program areas
   });
 
-  const sortedProgramAreas = [...filteredProgramAreas].sort((a, b) => {
+  const sortedProgramAreas = [...filteredProgramAreas].sort((a: ProgramArea, b: ProgramArea) => {
     let aValue: any = a[sortBy];
     let bValue: any = b[sortBy];
     
-    if (sortBy === 'start_date') {
-      aValue = a.start_date ? new Date(a.start_date) : new Date(0);
-      bValue = b.start_date ? new Date(b.start_date) : new Date(0);
-    } else if (sortBy === 'created_at') {
+    if (sortBy === 'created_at') {
       aValue = new Date(a.created_at || 0);
       bValue = new Date(b.created_at || 0);
     }
@@ -247,7 +244,7 @@ const OurWorkPage = () => {
                     {/* Floating badge */}
                     <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <div className="px-3 py-1 bg-gradient-to-r from-white/90 to-cyan-100/90 backdrop-blur-sm text-blue-800 text-xs font-medium rounded-full border border-white/50 shadow-lg">
-                        {programArea.projects?.length || 0} Projects
+                        {programArea.projectCount} Projects
                       </div>
                     </div>
                   </div>
@@ -265,14 +262,14 @@ const OurWorkPage = () => {
                     <div className="mb-4 flex items-center justify-between">
                       <div className="flex items-center text-sm text-gray-600">
                         <Target className="w-4 h-4 mr-2 text-cyan-500" />
-                        <span className="font-medium">{programArea.projects?.length || 0} Active Projects</span>
+                        <span className="font-medium">{programArea.projectCount} Active Projects</span>
                       </div>
                       
                       {/* Progress indicator */}
                       <div className="w-12 h-1 bg-gradient-to-r from-blue-200 to-cyan-200 rounded-full overflow-hidden">
                         <div 
                           className="h-full bg-gradient-to-r from-blue-500 via-blue-600 to-cyan-600 rounded-full transition-all duration-700 group-hover:from-blue-600 group-hover:to-cyan-700 shadow-sm"
-                          style={{ width: `${Math.min(((programArea.projects?.length || 0) / 10) * 100, 100)}%` }}
+                          style={{ width: `${Math.min((programArea.projectCount / 10) * 100, 100)}%` }}
                         ></div>
                       </div>
                     </div>

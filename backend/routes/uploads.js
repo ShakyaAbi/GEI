@@ -143,4 +143,48 @@ router.post('/project-media/:projectId', authenticateToken, upload.single('file'
   }
 });
 
+// Delete project media
+router.delete('/project-media/:projectId/:mediaId', authenticateToken, async (req, res) => {
+  try {
+    const { projectId, mediaId } = req.params;
+    
+    // Check if project exists
+    const project = await prisma.project.findUnique({
+      where: { id: projectId }
+    });
+    
+    if (!project) {
+      return res.status(404).json({ error: true, message: 'Project not found' });
+    }
+    
+    // Get media record
+    const media = await prisma.projectMedia.findUnique({
+      where: { id: mediaId }
+    });
+    
+    if (!media) {
+      return res.status(404).json({ error: true, message: 'Media not found' });
+    }
+    
+    // Delete file from filesystem
+    const filePath = path.join(uploadsDir, media.fileUrl.replace('/uploads/', ''));
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+    
+    // Delete media record
+    await prisma.projectMedia.delete({
+      where: { id: mediaId }
+    });
+    
+    res.status(200).json({
+      error: false,
+      message: 'Media deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete project media error:', error);
+    res.status(500).json({ error: true, message: error.message || 'Server error' });
+  }
+});
+
 export default router;

@@ -14,6 +14,7 @@ export interface ProgramArea {
   team_members?: ProgramAreaTeamMember[]
   partners?: ProgramAreaPartner[]
   projects?: Project[]
+  projectCount: number
 }
 
 export interface Project {

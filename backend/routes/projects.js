@@ -1,6 +1,8 @@
 import express from 'express';
 import prisma from '../prisma/client.js';
 import { authenticateToken } from '../middleware/auth.js';
+import path from 'path';
+import fs from 'fs';
 
 const router = express.Router();
 
@@ -498,6 +500,72 @@ router.delete('/content/:contentId', authenticateToken, async (req, res) => {
     res.json({ error: false, message: 'Content deleted' });
   } catch (error) {
     console.error('Delete project content error:', error);
+    res.status(500).json({ error: true, message: 'Server error' });
+  }
+});
+
+// Delete project media
+router.delete('/:projectId/media/:mediaId', authenticateToken, async (req, res) => {
+  try {
+    const { projectId, mediaId } = req.params;
+
+    // Check if project exists
+    const project = await prisma.project.findUnique({
+      where: { id: projectId }
+    });
+
+    if (!project) {
+      return res.status(404).json({ error: true, message: 'Project not found' });
+    }
+
+    // Get media record
+    const media = await prisma.projectMedia.findFirst({
+      where: {
+        id: mediaId,
+        projectId
+      }
+    });
+
+    if (!media) {
+      return res.status(404).json({ error: true, message: 'Media not found' });
+    }
+
+    // Delete file from filesystem
+    const filePath = path.join(uploadsDir, media.fileUrl.replace('/uploads/', ''));
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    // Delete media record
+    await prisma.projectMedia.delete({
+      where: { id: mediaId }
+    });
+
+    res.json({ error: false, message: 'Media deleted successfully' });
+  } catch (error) {
+    console.error('Delete project media error:', error);
+    res.status(500).json({ error: true, message: 'Server error' });
+  }
+});
+
+// Reorder project media
+router.put('/:projectId/media/reorder', authenticateToken, async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { mediaOrder } = req.body; // Array of media IDs in new order
+    if (!Array.isArray(mediaOrder)) {
+      return res.status(400).json({ error: true, message: 'mediaOrder must be an array of media IDs' });
+    }
+    // Update each media's orderIndex
+    await Promise.all(mediaOrder.map((mediaId, index) =>
+      prisma.projectMedia.update({
+        where: { id: mediaId, projectId },
+        data: { orderIndex: index }
+      })
+    ));
+    res.json({ error: false, message: 'Media order updated' });
+  } catch (error) {
+    console.error('Reorder project media error:', error);
     res.status(500).json({ error: true, message: 'Server error' });
   }
 });

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { publicationsApi } from '../lib/apiClient'
-import type { Publication } from '../lib/supabase'
+import { publicationsApi } from '../lib/prismaApi'
+import type { Publication } from '../types/prisma'
 
 export function usePublications(filters?: {
   category?: string;

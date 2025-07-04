@@ -5,12 +5,21 @@ import { useProgramAreas } from '../../hooks/useProgramAreas';
 import { ProjectStatusBadge } from '../projects/ProjectStatusBadge';
 import ImageUpload from './ImageUpload';
 import { imageUploadService } from '../../lib/imageUpload';
-import type { Project, ProjectFormData, ProjectStatus } from '../../types/project';
-import ProjectContentEditor from './ProjectContentEditor';
+import type { Project, ProjectFormData, ProjectStatus, ProjectMedia } from '../../types/project';
 import { fetchProjectContent } from '../../lib/projectsApi';
+import { projectsApi } from '../../lib/projectsApi';
 
 interface ProjectsAdminProps {
   programAreaId?: string;
+}
+
+// Update the ImageUpload component props
+interface ImageUploadProps {
+  onFileSelect: (file: File) => Promise<void>;
+  accept?: string;
+  multiple?: boolean;
+  className?: string;
+  children?: React.ReactNode;
 }
 
 const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
@@ -37,7 +46,7 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
     description: '',
     location: '',
     duration: '',
-    status: 'active',
+    status: 'active' as ProjectStatus,
     budget: '',
     beneficiaries: '',
     impact_metrics: [],
@@ -50,6 +59,15 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
   });
 
   const [impactMetric, setImpactMetric] = useState('');
+
+  // Add state for gallery image upload
+  const [selectedGalleryImage, setSelectedGalleryImage] = useState<File | null>(null);
+  const [uploadingGalleryImage, setUploadingGalleryImage] = useState(false);
+  const [galleryImageProgress, setGalleryImageProgress] = useState(0);
+  const [galleryImageError, setGalleryImageError] = useState<string>('');
+
+  // Add state for drag-and-drop
+  const [draggedMediaIndex, setDraggedMediaIndex] = useState<number | null>(null);
 
   const generateSlug = (title: string) => {
     return title
@@ -90,6 +108,9 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
       // Fetch project content from backend
       const res = await fetchProjectContent(project.id);
       setProjectContent(res.data || []);
+      if (project && (project as any).media && !project.project_media) {
+        project.project_media = (project as any).media;
+      }
     } else {
       setEditingProject(null);
       setFormData({
@@ -97,7 +118,7 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
         description: '',
         location: '',
         duration: '',
-        status: 'active',
+        status: 'active' as ProjectStatus,
         budget: '',
         beneficiaries: '',
         impact_metrics: [],
@@ -214,9 +235,9 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
         location: formData.location || '',
         duration: formData.duration || '',
         status: formData.status,
-        budget: formData.budget !== '' && !isNaN(Number(formData.budget)) ? String(Number(formData.budget)) : undefined,
+        budget: String(formData.budget ?? ''),
         beneficiaries: formData.beneficiaries || '',
-        impact_metrics: formData.impact_metrics.length > 0 ? formData.impact_metrics : [],
+        impact_metrics: Array.isArray(formData.impact_metrics) ? formData.impact_metrics : [],
         program_area_id: formData.program_area_id || '',
         order_index: formData.order_index,
         start_date: formData.start_date || '',
@@ -258,6 +279,87 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
 
   const viewProject = (project: Project) => {
     window.open(`/projects/${project.slug || project.id}`, '_blank');
+  };
+
+  const handleAddMedia = async (file: File): Promise<void> => {
+    if (!editingProject?.id) return;
+    setUploadingGalleryImage(true);
+    setGalleryImageError('');
+    setGalleryImageProgress(0);
+    try {
+      await projectsApi.uploadProjectMedia(editingProject.id, file);
+      setSelectedGalleryImage(null);
+      // Refresh the project data to show new media
+      let updatedProject = await projectsApi.getProject(editingProject.id);
+      if (updatedProject && (updatedProject as any).media && !updatedProject.project_media) {
+        updatedProject.project_media = (updatedProject as any).media;
+      }
+      setEditingProject(updatedProject);
+    } catch (error) {
+      setGalleryImageError('Failed to upload media. Please try again.');
+      console.error('Failed to upload media:', error);
+    } finally {
+      setUploadingGalleryImage(false);
+    }
+  };
+
+  const handleGalleryImageRemove = () => {
+    setSelectedGalleryImage(null);
+    setGalleryImageError('');
+  };
+
+  const handleDeleteMedia = async (mediaId: string): Promise<void> => {
+    if (!editingProject?.id || !confirm('Are you sure you want to delete this image?')) return;
+    try {
+      await projectsApi.deleteProjectMedia(editingProject.id, mediaId);
+      // Refresh the project data to update media list
+      let updatedProject = await projectsApi.getProject(editingProject.id);
+      if (updatedProject && (updatedProject as any).media && !updatedProject.project_media) {
+        updatedProject.project_media = (updatedProject as any).media;
+      }
+      setEditingProject(updatedProject);
+    } catch (error) {
+      console.error('Failed to delete media:', error);
+      alert('Failed to delete media. Please try again.');
+    }
+  };
+
+  // Function to handle drag start
+  const handleDragStart = (index: number) => {
+    setDraggedMediaIndex(index);
+  };
+
+  // Function to handle drop
+  const handleDrop = async (dropIndex: number) => {
+    if (draggedMediaIndex === null || !editingProject?.project_media) return;
+    const reordered = [...editingProject.project_media];
+    const [removed] = reordered.splice(draggedMediaIndex, 1);
+    reordered.splice(dropIndex, 0, removed);
+    // Persist new order in backend
+    if (editingProject.id) {
+      try {
+        await projectsApi.reorderProjectMedia(
+          editingProject.id,
+          reordered.map((m) => m.id)
+        );
+      } catch (error) {
+        alert('Failed to save new image order.');
+      }
+    }
+    setEditingProject({ ...editingProject, project_media: reordered });
+    setDraggedMediaIndex(null);
+  };
+
+  const handleReplaceMedia = async (mediaId: string, file: File) => {
+    if (!editingProject?.id) return;
+    try {
+      // Delete the old image
+      await handleDeleteMedia(mediaId);
+      // Upload the new image
+      await handleAddMedia(file);
+    } catch (error) {
+      alert('Failed to replace image.');
+    }
   };
 
   if (error) {
@@ -662,21 +764,6 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
                     </div>
                   </div>
 
-                {/* Project Content Editor */}
-                <div className="md:col-span-2">
-                  {editingProject?.id ? (
-                  <ProjectContentEditor
-                      projectId={editingProject.id}
-                    content={projectContent}
-                    onContentUpdate={setProjectContent}
-                  />
-                  ) : (
-                    <div className="p-6 bg-gray-50 rounded-lg text-gray-500 text-center border border-dashed border-gray-300">
-                      Save the project first to add content.
-                    </div>
-                  )}
-                </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Hero Image
@@ -691,6 +778,86 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
                       error={heroImageError}
                       label="Upload Hero Image"
                     />
+                  </div>
+                </div>
+              </div>
+
+              {/* Media Gallery Section */}
+              <div className="space-y-6 p-6">
+                <div className="mt-8 border-t border-gray-200 pt-8">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <ImageIcon className="w-5 h-5 mr-2 text-gray-600" />
+                    Media Gallery
+                  </h3>
+                  <div className="space-y-4">
+                    {/* Project Media List */}
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {editingProject?.project_media && editingProject.project_media.length > 0 ? (
+                        editingProject.project_media.map((media, index) => (
+                          <div
+                            key={media.id}
+                            className="relative group aspect-w-16 aspect-h-9"
+                            draggable
+                            onDragStart={() => handleDragStart(index)}
+                            onDragOver={e => e.preventDefault()}
+                            onDrop={() => handleDrop(index)}
+                            style={{ cursor: 'grab', opacity: draggedMediaIndex === index ? 0.5 : 1 }}
+                          >
+                            <img
+                              src={media.fileUrl}
+                              alt={media.fileName}
+                              className="w-full h-full object-cover rounded-lg"
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 rounded-lg">
+                              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteMedia(media.id)}
+                                  className="p-1.5 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                                <label className="p-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    onChange={e => {
+                                      if (e.target.files && e.target.files[0]) handleReplaceMedia(media.id, e.target.files[0]);
+                                    }}
+                                  />
+                                  Replace
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="col-span-full text-center text-gray-400 py-12">
+                          No images yet. Upload your first image!
+                        </div>
+                      )}
+                    </div>
+                    {/* Upload New Media */}
+                    <div className="mt-4">
+                      <ImageUpload
+                        onImageSelect={setSelectedGalleryImage}
+                        onImageRemove={handleGalleryImageRemove}
+                        selectedImage={selectedGalleryImage}
+                        uploading={uploadingGalleryImage}
+                        uploadProgress={galleryImageProgress}
+                        error={galleryImageError}
+                        label="Upload Image"
+                      />
+                      {selectedGalleryImage && !uploadingGalleryImage && (
+                        <button
+                          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                          onClick={() => handleAddMedia(selectedGalleryImage)}
+                        >
+                          Upload
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

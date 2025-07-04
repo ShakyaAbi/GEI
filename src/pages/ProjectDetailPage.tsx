@@ -24,7 +24,8 @@ import {
   XCircle,
   TrendingUp,
   Award,
-  Globe
+  Globe,
+  ImageIcon
 } from 'lucide-react';
 import Footer from '../components/Footer';
 import { projectsApi, fetchProjectBySlug, fetchProjectWithCustomFields, fetchProjectContent } from '../lib/projectsApi';
@@ -32,6 +33,7 @@ import type { ProjectWithCustomFields } from '../types/project';
 import { ProjectStatusBadge } from '../components/projects/ProjectStatusBadge';
 import ImageGalleryCarousel from '../components/ImageGalleryCarousel';
 import ProjectContentViewer from '../components/projects/ProjectContentViewer';
+import ProjectMediaGallery from '../components/projects/ProjectMediaGallery';
 
 const ProjectDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -85,6 +87,11 @@ const ProjectDetailPage = () => {
         const { data: fieldsData, error: fieldsError } = await fetchProjectWithCustomFields(projectData.id);
         if (fieldsError) throw fieldsError;
         projectWithFields = fieldsData || projectData;
+      }
+
+      // Map media to project_media for gallery compatibility
+      if (projectWithFields && projectWithFields.media && !projectWithFields.project_media) {
+        projectWithFields.project_media = projectWithFields.media;
       }
 
       // Fetch real project content
@@ -214,9 +221,9 @@ const ProjectDetailPage = () => {
   }
 
   const projectImages = project?.project_media?.map(media => ({
-    src: media.file_url,
-    alt: media.file_name,
-    caption: media.file_name
+    src: media.fileUrl,
+    alt: media.fileName,
+    caption: media.caption || media.fileName
   })) || [];
 
   return (
@@ -253,7 +260,7 @@ const ProjectDetailPage = () => {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         {(project?.hero_image || project?.image) ? (
-          <div className="relative h-[60vh] min-h-[400px]">
+          <div className="relative h-[40vh] sm:h-[50vh] md:h-[60vh] min-h-[300px] sm:min-h-[400px]">
             <img
               src={project.hero_image || project.image}
               alt={project.title}
@@ -263,64 +270,64 @@ const ProjectDetailPage = () => {
             
             {/* Hero Content */}
             <div className="absolute inset-0 flex items-end">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 w-full">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12 lg:pb-16 w-full">
                 <div className="max-w-4xl">
                   {/* Back Button */}
                   <button
                     onClick={() => navigate('/our-work')}
-                    className="inline-flex items-center text-white/90 hover:text-white font-medium mb-6 group bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full transition-all duration-300 hover:bg-white/20"
+                    className="inline-flex items-center text-white/90 hover:text-white font-medium mb-4 sm:mb-6 group bg-white/10 backdrop-blur-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-full transition-all duration-300 hover:bg-white/20 text-sm sm:text-base"
                   >
-                    <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+                    <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 group-hover:-translate-x-1 transition-transform" />
                     Back to Our Work
                   </button>
 
-                  <div className="flex items-center gap-4 mb-4">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-3 sm:mb-4">
                     <ProjectStatusBadge status={project.status || 'active'} size="lg" />
                     {project.program_areas?.name && (
-                      <span className="px-4 py-2 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full border border-white/30">
+                      <span className="px-3 py-1 sm:px-4 sm:py-2 bg-white/20 backdrop-blur-sm text-white text-xs sm:text-sm font-medium rounded-full border border-white/30">
                         {project.program_areas.name}
                       </span>
                     )}
                   </div>
 
-                  <h1 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                  <h1 className="text-2xl sm:text-4xl lg:text-6xl font-bold text-white mb-3 sm:mb-6 leading-tight">
                     {project.title}
                   </h1>
                   
                   {project.description && (
-                    <p className="text-xl text-white/90 leading-relaxed mb-8 max-w-3xl">
+                    <p className="text-base sm:text-xl text-white/90 leading-relaxed mb-6 sm:mb-8 max-w-3xl">
                       {project.description}
                     </p>
                   )}
 
                   {/* Key Stats */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
                     {project.start_date && (
-                      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                        <Calendar className="w-6 h-6 text-white/80 mb-2" />
-                        <div className="text-white font-semibold">Started</div>
-                        <div className="text-white/80 text-sm">{formatDate(project.start_date)}</div>
+                      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/20">
+                        <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-white/80 mb-2" />
+                        <div className="text-white text-sm sm:text-base font-semibold">Started</div>
+                        <div className="text-white/80 text-xs sm:text-sm">{formatDate(project.start_date)}</div>
                       </div>
                     )}
                     {project.location && (
-                      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                        <MapPin className="w-6 h-6 text-white/80 mb-2" />
-                        <div className="text-white font-semibold">Location</div>
-                        <div className="text-white/80 text-sm">{project.location}</div>
+                      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/20">
+                        <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-white/80 mb-2" />
+                        <div className="text-white text-sm sm:text-base font-semibold">Location</div>
+                        <div className="text-white/80 text-xs sm:text-sm">{project.location}</div>
                       </div>
                     )}
                     {project.beneficiaries && (
-                      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                        <Users className="w-6 h-6 text-white/80 mb-2" />
-                        <div className="text-white font-semibold">Beneficiaries</div>
-                        <div className="text-white/80 text-sm">{project.beneficiaries}</div>
+                      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/20">
+                        <Users className="w-5 h-5 sm:w-6 sm:h-6 text-white/80 mb-2" />
+                        <div className="text-white text-sm sm:text-base font-semibold">Beneficiaries</div>
+                        <div className="text-white/80 text-xs sm:text-sm">{project.beneficiaries}</div>
                       </div>
                     )}
                     {project.budget && (
-                      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                        <DollarSign className="w-6 h-6 text-white/80 mb-2" />
-                        <div className="text-white font-semibold">Budget</div>
-                        <div className="text-white/80 text-sm">{project.budget}</div>
+                      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/20">
+                        <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-white/80 mb-2" />
+                        <div className="text-white text-sm sm:text-base font-semibold">Budget</div>
+                        <div className="text-white/80 text-xs sm:text-sm">{project.budget}</div>
                       </div>
                     )}
                   </div>
@@ -329,36 +336,30 @@ const ProjectDetailPage = () => {
             </div>
           </div>
         ) : (
-          <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 py-24">
+          <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 py-12 sm:py-16 md:py-24">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="max-w-4xl">
                 {/* Back Button */}
                 <button
                   onClick={() => navigate('/our-work')}
-                  className="inline-flex items-center text-white/90 hover:text-white font-medium mb-8 group bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full transition-all duration-300 hover:bg-white/20"
+                  className="inline-flex items-center text-white/90 hover:text-white font-medium mb-4 sm:mb-8 group bg-white/10 backdrop-blur-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-full transition-all duration-300 hover:bg-white/20 text-sm sm:text-base"
                 >
-                  <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+                  <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2 group-hover:-translate-x-1 transition-transform" />
                   Back to Our Work
                 </button>
 
-                <div className="flex items-center gap-4 mb-6">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-3 sm:mb-6">
                   <ProjectStatusBadge status={project.status || 'active'} size="lg" />
                   {project.program_areas?.name && (
-                    <span className="px-4 py-2 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full border border-white/30">
+                    <span className="px-3 py-1 sm:px-4 sm:py-2 bg-white/20 backdrop-blur-sm text-white text-xs sm:text-sm font-medium rounded-full border border-white/30">
                       {project.program_areas.name}
                     </span>
                   )}
                 </div>
 
-                <h1 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                <h1 className="text-2xl sm:text-4xl lg:text-6xl font-bold text-white mb-3 sm:mb-6 leading-tight">
                   {project.title}
                 </h1>
-                
-                {project.description && (
-                  <p className="text-xl text-white/90 leading-relaxed max-w-3xl">
-                    {project.description}
-                  </p>
-                )}
               </div>
             </div>
           </div>
@@ -370,26 +371,24 @@ const ProjectDetailPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content Column */}
           <div className="lg:col-span-2 space-y-12">
-            {/* Project Gallery */}
-            {projectImages.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
-                <div className="p-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                    <Globe className="w-6 h-6 mr-3 text-blue-600" />
-                    Project Gallery
-                  </h2>
-                  <ImageGalleryCarousel 
-                    images={projectImages}
-                    sectionTitle=""
-                    sectionDescription=""
-                  />
-                </div>
-              </div>
-            )}
-
             {/* Project Content */}
             {project.project_content && project.project_content.length > 0 && (
               <ProjectContentViewer content={project.project_content} />
+            )}
+
+            {/* Project Gallery */}
+            {project.project_media && project.project_media.length > 0 && (
+              <section className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                  <ImageIcon className="w-6 h-6 mr-3 text-blue-600" />
+                  Project Gallery
+                </h2>
+                <ProjectMediaGallery
+                  projectId={project.id}
+                  media={project.project_media}
+                  isEditable={false}
+                />
+              </section>
             )}
 
             {/* Impact Metrics */}
