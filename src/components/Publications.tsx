@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BookOpen, ExternalLink, Calendar, Users, Filter, Loader2, AlertCircle, Download, Eye } from 'lucide-react';
+import { BookOpen, ExternalLink, Calendar, Users, Filter, Loader2, AlertCircle, Download, Eye, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { usePublications } from '../hooks/usePublications';
 import { useCategories } from '../hooks/useCategories';
@@ -8,12 +8,17 @@ import type { Publication, PublicationAuthor } from '../types/prisma';
 const Publications = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedPublicationType, setSelectedPublicationType] = useState('all');
+  const [showFilters, setShowFilters] = useState(false);
   
-  const { publications, loading: publicationsLoading, error: publicationsError } = usePublications({
+  const { publications = [], loading: publicationsLoading, error: publicationsError } = usePublications({
     category: selectedCategory
   });
   
   const { categories, loading: categoriesLoading } = useCategories();
+  const publicationTypes = publications.length
+    ? Array.from(new Set(publications.map(pub => pub.publicationType).filter(Boolean))).sort()
+    : [];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -53,12 +58,14 @@ const Publications = () => {
     navigate(`/publications/${publicationId}`);
   };
 
-  // Publications to display based on filter
-  const filteredPublications = selectedCategory === 'all'
-    ? publications // Show all, including those with no category
-    : publications.filter(
-        (pub) => pub.category && pub.category.slug === selectedCategory
-      );
+  // Memoized and defensive filteredPublications
+  const filteredPublications = React.useMemo(() => {
+    return (publications || []).filter((pub) => {
+      const matchesCategory = selectedCategory === 'all' || pub.category?.slug === selectedCategory;
+      const matchesPublicationType = selectedPublicationType === 'all' || (pub.publicationType && pub.publicationType === selectedPublicationType);
+      return matchesCategory && matchesPublicationType;
+    });
+  }, [publications, selectedCategory, selectedPublicationType]);
 
   if (publicationsError) {
     return (
@@ -84,11 +91,11 @@ const Publications = () => {
   }
 
   return (
-    <section id="publications" className="py-24 bg-gradient-to-b from-neutral-100 to-white">
+    <section id="publications" className="py-16 bg-gradient-to-b from-neutral-100 to-white">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         {/* Section Header */}
-        <div className="text-center mb-16 reveal">
-          <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">
+        <div className="text-center mb-8 reveal">
+          <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-4">
             Research & Reports
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
@@ -97,45 +104,170 @@ const Publications = () => {
           </p>
         </div>
 
-        {/* Category Filter */}
-        <div className="mb-12 reveal">
-          <div className="flex items-center gap-4 mb-6">
-            <Filter className="w-5 h-5 text-gray-600" />
-            <span className="text-gray-700 font-medium">Filter by Research Area:</span>
-          </div>
-          <div className="flex flex-wrap gap-3">
+        {/* Filter Toggle Button (left) */}
+        <div className="mb-4 reveal">
+          <div className="flex items-center">
             <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
-                selectedCategory === 'all'
-                  ? 'bg-gradient-to-r from-base-blue to-muted-blue text-white shadow-lg transform scale-105'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-base-blue/30'
-              }`}
+              onClick={() => setShowFilters(!showFilters)}
+              className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-base font-medium border border-gray-200 shadow-sm bg-white hover:bg-blue-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-200 ${showFilters ? 'ring-2 ring-blue-200' : ''}`}
+              style={{ minWidth: 'fit-content' }}
             >
-              All Publications
+              <Filter className="w-5 h-5 text-base-blue" />
+              <span>{showFilters ? 'Hide Filters' : 'Show Filters'}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
             </button>
-            {categoriesLoading ? (
-              <div className="flex items-center gap-2 px-6 py-3">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-sm text-gray-500">Loading categories...</span>
-              </div>
-            ) : (
-              categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.slug)}
-                  className={`px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
-                    selectedCategory === category.slug
-                      ? 'bg-gradient-to-r from-base-blue to-muted-blue text-white shadow-lg transform scale-105'
-                      : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-base-blue/30'
-                  }`}
-                >
-                  {category.name}
-                </button>
-              ))
-            )}
           </div>
+
+          {showFilters && (
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-6 mt-4 mb-2 space-y-6">
+              {/* Publication Type Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Publication Type:
+                </label>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => {
+                      if (selectedPublicationType === 'all') {
+                        window.location.reload();
+                      } else {
+                        setSelectedPublicationType('all');
+                      }
+                    }}
+                    className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                      selectedPublicationType === 'all'
+                        ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg transform scale-105'
+                        : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-green-300'
+                    }`}
+                  >
+                    All Types
+                  </button>
+                  {publicationTypes.map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => {
+                        if (selectedPublicationType === type) {
+                          window.location.reload();
+                        } else {
+                          setSelectedPublicationType(type);
+                        }
+                      }}
+                      className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                        selectedPublicationType === type
+                          ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg transform scale-105'
+                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-green-300'
+                      }`}
+                    >
+                      {type}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Category Filter */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Research Area:
+                </label>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => {
+                      if (selectedCategory === 'all') {
+                        window.location.reload();
+                      } else {
+                        setSelectedCategory('all');
+                      }
+                    }}
+                    className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                      selectedCategory === 'all'
+                        ? 'bg-gradient-to-r from-base-blue to-muted-blue text-white shadow-lg transform scale-105'
+                        : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-base-blue/30'
+                    }`}
+                  >
+                    All Areas
+                  </button>
+                  {categoriesLoading ? (
+                    <div className="flex items-center gap-2 px-6 py-2">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span className="text-sm text-gray-500">Loading categories...</span>
+                    </div>
+                  ) : (
+                    categories.map((category) => (
+                      <button
+                        key={category.id}
+                        onClick={() => {
+                          if (selectedCategory === category.slug) {
+                            window.location.reload();
+                          } else {
+                            setSelectedCategory(category.slug);
+                          }
+                        }}
+                        className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                          selectedCategory === category.slug
+                            ? 'bg-gradient-to-r from-base-blue to-muted-blue text-white shadow-lg transform scale-105'
+                            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-base-blue/30'
+                        }`}
+                      >
+                        {category.name}
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Active Filters Summary */}
+              {(selectedCategory !== 'all' || selectedPublicationType !== 'all') && (
+                <div className="flex items-center gap-4 pt-3 border-t border-gray-200">
+                  <span className="text-sm font-medium text-gray-700">Active Filters:</span>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedCategory !== 'all' && (
+                      <span className="inline-flex items-center px-3 py-1 bg-base-blue/10 text-base-blue text-xs font-medium rounded-full border border-base-blue/20">
+                        {categories.find(cat => cat.slug === selectedCategory)?.name || selectedCategory}
+                        <button
+                          onClick={() => setSelectedCategory('all')}
+                          className="ml-2 text-base-blue hover:text-dark-blue"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    )}
+                    {selectedPublicationType !== 'all' && (
+                      <span className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full border border-green-200">
+                        {selectedPublicationType}
+                        <button
+                          onClick={() => setSelectedPublicationType('all')}
+                          className="ml-2 text-green-700 hover:text-green-800"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => {
+                      setSelectedCategory('all');
+                      setSelectedPublicationType('all');
+                    }}
+                    className="text-sm text-gray-500 hover:text-gray-700 underline"
+                  >
+                    Clear All
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
+
+        {/* Results Count */}
+        {!publicationsLoading && filteredPublications.length > 0 && (
+          <div className="mb-2 reveal">
+            <p className="text-gray-600 text-sm">
+              Showing <span className="font-semibold text-gray-900">{filteredPublications.length}</span> 
+              {filteredPublications.length === 1 ? ' publication' : ' publications'}
+              {selectedCategory !== 'all' || selectedPublicationType !== 'all' ? ' matching your filters' : ''}
+            </p>
+          </div>
+        )}
 
         {/* Publications List */}
         {publicationsLoading ? (
@@ -150,13 +282,16 @@ const Publications = () => {
             <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No Publications Found</h3>
             <p className="text-gray-600 mb-8">
-              {selectedCategory === 'all' 
-                ? 'No publications have been added yet.' 
-                : `No publications found in the selected category.`
+              {selectedCategory === 'all' && selectedPublicationType === 'all'
+                ? 'No publications have been added yet.'
+                : `No publications found in the selected category and publication type.`
               }
             </p>
             <button 
-              onClick={() => setSelectedCategory('all')}
+              onClick={() => {
+                setSelectedCategory('all');
+                setSelectedPublicationType('all');
+              }}
               className="text-base-blue hover:text-dark-blue font-medium"
             >
               View All Publications

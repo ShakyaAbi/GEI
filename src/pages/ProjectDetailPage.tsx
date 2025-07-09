@@ -49,6 +49,12 @@ const ProjectDetailPage = () => {
     }
   }, [slug]);
 
+  useEffect(() => {
+    if (project) {
+      console.log('Project impact_metrics:', project.impact_metrics, project.impactMetrics);
+    }
+  }, [project]);
+
   // Helper function to check if a string is a UUID
   const isUUID = (str: string): boolean => {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -173,6 +179,9 @@ const ProjectDetailPage = () => {
         return field.field_value;
     }
   };
+
+  // Defensive fallback for impact metrics
+  const impactMetrics = project?.impact_metrics || project?.impactMetrics || [];
 
   if (loading) {
     return (
@@ -392,14 +401,14 @@ const ProjectDetailPage = () => {
             )}
 
             {/* Impact Metrics */}
-            {project.impact_metrics && project.impact_metrics.length > 0 && (
+            {impactMetrics.length > 0 && (
               <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                   <Target className="w-6 h-6 mr-3 text-green-600" />
                   Impact Metrics
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {project.impact_metrics.map((metric, index) => (
+                  {impactMetrics.map((metric, index) => (
                     <div key={index} className="flex items-start p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
                       <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mr-4 mt-2 flex-shrink-0"></div>
                       <span className="text-gray-700 leading-relaxed font-medium">{metric}</span>

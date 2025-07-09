@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, Globe, Users, Zap, MapPin, ExternalLink, X } from 'lucide-react';
 import ImageGalleryCarousel from './ImageGalleryCarousel';
+import CountUp from './CountUp';
 
 const Hero = () => {
   const [activeLocation, setActiveLocation] = useState<number | null>(null);
@@ -115,6 +116,7 @@ const Hero = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 lg:px-10 py-28 grid lg:grid-cols-2 gap-12 items-center relative">
+          {/* Left: Text Content */}
           <div className="space-y-8 reveal">
             <h1 className="font-playfair text-4xl lg:text-6xl font-bold tracking-tight leading-tight">
               Accelerating Environmental 
@@ -132,28 +134,13 @@ const Hero = () => {
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </button>
           </div>
-          
-          <div className="reveal flex items-center justify-center">
-            <div className="relative w-full max-w-xl">
-              <div 
-                className="absolute inset-0 bg-gradient-to-br from-light-blue/10 to-analogous-teal/10 rounded-2xl blur-3xl"
-                style={{ transform: 'scale(0.8)' }}
+          {/* Right: Hero Image */}
+          <div className="w-full h-80 lg:h-[32rem] flex items-center justify-center">
+            <img
+              src={galleryImages[0].src}
+              alt={galleryImages[0].alt}
+              className="w-full h-full object-cover rounded-2xl shadow-2xl"
               />
-              <img
-                src="/crystal-ball.gif"
-                alt="Animated crystal ball globe"
-                className="relative w-full h-auto rounded-2xl shadow-2xl"
-                style={{
-                  backfaceVisibility: 'hidden',
-                  transform: 'translate3d(0, 0, 0)',
-                  imageRendering: '-webkit-optimize-contrast',
-                  background: 'transparent',
-                  willChange: 'transform'
-                }}
-                loading="eager"
-                decoding="async"
-              />
-            </div>
           </div>
         </div>
       </section>
@@ -190,15 +177,21 @@ const Hero = () => {
       <section className="py-20 bg-gradient-to-r from-light-blue/30 to-analogous-teal/30">
         <div className="max-w-5xl mx-auto px-6 lg:px-10 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
           <div className="reveal">
-            <p className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-base-blue to-analogous-teal bg-clip-text text-transparent tracking-tight mb-2">1M+</p>
+            <p className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-base-blue to-analogous-teal bg-clip-text text-transparent tracking-tight mb-2">
+              <CountUp from={0} to={10000} separator="," direction="up" duration={1.5} className="count-up-text" />+
+            </p>
             <p className="text-gray-600 font-medium">Lives Impacted</p>
           </div>
           <div className="reveal" style={{ animationDelay: '0.1s' }}>
-            <p className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-base-blue to-analogous-teal bg-clip-text text-transparent tracking-tight mb-2">200+</p>
+            <p className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-base-blue to-analogous-teal bg-clip-text text-transparent tracking-tight mb-2">
+              <CountUp from={0} to={200} separator="," direction="up" duration={1.5} className="count-up-text" />+
+            </p>
             <p className="text-gray-600 font-medium">Active Projects</p>
           </div>
           <div className="reveal" style={{ animationDelay: '0.2s' }}>
-            <p className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-base-blue to-analogous-teal bg-clip-text text-transparent tracking-tight mb-2">50+</p>
+            <p className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-base-blue to-analogous-teal bg-clip-text text-transparent tracking-tight mb-2">
+              <CountUp from={0} to={50} separator="," direction="up" duration={1.5} className="count-up-text" />+
+            </p>
             <p className="text-gray-600 font-medium">Countries</p>
           </div>
         </div>
@@ -273,18 +266,10 @@ const Hero = () => {
         </div>
       </section>
 
-      {/* Image Gallery Carousel */}
-      <ImageGalleryCarousel
-        images={galleryImages}
-        sectionTitle="Our Impact in Action"
-        sectionDescription="Witness the transformative power of our environmental initiatives through real stories and impactful moments from communities around the world."
-        autoScrollSpeed={4000}
-      />
-
       {/* Centered Modal Popup */}
       {activeLocation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden max-w-md w-full animate-fadeInUp">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow border border-gray-200 overflow-hidden max-w-sm w-full animate-fadeInUp">
             {(() => {
               const location = locations.find(loc => loc.id === activeLocation);
               if (!location) return null;
@@ -294,45 +279,24 @@ const Hero = () => {
                   {/* Close Button */}
                   <button
                     onClick={() => setActiveLocation(null)}
-                    className="absolute top-4 right-4 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors z-30"
+                    className="absolute top-3 right-3 w-7 h-7 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors z-30"
                   >
                     <X className="w-4 h-4 text-gray-600" />
                   </button>
 
-                  {/* Image Header */}
-                  <div className="relative h-40 overflow-hidden">
+                  {/* Image Header (no overlay) */}
+                  <div className="relative h-32 overflow-hidden">
                     <img
                       src={location.image}
                       alt={location.country}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-                    <div className="absolute bottom-4 left-6 text-white">
-                      <div className="flex items-center gap-2 mb-2">
-                        <MapPin className="w-4 h-4" />
-                        <span className="text-sm font-medium opacity-90">{location.country}</span>
-                      </div>
-                      <h3 className="font-bold text-xl">{location.name}</h3>
-                    </div>
                   </div>
                   
-                  {/* Content */}
-                  <div className="p-6">
-                    <p className="text-gray-600 leading-relaxed mb-4">
-                      {location.description}
-                    </p>
-                    
-                    {/* Impact Badge */}
-                    <div className={`inline-flex items-center px-4 py-2 bg-gradient-to-r ${location.color} text-white text-sm font-medium rounded-full mb-4 shadow-lg`}>
-                      <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
-                      {location.impact}
-                    </div>
-                    
-                    {/* Action Button */}
-                    <button className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-slate-800 to-slate-700 text-white font-medium rounded-xl hover:from-slate-700 hover:to-slate-600 transition-all duration-300 transform hover:scale-105 group/btn">
-                      Learn More About Our Work
-                      <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                    </button>
+                  {/* Minimal Content */}
+                  <div className="p-4">
+                    <h3 className="font-bold text-lg text-gray-900 mb-2">{location.name}</h3>
+                    <p className="text-gray-600 text-sm mb-0">{location.description}</p>
                   </div>
                 </>
               );

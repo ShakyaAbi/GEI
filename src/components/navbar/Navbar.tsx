@@ -15,15 +15,16 @@ const Header: React.FC = () => {
 
   const navigationItems = [
     { 
-      name: 'About', 
+      name: 'Who We Are', 
       path: '/about',
       hasDropdown: true,
       dropdownItems: [
         { name: 'Our Mission', path: '/about#mission', description: 'Learn about our core mission and values' },
         { name: 'Our Team', path: '/about#team', description: 'Meet our leadership and expert team' },
         { name: 'Our History', path: '/about#history', description: 'Our journey and key milestones' },
+        { name: 'Our Stories', path: '/our-stories', description: 'Stories of impact and change' },
         { name: 'Partnerships', path: '/about#partnerships', description: 'Our global network of collaborators' },
-        { name: 'Careers', path: '/about#careers', description: 'Join our mission for environmental change' },
+        
       ]
     },
     { 
@@ -33,6 +34,7 @@ const Header: React.FC = () => {
       dropdownItems: [
         { name: 'All Programs', path: '/our-work', description: 'All program areas' },
         { name: 'Research & Publications', path: '/our-work/research-publications', description: 'Explore our research and publications' },
+        { name: 'Donations & Microloans', path: '/our-work/donations-microloans', description: 'Support and empower communities through giving and microfinance' },
         ...(programAreas && programAreas.length > 0
           ? programAreas.map(area => ({
               name: area.name,
@@ -48,10 +50,9 @@ const Header: React.FC = () => {
       hasDropdown: true,
       dropdownItems: [
         { name: 'Innovation Hub', path: '/ideas#innovation', description: 'Cutting-edge environmental innovations' },
-        { name: 'Policy Insights', path: '/ideas#policy', description: 'Environmental policy analysis and recommendations' },
-        { name: 'Research Insights', path: '/ideas#insights', description: 'Latest research findings and insights' },
-        { name: 'Trends & Analysis', path: '/ideas#trends', description: 'Environmental trends and future outlook' },
-        { name: 'Publications', path: '/ideas#publications', description: 'Latest publications and reports' },
+        { name: 'Policy Insights', path: '/ideas#policy', description: 'Environmental policy analysis and recommendations' }
+        
+        
       ]
     }
   ];
@@ -135,22 +136,21 @@ const Header: React.FC = () => {
           ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200' 
           : 'bg-white shadow-sm border-b border-gray-100'
       }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
+          <div className="flex justify-between items-center h-24">
             {/* Logo */}
             <Link 
               to="/" 
-              className="flex items-center space-x-4 group hover:opacity-80 transition-all duration-200"
+              className="flex items-center space-x-3 group hover:opacity-80 transition-all duration-200"
             >
-              <div className="w-14 h-14 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow bg-white overflow-hidden">
-                <img src="/GEI_Envirohealth_Icon[1].png" alt="Global Envirohealth Initiative Logo" className="w-12 h-12 object-contain" />
+              <div className="w-18 h-18 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow bg-white overflow-hidden">
+                <img src="/GEI_Envirohealth_Icon[1].png" alt="Global Envirohealth Initiative Logo" className="w-14 h-14 object-contain" />
               </div>
               <div className="flex flex-col justify-center">
-                <div className="text-2xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight">
-                  GEI
-                </div>
-                <div className="text-base text-gray-600 group-hover:text-blue-500 transition-colors leading-tight">
-                  Global Envirohealth Initiative
+                <div className="text-sm font-bold text-gray-700 group-hover:text-blue-600 transition-colors leading-tight">
+                Global <br />
+                Envirohealth <br />
+                Initiative 
                 </div>
               </div>
             </Link>

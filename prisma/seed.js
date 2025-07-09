@@ -1,4 +1,3 @@
-
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
@@ -25,34 +24,19 @@ async function main() {
     // Create research categories
     const categories = [
       {
-        name: 'Artificial Intelligence for Public Health',
-        slug: 'ai-public-health',
-        description: 'Leveraging AI and machine learning to advance healthcare delivery, disease surveillance, and community-level insights.'
+        name: 'Environmental Health & Innovation',
+        slug: 'environmental-innovation',
+        description: 'Research on water and air pollution, waste management, and clean technology innovations for community health and sustainability.'
       },
       {
-        name: 'Quantum Technology & Systems',
-        slug: 'quantum-tech',
-        description: 'Emerging quantum applications for global development, including secure communications and environmental modeling.'
+        name: 'Maternal, Neonatal & Child Health',
+        slug: 'mnch',
+        description: 'Studies on maternal and child health, nutrition, and anemia including safe childbirth, essential newborn care, and health systems strengthening.'
       },
       {
-        name: 'Climate and Planetary Health',
-        slug: 'climate-planetary-health',
-        description: 'Cross-cutting climate research on adaptation, mitigation, air quality, and ecological resilience.'
-      },
-      {
-        name: 'Human-Centered Robotics',
-        slug: 'human-robotics',
-        description: 'Autonomous systems for environmental monitoring, health logistics, and disaster response.'
-      },
-      {
-        name: 'Biotechnology & Genomics',
-        slug: 'biotech-genomics',
-        description: 'Equitable innovations in genetic research, diagnostics, and biosystems for underserved populations.'
-      },
-      {
-        name: 'Sustainable Energy & Smart Grids',
-        slug: 'sustainable-energy',
-        description: 'Renewable energy research, smart grid systems, and low-carbon community solutions.'
+        name: 'Inclusive Economic Development',
+        slug: 'economic-development',
+        description: 'Research on poverty alleviation through sustainable livelihoods, women empowerment, green jobs, and community business development.'
       }
     ];
 
@@ -64,44 +48,120 @@ async function main() {
       });
     }
     console.log(`Created ${categories.length} research categories`);
+    
+    const publications = [
+      {
+        title: 'Scaling Water Purification Technologies in High-Altitude Nepal',
+        abstract: 'This paper evaluates the deployment and impact of modular water purification systems co-developed by GEI and Dhulikhel Hospital in remote Himalayan communities.',
+        journal: 'Journal of Environmental Health Innovation',
+        publicationYear: 2023,
+        publicationType: 'Journal Article',
+        doi: '10.1234/gei.2023.001',
+        pdfUrl: 'https://example.com/papers/water-purification-nepal.pdf',
+        citations: 12,
+        categorySlug: 'environmental-innovation'
+      },
+      {
+        title: 'Community-Based Approaches to Anemia Management in Rural Nepal',
+        abstract: 'This publication presents results from field-based anemia screening and treatment programs led by GEI in Accham, Nuwakot, and Bajura districts.',
+        journal: 'Maternal and Child Nutrition Review',
+        publicationYear: 2022,
+        publicationType: 'Peer-Reviewed Article',
+        doi: '10.1234/gei.2022.002',
+        pdfUrl: 'https://example.com/papers/anemia-community-nepal.pdf',
+        citations: 18,
+        categorySlug: 'mnch'
+      },
+      {
+        title: 'Green Job Creation through Waste-to-Value Innovation in Nepal',
+        abstract: "The study explores how GEI's eco-business model, including plastic reuse and compost production, contributes to sustainable livelihoods in Western Nepal.",
+        journal: 'Journal of Sustainable Economic Development',
+        publicationYear: 2024,
+        publicationType: 'White Paper',
+        doi: '10.1234/gei.2024.003',
+        pdfUrl: 'https://example.com/papers/waste-to-value.pdf',
+        citations: 7,
+        categorySlug: 'economic-development'
+      },
+      {
+        title: 'Non-Invasive Anemia Detection for Maternal Health in Resource-Limited Settings',
+        abstract: "This publication documents GEI's validation and field trials of a non-invasive hemoglobin screening device for pregnant women in high-altitude settings.",
+        journal: 'Global Health Diagnostics Journal',
+        publicationYear: 2023,
+        publicationType: 'Journal Article',
+        doi: '10.1234/gei.2023.004',
+        pdfUrl: 'https://example.com/papers/non-invasive-anemia.pdf',
+        citations: 25,
+        categorySlug: 'mnch'
+      },
+      {
+        title: 'Climate-Resilient Health Infrastructure: Lessons from the Kolti Hospital Project',
+        abstract: "GEI's partnership in designing and planning the Kolti Referral Hospital demonstrates how climate-smart health infrastructure can bridge access gaps in remote districts.",
+        journal: 'International Journal of Health Systems & Climate',
+        publicationYear: 2024,
+        publicationType: 'Case Study',
+        doi: '10.1234/gei.2024.005',
+        pdfUrl: 'https://example.com/papers/kolti-climate-resilient-hospital.pdf',
+        citations: 14,
+        categorySlug: 'environmental-innovation'
+      }
+    ];
+    
+    // Create publications with associated category
+    for (const pub of publications) {
+      const category = await prisma.researchCategory.findUnique({
+        where: { slug: pub.categorySlug }
+      });
+    
+      if (category) {
+        await prisma.publication.create({
+          data: {
+            title: pub.title,
+            abstract: pub.abstract,
+            journal: pub.journal,
+            publicationYear: pub.publicationYear,
+            publicationType: pub.publicationType,
+            doi: pub.doi,
+            pdfUrl: pub.pdfUrl,
+            citations: pub.citations,
+            categoryId: category.id,
+            isFeatured: true
+          }
+        });
+      }
+    }
 
     // Create authors
     const authors = [
       {
-        name: 'Dr. Sarah Chen',
-        email: 'sarah.chen@gei.edu',
-        affiliation: 'GEI Behavioral Science & AI Lab',
-        bio: 'Leads the application of artificial intelligence in behavior-driven health and development research.'
+        name: 'Dr. Bernhard Fassl',
+        email: 'bernhard.fassl@gei.org',
+        affiliation: 'Global Environmental and Health Initiative',
+        bio: 'Founder of GEI and expert in global pediatric care, health system strengthening, and climate-health integration. Leads initiatives in hospital capacity building and medical innovation.'
       },
       {
-        name: 'Dr. Michael Rodriguez',
-        email: 'michael.rodriguez@gei.edu',
-        affiliation: 'GEI Quantum Systems Research Hub',
-        bio: 'Expert in computational physics and quantum systems for low-resource innovations.'
+        name: 'Dr. Allison Judkins',
+        email: 'allison.judkins@gei.org',
+        affiliation: 'GEI Research Department',
+        bio: 'Head of Research at GEI, specializing in health equity, monitoring and evaluation, and evidence-based systems design for maternal and newborn health.'
       },
       {
-        name: 'Dr. Emma Thompson',
-        email: 'emma.thompson@gei.edu',
-        affiliation: 'GEI Climate Resilience Center',
-        bio: 'Designs community-based climate monitoring and early warning systems in high-altitude regions.'
+        name: 'Rabin Nepal',
+        email: 'rabin.nepal@gei.org',
+        affiliation: 'GEI Public Health Division',
+        bio: 'GEI Public Health Manager in Nepal, leading community-based assessments, anemia prevention programs, and maternal health capacity building.'
       },
       {
-        name: 'Dr. James Wilson',
-        email: 'james.wilson@gei.edu',
-        affiliation: 'GEI Robotics & Diagnostics Lab',
-        bio: 'Focuses on robotics for maternal-child health delivery and logistics in remote geographies.'
+        name: 'Bibek Lamichhane',
+        email: 'bibek.lamichhane@gei.org',
+        affiliation: 'GEI Asia Regional Office',
+        bio: 'President of GEI Asia and Head of Public Health. Expert in health systems, rural care access, and training program cascades in South Asia.'
       },
       {
-        name: 'Dr. Lisa Park',
-        email: 'lisa.park@gei.edu',
-        affiliation: 'GEI Life Sciences Division',
-        bio: 'Biotechnologist working on nutritional genomics and maternal health diagnostics.'
-      },
-      {
-        name: 'Dr. David Kumar',
-        email: 'david.kumar@gei.edu',
-        affiliation: 'GEI Renewable Energy Division',
-        bio: 'Develops low-cost solar and biomass solutions for off-grid communities.'
+        name: 'Suyog Shrestha',
+        email: 'suyog.shrestha@gei.org',
+        affiliation: 'GEI Green Innovation Team',
+        bio: 'President of Green Job Creation, overseeing clean energy, permaculture, plastic reuse, and environmental technology pilots in Nepal.'
       }
     ];
 
@@ -114,39 +174,31 @@ async function main() {
     }
     console.log(`Created ${authors.length} authors`);
 
-    // Create program areas
+    // Create updated program areas
     const programAreas = [
       {
-        name: 'Climate Resilience & Action',
-        slug: 'climate-resilience',
-        description: 'Accelerating climate adaptation and disaster preparedness for vulnerable communities through ecosystem restoration, resilient infrastructure, and risk data integration.',
-        seoTitle: 'Climate Resilience & Action | GEI Programs',
-        seoDescription: 'Explore GEI’s community-driven climate resilience programs that tackle the frontlines of climate vulnerability through innovation and inclusion.',
+        name: 'Environmental Sustainability & Green Innovation',
+        slug: 'environmental-green-tech',
+        description: 'GEI pioneers clean technologies including water purification, air pollution mitigation, and waste recycling to improve environmental health.',
+        seoTitle: 'Environmental Innovation | GEI',
+        seoDescription: 'Explore GEI's innovations in water purification, air quality improvement, and sustainable waste management.',
         orderIndex: 1
       },
       {
-        name: 'Water, Sanitation & Hygiene (WASH)',
-        slug: 'wash',
-        description: 'Deploying community-led and tech-enabled solutions to ensure universal access to clean water and improved sanitation in underserved and high-altitude regions.',
-        seoTitle: 'WASH Programs | GEI',
-        seoDescription: 'Discover GEI’s pioneering WASH initiatives that address water quality, sanitation infrastructure, and hygiene behavior change.',
+        name: 'Health Capacity Building',
+        slug: 'health-capacity',
+        description: 'Improving maternal and child health through infrastructure upgrades, anemia management, safe delivery training, and diagnostics innovation.',
+        seoTitle: 'Maternal & Child Health Programs | GEI',
+        seoDescription: 'Discover GEI's maternal and child health programs, including nutrition, anemia prevention, and newborn care.',
         orderIndex: 2
       },
       {
-        name: 'Renewable Energy & Green Innovation',
-        slug: 'green-energy',
-        description: 'Empowering remote areas with sustainable energy through decentralized solar mini-grids, clean cookstoves, and training local green technicians.',
-        seoTitle: 'Renewable Energy for Development | GEI',
-        seoDescription: 'Learn how GEI transforms energy access through inclusive and clean energy innovations.',
+        name: 'Sustainable Economic Development',
+        slug: 'economic-development',
+        description: 'Creating community-based green businesses, promoting women-led cooperatives, eco-tourism, and permaculture in underserved regions.',
+        seoTitle: 'Community Development & Livelihoods | GEI',
+        seoDescription: 'Learn how GEI supports sustainable income generation, permaculture farming, and women's economic empowerment.',
         orderIndex: 3
-      },
-      {
-        name: 'Forest and Ecosystem Conservation',
-        slug: 'ecosystem-conservation',
-        description: 'Preserving critical biodiversity through traditional land-use practices, reforestation, permaculture, and indigenous-led forest governance.',
-        seoTitle: 'Community Forest & Ecosystem Conservation | GEI',
-        seoDescription: 'GEI integrates community forestry, ecological restoration, and conservation education to preserve vital ecosystems.',
-        orderIndex: 4
       }
     ];
 
@@ -158,6 +210,73 @@ async function main() {
       });
     }
     console.log(`Created ${programAreas.length} program areas`);
+
+    // Add dummy projects for each program area
+    const allAreas = await prisma.programArea.findMany();
+    const projects = [
+      // Environmental
+      {
+        title: 'Smart Water Purification Pilot',
+        description: 'Deploying modular water purification systems in rural communities to ensure access to clean drinking water.',
+        programAreaSlug: 'environmental-green-tech'
+      },
+      {
+        title: 'Urban Air Quality Monitoring Network',
+        description: 'Establishing a real-time air quality sensor network in urban centers to track and reduce pollution.',
+        programAreaSlug: 'environmental-green-tech'
+      },
+      {
+        title: 'Community Forest Restoration Project',
+        description: 'Engaging local communities in reforestation and sustainable forest management.',
+        programAreaSlug: 'environmental-green-tech'
+      },
+      // Health
+      {
+        title: 'Maternal Health Outreach Program',
+        description: 'Providing maternal health education and services to remote and underserved populations.',
+        programAreaSlug: 'health-capacity'
+      },
+      {
+        title: 'School Nutrition & Anemia Awareness',
+        description: 'Implementing school-based nutrition and anemia screening programs for children.',
+        programAreaSlug: 'health-capacity'
+      },
+      {
+        title: 'Community Health Worker Training',
+        description: 'Training local health workers in essential maternal and child health practices.',
+        programAreaSlug: 'health-capacity'
+      },
+      // Economic
+      {
+        title: 'Eco-Friendly Handicraft Cooperative',
+        description: 'Supporting women-led cooperatives to produce and market eco-friendly handicrafts.',
+        programAreaSlug: 'economic-development'
+      },
+      {
+        title: 'Green Startups Incubator',
+        description: 'Mentoring and funding green startups focused on sustainability and community impact.',
+        programAreaSlug: 'economic-development'
+      },
+      {
+        title: 'Women's Microenterprise Fund',
+        description: 'Providing microloans and business training to women entrepreneurs in rural areas.',
+        programAreaSlug: 'economic-development'
+      }
+    ];
+
+    for (const project of projects) {
+      const area = allAreas.find(a => a.slug === project.programAreaSlug);
+      if (area) {
+        await prisma.project.create({
+          data: {
+            title: project.title,
+            description: project.description,
+            program_area_id: area.id
+          }
+        });
+      }
+    }
+    console.log(`Created ${projects.length} dummy projects`);
   } catch (error) {
     console.error('Error during GEI seed:', error);
     process.exit(1);

@@ -260,10 +260,7 @@ const AboutPage = () => {
                 <h2 className="text-3xl font-bold font-playfair text-gray-900">Our Mission</h2>
               </div>
               <p className="text-gray-700 leading-relaxed text-lg">
-                To create sustainable environmental solutions that empower communities, 
-                protect ecosystems, and drive positive change through innovative research, 
-                collaborative partnerships, and community-centered approaches that respect 
-                local knowledge and cultural values.
+                We create healthy, resilient communities through sustainable innovation and community development.
               </p>
             </div>
 
@@ -275,101 +272,8 @@ const AboutPage = () => {
                 <h2 className="text-3xl font-bold font-playfair text-gray-900">Our Vision</h2>
               </div>
               <p className="text-gray-700 leading-relaxed text-lg">
-                A world where environmental sustainability and human prosperity coexist, 
-                where communities are resilient and empowered, and where innovative 
-                solutions create lasting positive impact for generations to come, 
-                ensuring a thriving planet for all.
+                We team up with local leaders to create prosperous communities that thrive through access to clean technologies, healthy environments and equitable healthcare. We achieve our goals by focusing on integrated community development addressing the root causes of poverty, hunger and poor health.
               </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Values Carousel Section */}
-      <section id="values" className="py-24 bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="text-center mb-16 reveal">
-            <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">Our Core Values</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              These fundamental principles guide everything we do and shape our approach to creating positive change.
-            </p>
-          </div>
-
-          {/* Carousel Container */}
-          <div 
-            className="relative reveal"
-            onMouseEnter={() => setIsAutoPlaying(false)}
-            onMouseLeave={() => setIsAutoPlaying(true)}
-          >
-            {/* Carousel Wrapper */}
-            <div className="overflow-hidden rounded-3xl">
-              <div 
-                className="flex transition-transform duration-1000 ease-in-out"
-                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-              >
-                {Array.from({ length: totalSlides }).map((_, slideIndex) => (
-                  <div key={slideIndex} className="w-full flex-shrink-0">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-                      {values.slice(slideIndex * 3, slideIndex * 3 + 3).map((value, index) => {
-                        const IconComponent = value.icon;
-                        const actualIndex = slideIndex * 3 + index;
-                        const isActive = currentSlide === slideIndex;
-                        
-                        return (
-                          <div
-                            key={actualIndex}
-                            className={`bg-white rounded-2xl p-8 shadow-lg border border-gray-100 group transform transition-all duration-700 ease-out ${
-                              isActive 
-                                ? 'translate-y-0 scale-100 opacity-100 hover:-translate-y-2 hover:shadow-xl' 
-                                : 'translate-y-8 scale-95 opacity-60'
-                            }`}
-                            style={{ 
-                              transitionDelay: isActive ? `${index * 150}ms` : '0ms'
-                            }}
-                          >
-                            {/* Icon and Heading Row */}
-                            <div className="flex items-center gap-4 mb-6">
-                              <div className="relative">
-                                <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-500 motion-pulse overflow-hidden">
-                                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-indigo-500/0 group-hover:from-blue-500/10 group-hover:to-indigo-500/10 transition-all duration-500"></div>
-                                  <IconComponent className="w-8 h-8 text-gray-700 group-hover:text-blue-600 transition-colors duration-500 relative z-10" />
-                                </div>
-                                <div className="absolute -inset-2 bg-gradient-to-r from-blue-500/0 to-indigo-500/0 group-hover:from-blue-500/20 group-hover:to-indigo-500/20 rounded-3xl transition-all duration-500 -z-10"></div>
-                              </div>
-                              <h3 className="text-xl font-bold text-gray-900 mb-0 font-playfair group-hover:text-base-blue transition-colors duration-300">
-                                {value.title}
-                              </h3>
-                            </div>
-                            {/* Description and underline remain unchanged */}
-                            <p className="text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
-                              {value.description}
-                            </p>
-                            <div className="mt-6 h-1 w-0 bg-gradient-to-r from-base-blue to-analogous-teal rounded-full group-hover:w-full transition-all duration-700 ease-out"></div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Navigation Arrows - move to bottom center */}
-            <div className="flex justify-center gap-6 mt-8">
-              <button
-                onClick={prevSlide}
-                className="w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:text-blue-600 hover:bg-white hover:scale-110 transition-all duration-300 group z-10"
-                aria-label="Previous slide"
-              >
-                <ChevronLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
-              </button>
-              <button
-                onClick={nextSlide}
-                className="w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-700 hover:text-blue-600 hover:bg-white hover:scale-110 transition-all duration-300 group z-10"
-                aria-label="Next slide"
-              >
-                <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-              </button>
             </div>
           </div>
         </div>

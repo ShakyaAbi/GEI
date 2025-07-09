@@ -93,20 +93,160 @@ The application uses Supabase Authentication. To set up admin access:
 3. Configure Row Level Security (RLS) policies
 4. Update the `isAdmin()` function in `src/lib/auth.ts`
 
-## Deployment
+---
 
-### Build for Production
+## Backend Setup
 
+The backend is a Node.js/Express server located in the `backend/` directory. It provides REST API endpoints for authentication, publications, program areas, projects, and file uploads.
+
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+- PostgreSQL database (local or cloud, e.g., Hostinger, Supabase, or other)
+
+### Installation & Running
+1. Install dependencies (from project root):
+   ```bash
+   npm install
+   ```
+2. Set up backend environment variables:
+   - Create a `.env` file in the project root or `backend/` directory with:
+     ```env
+     PORT=5000
+     DATABASE_URL=your_postgres_connection_url
+     JWT_SECRET=your_jwt_secret
+     UPLOAD_DIR=uploads
+     ```
+3. Run database migrations and seed (from project root):
+   ```bash
+   npx prisma migrate deploy
+   npx prisma generate
+   node prisma/seed.js
+   ```
+4. Start the backend server:
+   ```bash
+   npm run server
+   # or for development with hot reload:
+   npm run dev:server
+   ```
+
+The backend will be available at `http://localhost:5000` by default.
+
+---
+
+## Database Setup
+
+- The database schema is defined in `prisma/schema.prisma`.
+- Migrations are in `prisma/migrations/`.
+- Seed data is in `prisma/seed.js`.
+- You can use any PostgreSQL instance (local, Supabase, or Hostinger’s managed DB).
+
+---
+
+## Environment Variables
+
+### Frontend (`.env` in root):
+```
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### Backend (`.env` in root or backend/):
+```
+PORT=5000
+DATABASE_URL=your_postgres_connection_url
+JWT_SECRET=your_jwt_secret
+UPLOAD_DIR=uploads
+```
+
+---
+
+## API Endpoints
+
+- `POST   /api/auth/login` — User login
+- `POST   /api/auth/register` — User registration
+- `GET    /api/publications` — List publications
+- `GET    /api/program-areas` — List program areas
+- `GET    /api/projects` — List projects
+- `POST   /api/projects` — Create project (admin)
+- `GET    /api/health` — Health check
+- ...and more (see `backend/routes/` for full list)
+
+## Admin Panels
+- `/admin/publications` — Manage publications
+- `/admin/program-areas` — Manage program areas
+- `/admin/projects` — Manage projects
+
+---
+
+## Deployment to Hostinger (VPS)
+
+### 1. Prepare your VPS
+- Deploy an Ubuntu server (Hostinger VPS panel)
+- SSH into your VPS
+- Install Node.js, npm, and PostgreSQL:
+  ```bash
+  sudo apt update && sudo apt install nodejs npm postgresql
+  ```
+- (Optional) Install Nginx for reverse proxy
+
+### 2. Clone your repository
 ```bash
+git clone https://github.com/ShakyaAbi/GEI.git
+cd GEI
+```
+
+### 3. Set up environment variables
+- Create `.env` files as described above for both frontend and backend
+
+### 4. Install dependencies and build frontend
+```bash
+npm install
 npm run build
 ```
 
-### Deploy to Netlify
+### 5. Set up the database
+- Create a PostgreSQL database and user
+- Update `DATABASE_URL` in your `.env`
+- Run migrations and seed:
+  ```bash
+  npx prisma migrate deploy
+  npx prisma generate
+  node prisma/seed.js
+  ```
 
-1. Connect your repository to Netlify
-2. Set build command: `npm run build`
-3. Set publish directory: `dist`
-4. Add environment variables in Netlify dashboard
+### 6. Start the backend server
+```bash
+npm run server
+```
+
+### 7. Serve the frontend
+- You can use Nginx or serve static files with a Node.js static server (e.g., `serve`)
+- Example Nginx config:
+  - Serve `dist/` as static files
+  - Proxy `/api` requests to backend server
+
+### 8. (Optional) Use PM2 for process management
+```bash
+npm install -g pm2
+pm2 start backend/server.js --name gei-backend
+pm2 start npx --name gei-frontend -- serve -s dist
+pm2 save
+```
+
+---
+
+## Notes for Hostinger Shared Hosting
+- Node.js/Express is not supported on shared hosting. Use VPS or Docker hosting for full-stack deployment.
+- For static frontend only, upload the `dist/` folder to Hostinger’s static file manager.
+
+---
+
+## Troubleshooting
+- Ensure all environment variables are set correctly
+- Check database connection and run migrations
+- Use `npm run dev:server` for backend debugging
+- Use Nginx or Caddy for production reverse proxy
 
 ## Contributing
 

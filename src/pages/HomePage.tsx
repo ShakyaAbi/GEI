@@ -6,7 +6,7 @@ import Research from '../components/Research';
 import Publications from '../components/Publications';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
-import Header from '../components/Header';
+import ImpactShowcase from '../components/ImpactShowcase';
 
 const HomePage = () => {
   const location = useLocation();
@@ -28,8 +28,10 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-white">
       <Hero />
+      
       {/* <About /> */}
       <Research />
+      <ImpactShowcase />
       <Publications />
       <Contact />
       <Footer />

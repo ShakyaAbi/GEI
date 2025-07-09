@@ -23,57 +23,30 @@ const Research = () => {
   const researchAreas = [
     {
       icon: Globe,
-      title: 'Climate & Health',
-      description: 'Studying the impacts of climate change on human health and developing adaptation strategies for vulnerable communities.',
-      projects: 18,
-      color: 'from-blue-500 to-cyan-500',
-      bgColor: 'from-blue-50 to-cyan-50',
-      iconColor: 'text-blue-700'
-    },
-    {
-      icon: Dna,
-      title: 'Environmental Health',
-      description: 'Investigating environmental factors affecting human health and developing evidence-based disease prevention strategies.',
-      projects: 15,
-      color: 'from-blue-500 to-cyan-500',
-      bgColor: 'from-blue-50 to-cyan-50',
+      title: 'Climate & Environment',
+      description: `Tackling environmental threats to protect communities and ecosystems\nAt GEI, we believe that environmental justice is foundational to human dignity. That’s why we co-create low-cost, locally adaptable innovations — from modular water purification systems to waste-to-resource technologies — that mitigate pollution, restore ecosystems, and ensure clean air and water for the most vulnerable.`,
+      projects: 21,
+      color: 'from-blue-500 to-green-500',
+      bgColor: 'from-blue-50 to-green-50',
       iconColor: 'text-blue-700'
     },
     {
       icon: Brain,
-      title: 'One Health',
-      description: 'Integrating human, animal, and environmental health for comprehensive solutions to global health challenges.',
-      projects: 12,
-      color: 'from-blue-500 to-indigo-500',
-      bgColor: 'from-blue-50 to-indigo-50',
-      iconColor: 'text-blue-700'
-    },
-    {
-      icon: Zap,
-      title: 'Sustainable Systems',
-      description: 'Developing sustainable energy and food systems that promote both planetary and human health.',
-      projects: 14,
-      color: 'from-blue-500 to-cyan-500',
-      bgColor: 'from-blue-50 to-cyan-50',
-      iconColor: 'text-blue-700'
-    },
-    {
-      icon: Atom,
-      title: 'Pollution & Health',
-      description: 'Researching the health impacts of air, water, and soil pollution with focus on vulnerable populations.',
-      projects: 10,
-      color: 'from-blue-500 to-indigo-500',
-      bgColor: 'from-blue-50 to-indigo-50',
-      iconColor: 'text-blue-700'
+      title: 'Community Health Innovation',
+      description: `Closing the gap in care for mothers, children, and remote populations\nWe refuse to accept that geography or income should determine health outcomes. GEI strengthens rural health systems by upgrading facilities, equipping providers, and introducing breakthrough tools like non-invasive anemia screening. By integrating data, training, and trust-building, we ensure care reaches those who need it most — before it's too late.`,
+      projects: 18,
+      color: 'from-pink-500 to-red-500',
+      bgColor: 'from-pink-50 to-red-50',
+      iconColor: 'text-pink-700'
     },
     {
       icon: Cpu,
-      title: 'Health Technology',
-      description: 'Leveraging cutting-edge technology for environmental health monitoring and innovative interventions.',
-      projects: 8,
-      color: 'from-indigo-500 to-blue-500',
-      bgColor: 'from-indigo-50 to-blue-50',
-      iconColor: 'text-indigo-700'
+      title: 'Sustainable Job Creation',
+      description: `Turning community potential into resilient, green livelihoods\nPoverty isn’t just about income — it’s about missed opportunity. GEI helps communities unlock that potential by investing in eco-enterprises like permaculture, plastic recycling, and dairy cooperatives. These ventures not only generate income but anchor long-term wellbeing, self-reliance, and environmental stewardship where it’s needed most.`,
+      projects: 15,
+      color: 'from-yellow-500 to-green-500',
+      bgColor: 'from-yellow-50 to-green-50',
+      iconColor: 'text-yellow-700'
     }
   ];
 

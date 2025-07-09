@@ -148,6 +148,9 @@ router.post('/', authenticateToken, async (req, res) => {
     // Map program_area_id (snake_case) to programAreaId (camelCase) if present
     if (!programAreaId && program_area_id) programAreaId = program_area_id;
     
+    // Map impact_metrics (snake_case) to impactMetrics (camelCase) if present
+    if (!impactMetrics && req.body.impact_metrics) impactMetrics = req.body.impact_metrics;
+    
     // Fix budget: always save as string
     if (budget !== undefined && budget !== null) budget = String(budget);
     
@@ -216,6 +219,9 @@ router.put('/:id', authenticateToken, async (req, res) => {
     
     // Map program_area_id (snake_case) to programAreaId (camelCase) if present
     if (!programAreaId && program_area_id) programAreaId = program_area_id;
+    
+    // Map impact_metrics (snake_case) to impactMetrics (camelCase) if present
+    if (!impactMetrics && req.body.impact_metrics) impactMetrics = req.body.impact_metrics;
     
     // Fix budget: always save as string
     if (budget !== undefined && budget !== null) budget = String(budget);

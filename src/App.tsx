@@ -13,42 +13,57 @@ import ProjectDetailPage from './pages/ProjectDetailPage';
 import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 import ResearchPublicationsPage from './pages/ResearchPublicationsPage';
+import OurStoriesPage from './pages/OurStoriesPage';
+import AdminLayout from './components/admin/AdminLayout';
+import StoryDetailPage from './pages/StoryDetailPage';
 
 function App() {
   return (
     <Router>
       <div className="min-h-screen bg-white">
-        <Navbar />
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/our-work" element={<OurWorkPage />} />
-          <Route path="/ideas" element={<IdeasPage />} />
-          <Route path="/projects/:slug" element={<ProjectDetailPage />} />
-          <Route path="/publications/:id" element={<PublicationDetailPage />} />
+          {/* Non-admin pages use Navbar */}
+          <Route path="/" element={<><Navbar /><HomePage /></>} />
+          <Route path="/about" element={<><Navbar /><AboutPage /></>} />
+          <Route path="/our-work" element={<><Navbar /><OurWorkPage /></>} />
+          <Route path="/ideas" element={<><Navbar /><IdeasPage /></>} />
+          <Route path="/projects/:slug" element={<><Navbar /><ProjectDetailPage /></>} />
+          <Route path="/publications/:id" element={<><Navbar /><PublicationDetailPage /></>} />
+          <Route path="/areas/:slug" element={<><Navbar /><ProgramAreaDetailPage /></>} />
+          <Route path="/our-work/research-publications" element={<><Navbar /><ResearchPublicationsPage /></>} />
+          <Route path="/our-stories" element={<><Navbar /><OurStoriesPage /></>} />
+          <Route path="/our-stories/:id" element={<><Navbar /><StoryDetailPage /></>} />
+          <Route path="/login" element={<LoginPage />} />
+
+          {/* Admin pages use AdminLayout and sidebar */}
           <Route path="/admin/publications" element={
             <ProtectedRoute>
-              <PublicationsAdmin />
+              <AdminLayout>
+                <PublicationsAdmin />
+              </AdminLayout>
             </ProtectedRoute>
           } />
           <Route path="/admin/programs" element={
             <ProtectedRoute>
-              <ProgramAreasAdmin />
+              <AdminLayout>
+                <ProgramAreasAdmin />
+              </AdminLayout>
             </ProtectedRoute>
           } />
           <Route path="/admin/program-areas" element={
             <ProtectedRoute>
-              <ProgramAreasAdmin />
+              <AdminLayout>
+                <ProgramAreasAdmin />
+              </AdminLayout>
             </ProtectedRoute>
           } />
           <Route path="/admin/projects" element={
             <ProtectedRoute>
-              <ProgramAreasAdmin />
+              <AdminLayout>
+                <ProgramAreasAdmin />
+              </AdminLayout>
             </ProtectedRoute>
           } />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/areas/:slug" element={<ProgramAreaDetailPage />} />
-          <Route path="/our-work/research-publications" element={<ResearchPublicationsPage />} />
         </Routes>
       </div>
     </Router>
