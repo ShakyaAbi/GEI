@@ -45,14 +45,12 @@ const Header: React.FC = () => {
       ]
     },
     { 
-      name: 'Ideas', 
+      name: 'Join us', 
       path: '/ideas',
       hasDropdown: true,
       dropdownItems: [
-        { name: 'Innovation Hub', path: '/ideas#innovation', description: 'Cutting-edge environmental innovations' },
-        { name: 'Policy Insights', path: '/ideas#policy', description: 'Environmental policy analysis and recommendations' }
-        
-        
+        { name: 'Collaborate with Us', path: '/collaborate', description: 'Partner or volunteer with us to make an impact' },
+        { name: 'Contact Us', path: '/contact', description: 'Get in touch with our team' }
       ]
     }
   ];
@@ -137,14 +135,14 @@ const Header: React.FC = () => {
           : 'bg-white shadow-sm border-b border-gray-100'
       }`}>
         <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
-          <div className="flex justify-between items-center h-24">
+          <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link 
               to="/" 
               className="flex items-center space-x-3 group hover:opacity-80 transition-all duration-200"
             >
-              <div className="w-18 h-18 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow bg-white overflow-hidden">
-                <img src="/GEI_Envirohealth_Icon[1].png" alt="Global Envirohealth Initiative Logo" className="w-14 h-14 object-contain" />
+              <div className="w-14 h-14 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow bg-white overflow-hidden">
+                <img src="/GEI_Envirohealth_Icon[1].png" alt="Global Envirohealth Initiative Logo" className="w-10 h-10 object-contain" />
               </div>
               <div className="flex flex-col justify-center">
                 <div className="text-sm font-bold text-gray-700 group-hover:text-blue-600 transition-colors leading-tight">
@@ -191,7 +189,7 @@ const Header: React.FC = () => {
                             {/* Dropdown Title and Subtitle */}
                             <div className="text-center mb-10 transition-all duration-500 ease-in-out">
                               <h2 className="font-playfair font-bold text-3xl text-gray-900 mb-2 scale-100 group-hover:scale-105 transition-transform duration-500 ease-in-out">{item.name}</h2>
-                              {item.name === 'About' && (
+                              {item.name === 'Who We Are' && (
                                 <div className="text-gray-500 text-lg max-w-2xl mx-auto">
                                   Learn more about our mission, team, and journey toward environmental sustainability
                                 </div>
@@ -201,7 +199,7 @@ const Header: React.FC = () => {
                                   Explore our programs, research, and impact stories driving global change
                                 </div>
                               )}
-                              {item.name === 'Ideas' && (
+                              {item.name === 'Join us' && (
                                 <div className="text-gray-500 text-lg max-w-2xl mx-auto">
                                   Discover insights, trends, and publications shaping the future of the environment
                                 </div>
