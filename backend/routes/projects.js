@@ -11,13 +11,23 @@ function mapProjectFields(project) {
   if (!project) return project;
   const obj = typeof project.toJSON === 'function' ? project.toJSON() : project;
   const {
-    heroImage, programAreaId, impactMetrics, ...rest
+    heroImage, programAreaId, impactMetrics, programArea, overview, ...rest
   } = obj;
   return {
     ...rest,
+    overview, // ensure overview is always present
     hero_image: heroImage,
     program_area_id: programAreaId,
     impact_metrics: impactMetrics,
+    program_areas: programArea
+      ? {
+          id: programArea.id,
+          name: programArea.name,
+          slug: programArea.slug,
+          description: programArea.description,
+          icon: programArea.icon,
+        }
+      : undefined,
   };
 }
 
@@ -137,7 +147,7 @@ router.get('/slug/:slug', async (req, res) => {
 router.post('/', authenticateToken, async (req, res) => {
   try {
     let { 
-      title, description, location, duration, status, budget, 
+      title, description, overview, location, duration, status, budget, 
       beneficiaries, impactMetrics, programAreaId, program_area_id, orderIndex,
       startDate, endDate, slug, heroImage, hero_image, image, project_content
     } = req.body;
@@ -171,6 +181,7 @@ router.post('/', authenticateToken, async (req, res) => {
       data: {
         title,
         description,
+        overview,
         location,
         duration,
         status: status || 'active',
@@ -209,7 +220,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     let { 
-      title, description, location, duration, status, budget, 
+      title, description, overview, location, duration, status, budget, 
       beneficiaries, impactMetrics, programAreaId, program_area_id, orderIndex,
       startDate, endDate, slug, heroImage, hero_image, image, project_content
     } = req.body;
@@ -259,6 +270,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
       data: {
         title,
         description,
+        overview,
         location,
         duration,
         status,

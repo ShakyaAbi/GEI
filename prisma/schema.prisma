@@ -72,13 +72,30 @@ model ProgramArea {
   seoTitle       String?                 @map("seo_title")
   seoDescription String?                 @map("seo_description")
   orderIndex     Int                     @default(0) @map("order_index")
+  icon           String?                 // New: icon name or URL
   createdAt      DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt      DateTime                @default(now()) @map("updated_at") @db.Timestamptz(6)
   partners       ProgramAreaPartner[]
   teamMembers    ProgramAreaTeamMember[]
   projects       Project[]
+  features       ProgramAreaFeature[]    // New: relation to features
 
   @@map("program_areas")
+}
+
+model ProgramAreaFeature {
+  id             String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  programArea    ProgramArea @relation(fields: [programAreaId], references: [id])
+  programAreaId  String      @db.Uuid
+  title          String
+  subtitle       String?
+  description    String?
+  image          String?
+  orderIndex     Int         @default(0)
+  createdAt      DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("program_area_features")
 }
 
 model Project {
@@ -86,6 +103,7 @@ model Project {
   programAreaId  String?              @map("program_area_id") @db.Uuid
   title          String
   description    String?
+  overview       String?
   location       String?
   duration       String?
   status         ProjectStatus        @default(active)
@@ -321,4 +339,31 @@ enum StakeholderType {
   team_member
   partner
   beneficiary
+}
+
+model Story {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title     String
+  excerpt   String?
+  content   String
+  image     String?
+  category  String?
+  author    String?
+  readTime  String?  @map("read_time")
+  featured  Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("stories")
+}
+
+model Admin {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("admins")
 }

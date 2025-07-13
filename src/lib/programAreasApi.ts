@@ -11,10 +11,11 @@ export interface ProgramArea {
   order_index: number
   created_at: string
   updated_at: string
+  icon?: string // Add icon as optional
   team_members?: ProgramAreaTeamMember[]
   partners?: ProgramAreaPartner[]
   projects?: Project[]
-  projectCount: number
+  projectCount?: number // Make optional
 }
 
 export interface Project {

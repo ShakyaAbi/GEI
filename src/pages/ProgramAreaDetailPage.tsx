@@ -5,6 +5,7 @@ import { useProgramAreas } from '../hooks/useProgramAreas';
 import { useProjects } from '../hooks/useProjects';
 import { ProjectCard } from '../components/projects/ProjectCard';
 import Footer from '../components/Footer';
+import axios from 'axios';
 
 const ProgramAreaDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -14,6 +15,7 @@ const ProgramAreaDetailPage = () => {
   
   const [programArea, setProgramArea] = useState<any>(null);
   const [relatedProjects, setRelatedProjects] = useState<any[]>([]);
+  const [features, setFeatures] = useState<any[]>([]);
 
   useEffect(() => {
     if (programAreas && slug) {
@@ -28,6 +30,14 @@ const ProgramAreaDetailPage = () => {
       setRelatedProjects(filtered);
     }
   }, [projects, programArea]);
+
+  useEffect(() => {
+    if (programArea) {
+      axios.get(`/api/program-areas/${programArea.id}/features`).then(res => {
+        setFeatures(res.data.data || []);
+      });
+    }
+  }, [programArea]);
 
   if (programAreasLoading || projectsLoading) {
     return (
@@ -107,55 +117,29 @@ const ProgramAreaDetailPage = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="space-y-12">
-          {/* Annual Letter Section */}
-          <section className="mb-12">
-            <div className="bg-white border border-gray-200 rounded-2xl flex flex-col md:flex-row overflow-hidden shadow-lg w-full">
-              <div className="md:w-1/2 w-full h-96 flex-shrink-0">
-                <img
-                  src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"
-                  alt="Annual Letter"
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              <div className="md:w-1/2 w-full p-12 flex flex-col justify-center bg-white">
-                <div>
-                  <span className="uppercase text-xs tracking-widest text-blue-700 font-semibold mb-2 block">Message from our CEO</span>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-4">Annual Letter</h2>
-                  <p className="text-gray-800 mb-4">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore nulla pariatur.
-                  </p>
-                  <p className="text-gray-600 mb-4">
-                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem.
-                  </p>
+          {/* Render dynamic features */}
+          {features.map((feature, idx) => (
+            <section className="mb-12" key={feature.id}>
+              <div className={`bg-white border border-gray-200 rounded-2xl flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} overflow-hidden shadow-lg w-full`}>
+                {feature.image && (
+                  <div className="md:w-1/2 w-full h-96 flex-shrink-0">
+                    <img
+                      src={feature.image}
+                      alt={feature.title}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                )}
+                <div className="md:w-1/2 w-full p-12 flex flex-col justify-center bg-white">
+                  <div>
+                    {feature.subtitle && <span className="uppercase text-xs tracking-widest text-blue-700 font-semibold mb-2 block">{feature.subtitle}</span>}
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4">{feature.title}</h2>
+                    {feature.description && <p className="text-gray-800 mb-4">{feature.description}</p>}
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
-
-          {/* New Mirrored Section: Image Right, Text Left */}
-          <section className="mb-12">
-            <div className="bg-white border border-gray-200 rounded-2xl flex flex-col md:flex-row-reverse overflow-hidden shadow-lg">
-              <div className="md:w-1/2 w-full h-64 md:h-auto flex-shrink-0">
-                <img
-                  src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80"
-                  alt="Program Highlight"
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              <div className="md:w-1/2 w-full p-8 flex flex-col justify-between">
-                <div>
-                  <span className="uppercase text-xs tracking-widest text-blue-700 font-semibold mb-2 block">Program Highlight</span>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Spotlight Initiative</h2>
-                  <p className="text-gray-800 mb-4">
-                    This is a placeholder for a featured program, initiative, or story. You can use this section to showcase a recent success, a key partner, or a unique aspect of this program area. Update this text and image as needed to keep your content fresh and engaging.
-                  </p>
-                  <p className="text-gray-600 mb-4">
-                    Add more details here about the impact, goals, or people involved. This layout mirrors the annual letter, but with the image on the right for visual variety.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
+            </section>
+          ))}
 
           {/* Projects Section */}
           <section>

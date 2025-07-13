@@ -5,6 +5,7 @@ export interface Project {
   program_area_id?: string;
   title: string;
   description?: string;
+  overview?: string;
   location?: string;
   duration?: string;
   status?: 'active' | 'completed' | 'on_hold' | 'cancelled';
@@ -24,6 +25,7 @@ export interface Project {
     name: string;
     slug?: string;
     description?: string;
+    icon?: string;
   };
   project_media?: ProjectMedia[];
   project_stakeholders?: ProjectStakeholder[];
@@ -107,6 +109,7 @@ export interface ProjectContent {
 export interface ProjectFormData {
   title: string;
   description: string;
+  overview?: string;
   status: ProjectStatus;
   start_date?: string;
   end_date?: string;

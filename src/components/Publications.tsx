@@ -375,7 +375,7 @@ const Publications = () => {
                     <div className="flex lg:flex-col gap-3">
                       <button
                         onClick={() => viewPublication(publication.id)}
-                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-base-blue to-dark-blue text-white text-sm font-medium rounded-full hover:from-dark-blue hover:to-base-blue transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
+                        className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
                       >
                         <Eye className="w-4 h-4 mr-2" />
                         View Details
@@ -387,7 +387,7 @@ const Publications = () => {
                           href={publication.pdfUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-base-blue to-muted-blue text-white text-sm font-medium rounded-full hover:from-dark-blue hover:to-base-blue transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
+                          className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
                         >
                           <Download className="w-4 h-4 mr-2" />
                           Download PDF

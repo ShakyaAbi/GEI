@@ -6,7 +6,7 @@ import Research from '../components/Research';
 import Publications from '../components/Publications';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
-import ImpactShowcase from '../components/ImpactShowcase';
+
 
 const HomePage = () => {
   const location = useLocation();
@@ -26,12 +26,11 @@ const HomePage = () => {
   }, [location.hash]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
       <Hero />
       
-      {/* <About /> */}
       <Research />
-      <ImpactShowcase />
+     
       <Publications />
       <Contact />
       <Footer />

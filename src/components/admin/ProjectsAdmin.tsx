@@ -44,6 +44,7 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
   const [formData, setFormData] = useState<ProjectFormData>({
     title: '',
     description: '',
+    overview: '',
     location: '',
     duration: '',
     status: 'active' as ProjectStatus,
@@ -92,6 +93,7 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
       setFormData({
         title: project.title,
         description: project.description || '',
+        overview: project.overview || '',
         location: project.location || '',
         duration: project.duration || '',
         status: project.status || 'active',
@@ -116,6 +118,7 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
       setFormData({
         title: '',
         description: '',
+        overview: '',
         location: '',
         duration: '',
         status: 'active' as ProjectStatus,
@@ -160,6 +163,8 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
       }));
     } else if (name === 'budget') {
       setFormData((prev: ProjectFormData) => ({ ...prev, budget: value }));
+    } else if (name === 'overview') {
+      setFormData((prev: ProjectFormData) => ({ ...prev, overview: value }));
     } else {
       setFormData((prev: ProjectFormData) => ({ ...prev, [name]: value }));
     }
@@ -232,6 +237,7 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
       const projectData: ProjectFormData = {
         title: formData.title,
         description: formData.description || '',
+        overview: formData.overview || '',
         location: formData.location || '',
         duration: formData.duration || '',
         status: formData.status,
@@ -605,6 +611,17 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                       placeholder="Describe the project objectives and impact"
+                    />
+                    <label className="block text-sm font-medium text-gray-700 mb-2 mt-4">
+                      Overview
+                    </label>
+                    <textarea
+                      name="overview"
+                      rows={4}
+                      value={formData.overview}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                      placeholder="Add a project overview (optional)"
                     />
                   </div>
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Target, Eye, Users, Lightbulb, Award, Heart, Globe, Zap, Calendar, MapPin, Mail, Linkedin, Twitter, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Target, Eye, Users, Lightbulb, Award, Heart, Globe, Zap, Calendar, MapPin, Mail, Linkedin, Twitter, ChevronLeft, ChevronRight, Brain, Compass, ArrowRight } from 'lucide-react';
 import Footer from '../components/Footer';
-import Header from '../components/Header';
+import TiltedCard from '../components/TiltedCard';
 
 const AboutPage = () => {
   const location = useLocation();
@@ -41,85 +41,19 @@ const AboutPage = () => {
     return () => observer.disconnect();
   }, []);
 
-  const teamMembers = [
-    {
-      name: 'Dr. Sarah Chen',
-      title: 'Executive Director & Founder',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=400&q=80',
-      bio: 'Leading environmental scientist with 15+ years of experience in sustainable development and climate adaptation strategies.',
-      expertise: ['Climate Science', 'Policy Development', 'International Relations'],
-      education: 'PhD Environmental Science, Stanford University',
-      social: {
-        email: 'sarah.chen@gei.org',
-        linkedin: '#',
-        twitter: '#'
-      }
-    },
-    {
-      name: 'Michael Rodriguez',
-      title: 'Program Director',
-      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80',
-      bio: 'Expert in international development and community-based environmental programs with extensive field experience.',
-      expertise: ['Program Management', 'Community Development', 'Sustainable Agriculture'],
-      education: 'MS Development Studies, Oxford University',
-      social: {
-        email: 'michael.rodriguez@gei.org',
-        linkedin: '#',
-        twitter: '#'
-      }
-    },
-    {
-      name: 'Dr. Emma Thompson',
-      title: 'Research Director',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=400&q=80',
-      bio: 'Climate scientist specializing in adaptation strategies and environmental health policy development.',
-      expertise: ['Climate Research', 'Environmental Health', 'Data Analytics'],
-      education: 'PhD Climate Science, MIT',
-      social: {
-        email: 'emma.thompson@gei.org',
-        linkedin: '#',
-        twitter: '#'
-      }
-    },
-    {
-      name: 'James Wilson',
-      title: 'Operations Director',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-      bio: 'Operations expert ensuring efficient program delivery across multiple countries and diverse communities.',
-      expertise: ['Operations Management', 'Logistics', 'Quality Assurance'],
-      education: 'MBA Operations Management, Wharton',
-      social: {
-        email: 'james.wilson@gei.org',
-        linkedin: '#',
-        twitter: '#'
-      }
-    },
-    {
-      name: 'Dr. Priya Patel',
-      title: 'Technology Innovation Lead',
-      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80',
-      bio: 'Technology innovator developing digital solutions for environmental monitoring and community engagement.',
-      expertise: ['Environmental Technology', 'Digital Innovation', 'Data Science'],
-      education: 'PhD Computer Science, Carnegie Mellon',
-      social: {
-        email: 'priya.patel@gei.org',
-        linkedin: '#',
-        twitter: '#'
-      }
-    },
-    {
-      name: 'Dr. Ahmed Hassan',
-      title: 'Regional Director - MENA',
-      image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80',
-      bio: 'Regional expert leading environmental initiatives across the Middle East and North Africa region.',
-      expertise: ['Regional Development', 'Water Security', 'Desert Ecology'],
-      education: 'PhD Environmental Engineering, AUC',
-      social: {
-        email: 'ahmed.hassan@gei.org',
-        linkedin: '#',
-        twitter: '#'
-      }
-    }
+  // Faculty Team (new content)
+  const facultyTeam = [
+    { name: 'Suyog, MBA', title: 'GEI business development' },
+    { name: 'Allison Judkins MD', title: 'Director: Research and Maternal child health' },
+    { name: 'Spencer Crocker MS', title: 'Founder and President' },
+    { name: 'Bibek Lamicchane MPH', title: 'Director of operations GEI Asia' },
+    { name: 'Ranjan Dhungana MPH', title: 'Project Consultant' },
+    { name: 'Rabin Dhital MPH', title: 'Field officer' },
+    { name: 'Leela Khanal MS', title: 'Project Project consultant.' },
+    { name: 'Sarala Sharma, BSN', title: 'Project consultant' },
+    { name: 'Priyanka', title: 'Program officer' },
+    { name: 'Paribesh Bidari, MS', title: 'Research and Data and Communications' },
+    { name: 'Vaskar Sapkota MPH', title: 'Project Manager' },
   ];
 
   const values = [
@@ -157,45 +91,59 @@ const AboutPage = () => {
 
   const milestones = [
     {
-      year: '2010',
-      title: 'Foundation',
-      description: 'GEI was founded with a vision to address pressing environmental challenges through innovative, community-centered solutions. Our first project launched in Nepal, focusing on sustainable agriculture practices.',
-      impact: 'First 1,000 farmers reached',
+      year: '2015',
+      title: 'Nuwakot Beginnings',
+      description: 'Our journey started with a livelihood and healthcare capacity project in Nuwakot district.',
+      impact: 'First project launched',
       color: 'from-blue-500 to-indigo-500'
     },
     {
-      year: '2013',
-      title: 'Regional Expansion',
-      description: 'Expanded operations to India, establishing key partnerships with local organizations and governments. Launched our first major water security program.',
-      impact: '5 countries, 10,000 beneficiaries',
+      year: '2017',
+      title: 'Nepal & Kenya Expansion',
+      description: 'Established a policlinic and launched a goat raising livelihood project in Nepal. Supported hospital construction in Kenya.',
+      impact: 'Policlinic & hospital support',
       color: 'from-blue-500 to-indigo-500'
-    },
-    {
-      year: '2016',
-      title: 'Technology Integration',
-      description: 'Integrated cutting-edge technology into our programs, including satellite monitoring and mobile data collection systems for better impact measurement.',
-      impact: 'Digital transformation completed',
-      color: 'from-purple-500 to-indigo-500'
     },
     {
       year: '2018',
-      title: 'Research Excellence',
-      description: 'Established our research and innovation hub, developing evidence-based solutions and publishing groundbreaking research in top-tier journals.',
-      impact: '50+ peer-reviewed publications',
-      color: 'from-yellow-500 to-orange-500'
+      title: 'Capacity Building & Training',
+      description: 'Healthcare capacity building in Humla district. Master training in collaboration with the National Health Training Center Nepal in Maternal Neonatal Care.',
+      impact: 'Master training launched',
+      color: 'from-purple-500 to-indigo-500'
     },
     {
       year: '2020',
-      title: 'Global Recognition',
-      description: 'Received international recognition for our innovative approaches to climate adaptation and sustainable development during the global pandemic.',
-      impact: 'UN Partnership established',
+      title: 'Birthing Centers & Staff Training',
+      description: 'Completed 13 birthing centers in Humla. Trained 100+ staff.',
+      impact: '13 birthing centers, 100+ staff',
+      color: 'from-yellow-500 to-orange-500'
+    },
+    {
+      year: '2021',
+      title: 'Curriculum Redesign & Master Training',
+      description: 'Redesigned training curricula in Helping Babies Breathe and Helping Mothers Survive. Established Master training courses throughout Nepal.',
+      impact: 'National training programs',
       color: 'from-pink-500 to-rose-500'
     },
     {
+      year: '2022',
+      title: 'Research & Evaluation',
+      description: 'Investigated micro and macronutrient deficiencies in several districts. Described micro- and macroeconomics impact on health and outcomes. Post-pandemic project evaluations revealed sustainability challenges in many aspects.',
+      impact: 'Research & evaluation',
+      color: 'from-green-500 to-teal-500'
+    },
+    {
+      year: '2023',
+      title: 'GEI Foundation Established',
+      description: 'GEI formally established as a not-for-profit operating Foundation in the US. Identified integrated community development as preferred strategy combining health care development, economic growth, and environmental preservation as cornerstones based on science and responsible business.',
+      impact: 'US Foundation established',
+      color: 'from-blue-500 to-indigo-500'
+    },
+    {
       year: '2024',
-      title: 'Scaling Impact',
-      description: 'Today, GEI operates in over 50 countries, has impacted more than 1 million lives, and continues to pioneer innovative solutions for environmental sustainability.',
-      impact: '1M+ lives transformed',
+      title: 'Collaborations & Integrated Development',
+      description: 'Project collaboration with Dhulikel Hospital: low cost water treatment plant. Achham and Bajura: Integrated community development project.',
+      impact: 'Water treatment & community development',
       color: 'from-blue-500 to-indigo-500'
     }
   ];
@@ -226,6 +174,110 @@ const AboutPage = () => {
 
   const totalSlides = Math.ceil(values.length / 3);
 
+  // Parallax background for process section
+  const ProcessParallaxBackground = () => {
+    const [scrollY, setScrollY] = React.useState(0);
+    React.useEffect(() => {
+      const handleScroll = () => setScrollY(window.scrollY);
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+    return (
+      <div className="fixed inset-0 pointer-events-none z-10">
+        <div 
+          className="absolute top-20 right-10 w-64 h-64 bg-gradient-to-br from-blue-100/30 to-blue-200/20 rounded-full blur-3xl"
+          style={{ transform: `translateY(${scrollY * 0.2}px)` }}
+        />
+        <div 
+          className="absolute top-96 left-10 w-48 h-48 bg-gradient-to-br from-blue-200/20 to-blue-100/10 rounded-full blur-2xl"
+          style={{ transform: `translateY(${scrollY * -0.1}px)` }}
+        />
+        <div 
+          className="absolute bottom-20 right-1/3 w-32 h-32 bg-gradient-to-br from-blue-300/20 to-blue-400/10 rounded-full blur-xl"
+          style={{ transform: `translateY(${scrollY * 0.15}px)` }}
+        />
+      </div>
+    );
+  };
+
+  const impactSteps = [
+    {
+      id: 1,
+      icon: Brain,
+      title: "Diagnose",
+      description: "We start by understanding real community needs using our innovative data collection platform. Through household surveys, environmental assessments, and health system reviews, we identify the root causes of challenges — not just the symptoms.",
+      linkText: "Explore our assessment tools",
+      hoverExample: "1500 children lacked clean water – see our field data",
+      parallaxSpeed: 0.5
+    },
+    {
+      id: 2,
+      icon: Compass,
+      title: "Plan",
+      description: "GEI works hand-in-hand with communities, governments, and private partners to design targeted, scalable solutions. Whether upgrading rural clinics, planning clean water systems, or launching nutrition programs — we co-create every step to ensure relevance and sustainability.",
+      linkText: "See our project planning in action",
+      hoverExample: "Co-designed water plant with Dhulikhel engineers",
+      parallaxSpeed: 0.3
+    },
+    {
+      id: 3,
+      icon: Zap,
+      title: "Empower",
+      description: "We implement locally led programs that generate green jobs, improve health, restore environments, and build resilience. Our approach centers communities as leaders — ensuring that change grows from within and lasts for generations.",
+      linkText: "View our community-led programs",
+      hoverExample: "Plastic recycling co-op creates 20+ jobs",
+      parallaxSpeed: 0.7
+    }
+  ];
+
+  const ProcessSteps = () => {
+    return (
+      <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
+        {impactSteps.map((step, index) => (
+          <React.Fragment key={step.id}>
+            <div className="relative group">
+              <TiltedCard
+                containerHeight="400px"
+                containerWidth="100%"
+                imageHeight="400px"
+                imageWidth="100%"
+                scaleOnHover={1.05}
+                rotateAmplitude={8}
+                showTooltip={true}
+                captionText={step.hoverExample}
+                displayOverlayContent={true}
+                overlayContent={
+                  <div className="w-full h-full p-8 flex flex-col justify-between">
+                    <div className="mb-6">
+                      <div className="w-16 h-16 bg-gradient-to-br from-brand-blue to-brand-dark-blue rounded-xl flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        {React.createElement(step.icon, { size: 32 })}
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2 font-playfair">{step.title}</h3>
+                      <p className="text-gray-600 mb-4 font-inter">{step.description}</p>
+                      <span className="inline-flex items-center text-brand-blue font-semibold cursor-pointer hover:underline">
+                        {step.linkText} <span className="ml-2">→</span>
+                      </span>
+                    </div>
+                  </div>
+                }
+              />
+            </div>
+            {/* Arrow for Mobile with no parallax */}
+            {index < impactSteps.length - 1 && (
+              <div className="lg:hidden flex justify-center my-8">
+                <div className="w-8 h-8 bg-gradient-to-br from-brand-blue to-brand-dark-blue rounded-full flex items-center justify-center text-white shadow-lg">
+                  <ArrowRight size={16} className="transform rotate-90" />
+                </div>
+              </div>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -240,7 +292,7 @@ const AboutPage = () => {
             <h1 className="text-4xl lg:text-6xl font-bold font-playfair text-gray-900 mb-6">
               About <span className="gradient-text">GEI</span>
             </h1>
-            <p className="text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-inter">
               Transforming communities and environments through innovative, sustainable solutions 
               that create lasting positive impact across the globe.
             </p>
@@ -259,8 +311,8 @@ const AboutPage = () => {
                 </div>
                 <h2 className="text-3xl font-bold font-playfair text-gray-900">Our Mission</h2>
               </div>
-              <p className="text-gray-700 leading-relaxed text-lg">
-                We create healthy, resilient communities through sustainable innovation and community development.
+              <p className="text-gray-700 leading-relaxed text-lg font-inter">
+                We believe in a future where economic progress, human health, and environmental stewardship are inseparable.
               </p>
             </div>
 
@@ -271,10 +323,37 @@ const AboutPage = () => {
                 </div>
                 <h2 className="text-3xl font-bold font-playfair text-gray-900">Our Vision</h2>
               </div>
-              <p className="text-gray-700 leading-relaxed text-lg">
-                We team up with local leaders to create prosperous communities that thrive through access to clean technologies, healthy environments and equitable healthcare. We achieve our goals by focusing on integrated community development addressing the root causes of poverty, hunger and poor health.
+              <p className="text-gray-700 leading-relaxed text-lg font-inter">
+                At GEI, our mission is to build resilient, thriving communities by advancing environmental sustainability, equitable healthcare, and economic opportunity. We empower individuals through green job creation, support community health initiatives, and drive forward innovative research that fosters a just and sustainable future. Guided by a deep commitment to environmental stewardship and social equity, we work collaboratively with local stakeholders to create lasting impact for people and the planet.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Impact Model Section */}
+      <section className="relative py-24 bg-gradient-to-br from-slate-50 to-blue-50 overflow-hidden">
+        {/* Parallax Background Elements */}
+        <ProcessParallaxBackground />
+        <div className="container mx-auto px-6 py-16 relative z-20">
+          <div className="text-center mb-16 reveal">
+            <h1 className="text-5xl font-bold text-gray-900 mb-6 font-playfair">Our Impact Model</h1>
+            <p className="text-xl text-gray-600 font-medium font-inter">From Data to Change</p>
+          </div>
+          <div className="relative max-w-7xl mx-auto">
+            {/* Animated Connection Lines */}
+            <div className="hidden lg:block absolute top-32 left-1/2 transform -translate-x-1/2 w-full max-w-4xl">
+              <div className="flex justify-between items-center px-8">
+                <div className="w-1/3 h-0.5 bg-gradient-to-r from-blue-300/60 to-blue-500/80 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
+                </div>
+                <div className="w-1/3 h-0.5 bg-gradient-to-r from-blue-500/80 to-blue-700/60 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer delay-1000" />
+                </div>
+              </div>
+            </div>
+            {/* Step Cards */}
+            <ProcessSteps />
           </div>
         </div>
       </section>
@@ -283,70 +362,13 @@ const AboutPage = () => {
       <section id="team" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <div className="text-center mb-16 reveal">
-            <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">Leadership Team</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Meet the dedicated leaders driving our mission forward with expertise, passion, and unwavering commitment to environmental sustainability.
-            </p>
+            <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">Faculty Team</h2>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {teamMembers.map((member, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-2xl overflow-hidden shadow-lg hover-lift border border-gray-100 group reveal"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair">{member.name}</h3>
-                  <p className="text-blue-600 font-semibold mb-3">{member.title}</p>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">{member.bio}</p>
-                  
-                  {/* Expertise Tags */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {member.expertise.map((skill, skillIndex) => (
-                      <span
-                        key={skillIndex}
-                        className="px-3 py-1 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 text-xs font-medium rounded-full border border-blue-200"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                  
-                  {/* Education */}
-                  <p className="text-xs text-gray-500 mb-4">{member.education}</p>
-                  
-                  {/* Social Links */}
-                  <div className="flex items-center gap-3">
-                    <a
-                      href={`mailto:${member.social.email}`}
-                      className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-blue-100 hover:text-blue-600 transition-colors"
-                    >
-                      <Mail className="w-4 h-4" />
-                    </a>
-                    <a
-                      href={member.social.linkedin}
-                      className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-blue-100 hover:text-blue-400 transition-colors"
-                    >
-                      <Linkedin className="w-4 h-4" />
-                    </a>
-                    <a
-                      href={member.social.twitter}
-                      className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-blue-100 hover:text-blue-400 transition-colors"
-                    >
-                      <Twitter className="w-4 h-4" />
-                    </a>
-                  </div>
-                </div>
+            {facultyTeam.map((member, index) => (
+              <div key={index} className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col items-center justify-center py-8">
+                <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair">{member.name}</h3>
+                <p className="text-blue-600 font-semibold mb-3 text-center font-inter">{member.title}</p>
               </div>
             ))}
           </div>
@@ -358,7 +380,7 @@ const AboutPage = () => {
         <div className="max-w-6xl mx-auto px-6 lg:px-10">
           <div className="text-center mb-16 reveal">
             <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">Our Journey</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-inter">
               From humble beginnings to global impact - the story of GEI's growth, evolution, and unwavering commitment to environmental sustainability.
             </p>
           </div>
@@ -379,18 +401,24 @@ const AboutPage = () => {
                 >
                   {/* Timeline Dot */}
                   <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-800 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg motion-pulse border-4 border-white">
-                    <span className="text-white font-bold text-sm">{milestone.year}</span>
+                    <span className="text-white font-bold text-sm">
+                      {milestone.year}
+                    </span>
                   </div>
                   
                   {/* Content */}
                   <div className="flex-1 bg-white rounded-2xl p-8 shadow-lg hover-lift border border-gray-100">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-2xl font-bold text-gray-900 font-playfair">{milestone.title}</h3>
+                      <h3 className="text-2xl font-bold text-gray-900 font-playfair">
+                        {milestone.title}
+                      </h3>
                       <span className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-800 text-white text-sm font-medium rounded-full">
                         {milestone.impact}
                       </span>
                     </div>
-                    <p className="text-gray-600 leading-relaxed text-lg">{milestone.description}</p>
+                    <p className="text-gray-600 leading-relaxed text-lg font-inter">
+                      {milestone.description}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -404,7 +432,7 @@ const AboutPage = () => {
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <div className="text-center mb-16 reveal">
             <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">Global Partnerships</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-inter">
               We collaborate with leading organizations, governments, and communities to amplify our impact and create sustainable change.
             </p>
           </div>
@@ -412,21 +440,21 @@ const AboutPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white rounded-2xl p-8 shadow-lg hover-lift border border-gray-100 reveal">
               <h3 className="text-xl font-bold text-gray-900 mb-4 font-playfair">UN Agencies</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed font-inter">
                 Strategic partnerships with UNEP, UNESCO, and other UN agencies to align our work with global sustainability goals.
               </p>
             </div>
             
             <div className="bg-white rounded-2xl p-8 shadow-lg hover-lift border border-gray-100 reveal" style={{ animationDelay: '0.1s' }}>
               <h3 className="text-xl font-bold text-gray-900 mb-4 font-playfair">Government Partners</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed font-inter">
                 Collaboration with national and local governments to implement policy-driven environmental solutions.
               </p>
             </div>
             
             <div className="bg-white rounded-2xl p-8 shadow-lg hover-lift border border-gray-100 reveal" style={{ animationDelay: '0.2s' }}>
               <h3 className="text-xl font-bold text-gray-900 mb-4 font-playfair">Academic Institutions</h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed font-inter">
                 Research partnerships with leading universities to advance scientific understanding and innovation.
               </p>
             </div>
@@ -434,7 +462,7 @@ const AboutPage = () => {
 
           {/* Trusted Partners Bar */}
           <div className="mt-20">
-            <p className="text-center uppercase text-sm tracking-wider text-gray-500 mb-8 font-medium">
+            <p className="text-center uppercase text-sm tracking-wider text-gray-500 mb-8 font-medium font-inter">
               Trusted by forward-thinking partners
             </p>
             <div className="relative w-full overflow-hidden opacity-60">
@@ -470,7 +498,7 @@ const AboutPage = () => {
         
         <div className="max-w-4xl mx-auto px-6 lg:px-10 text-center text-white relative reveal">
           <h2 className="text-3xl lg:text-5xl font-bold font-playfair mb-6">Join Our Mission</h2>
-          <p className="text-xl text-blue-100 mb-8 leading-relaxed">
+          <p className="text-xl text-blue-100 mb-8 leading-relaxed font-inter">
             Be part of the solution. Whether you're a researcher, policy maker, or passionate individual, 
             there are many ways to contribute to our global environmental mission.
           </p>

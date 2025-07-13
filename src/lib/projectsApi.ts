@@ -42,6 +42,7 @@ export class ProjectsAPI {
 
   async createProject(projectData: ProjectFormData): Promise<Project | null> {
     try {
+      if (typeof projectData.overview === 'undefined') projectData.overview = '';
       const response = await api.post('/projects', projectData);
       return response.data.data;
     } catch (error) {
@@ -52,6 +53,7 @@ export class ProjectsAPI {
 
   async updateProject(id: string, projectData: Partial<ProjectFormData>): Promise<Project | null> {
     try {
+      if (typeof projectData.overview === 'undefined') projectData.overview = '';
       const response = await api.put(`/projects/${id}`, projectData);
       return response.data.data;
     } catch (error) {

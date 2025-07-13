@@ -1,33 +1,20 @@
 import React, { useState } from 'react';
 import { Calendar, ArrowRight, Users, Leaf, Globe, Heart } from 'lucide-react';
 import Footer from '../components/Footer';
-import stories from '../data/stories';
+import { useStories, Story } from '../hooks/useStories';
 import { useNavigate } from 'react-router-dom';
-
-interface Story {
-  id: string;
-  date: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  image: string;
-  category: string;
-  author: string;
-  readTime: string;
-  featured: boolean;
-}
 
 const categories = ['All', 'Conservation', 'Youth Leadership', 'Renewable Energy', 'Urban Agriculture', 'Education'];
 
 const OurStoriesPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const navigate = useNavigate();
+  const { stories, loading, error } = useStories();
 
   const filteredStories = selectedCategory === 'All' 
     ? stories 
     : stories.filter((story: Story) => story.category === selectedCategory);
 
-  // Remove featured/regular split, show all in alternating large format
   const storiesToShow = filteredStories;
 
   const getCategoryIcon = (category: string) => {
@@ -45,6 +32,22 @@ const OurStoriesPage: React.FC = () => {
   const goToStory = (id: string) => {
     navigate(`/our-stories/${id}`);
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p>Loading stories...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-red-500">Error fetching stories: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">

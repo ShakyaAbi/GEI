@@ -1,12 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Calendar, Users, ArrowRight, Clock, Target, Award, TrendingUp } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 import type { Project } from '../../types/project';
 import { ProjectStatusBadge } from './ProjectStatusBadge';
 
 interface ProjectCardProps {
   project: Project;
   viewMode?: 'grid' | 'list';
+}
+
+// Helper to get Lucide icon component by name
+function getLucideIcon(iconName: string) {
+  if (!iconName) return null;
+  const IconComponent = (LucideIcons as any)[iconName];
+  return IconComponent ? <IconComponent className="w-4 h-4 mr-1 text-blue-500 inline-block align-middle" /> : null;
 }
 
 export function ProjectCard({ project, viewMode = 'grid' }: ProjectCardProps) {
@@ -99,8 +107,6 @@ export function ProjectCard({ project, viewMode = 'grid' }: ProjectCardProps) {
               alt={project.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            
             {/* Floating Status Badge */}
             <div className="absolute top-4 right-4">
               {project.status && <ProjectStatusBadge status={project.status} />}
@@ -110,9 +116,17 @@ export function ProjectCard({ project, viewMode = 'grid' }: ProjectCardProps) {
         
         <div className="p-6 bg-gradient-to-br from-white to-gray-50/50">
           <div className="flex items-start justify-between mb-3">
-            <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
-              {project.title}
-            </h3>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
+                {project.title}
+              </h3>
+              {project.program_areas?.icon && (
+                <div className="flex items-center mt-1">
+                  {getLucideIcon(project.program_areas.icon)}
+                  <span className="text-sm text-blue-700 font-medium ml-1">{project.program_areas.name}</span>
+                </div>
+              )}
+            </div>
           </div>
           
           {project.description && (

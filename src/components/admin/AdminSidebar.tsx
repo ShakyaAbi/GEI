@@ -6,7 +6,8 @@ const adminLinks = [
   // { name: 'Dashboard', path: '/admin', icon: Home }, // Hidden for now
   { name: 'Publications', path: '/admin/publications', icon: Book },
   { name: 'Program Areas', path: '/admin/program-areas', icon: Folder },
-  { name: 'Projects', path: '/admin/projects', icon: Folder }
+  { name: 'Projects', path: '/admin/projects', icon: Folder },
+  { name: 'Stories', path: '/admin/stories', icon: Book }
 ];
 
 const AdminSidebar: React.FC = () => {

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Target, Eye, Users, Lightbulb, Award, Heart } from 'lucide-react';
+import { Logos3 } from "@/components/ui/logos3";
 
 const About = () => {
   useEffect(() => {
@@ -127,6 +128,8 @@ const About = () => {
           </div>
         </div>
         */}
+        {/* Add Logos3 carousel below about content */}
+        <Logos3 />
       </div>
     </section>
   );

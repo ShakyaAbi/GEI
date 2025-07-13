@@ -105,7 +105,7 @@ router.post('/', authenticateToken, async (req, res) => {
   try {
     let { 
       name, slug, description, heroImage, hero_image, 
-      seoTitle, seoDescription, orderIndex 
+      seoTitle, seoDescription, orderIndex, icon 
     } = req.body;
     // Map hero_image (snake_case) to heroImage (camelCase) if present
     if (!heroImage && hero_image) heroImage = hero_image;
@@ -133,7 +133,8 @@ router.post('/', authenticateToken, async (req, res) => {
         heroImage,
         seoTitle,
         seoDescription,
-        orderIndex: orderIndex ? parseInt(orderIndex) : 0
+        orderIndex: orderIndex ? parseInt(orderIndex) : 0,
+        icon: icon || null
       }
     });
     
@@ -150,7 +151,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
     let { 
       name, slug, description, heroImage, hero_image, 
-      seoTitle, seoDescription, orderIndex 
+      seoTitle, seoDescription, orderIndex, icon 
     } = req.body;
     // Map hero_image (snake_case) to heroImage (camelCase) if present
     if (!heroImage && hero_image) heroImage = hero_image;
@@ -185,7 +186,8 @@ router.put('/:id', authenticateToken, async (req, res) => {
         heroImage,
         seoTitle,
         seoDescription,
-        orderIndex: orderIndex ? parseInt(orderIndex) : 0
+        orderIndex: orderIndex ? parseInt(orderIndex) : 0,
+        icon: icon || null
       }
     });
     
@@ -298,6 +300,82 @@ router.post('/:id/partners', authenticateToken, async (req, res) => {
     res.status(201).json({ error: false, data: partner });
   } catch (error) {
     console.error('Add partner error:', error);
+    res.status(500).json({ error: true, message: 'Server error' });
+  }
+});
+
+// --- Program Area Features CRUD ---
+
+// Get all features for a program area
+router.get('/:id/features', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const features = await prisma.programAreaFeature.findMany({
+      where: { programAreaId: id },
+      orderBy: { orderIndex: 'asc' }
+    });
+    res.json({ error: false, data: features });
+  } catch (error) {
+    console.error('Get program area features error:', error);
+    res.status(500).json({ error: true, message: 'Server error' });
+  }
+});
+
+// Create a feature for a program area (authenticated)
+router.post('/:id/features', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, subtitle, description, image, orderIndex } = req.body;
+    if (!title) {
+      return res.status(400).json({ error: true, message: 'Title is required' });
+    }
+    const feature = await prisma.programAreaFeature.create({
+      data: {
+        programAreaId: id,
+        title,
+        subtitle,
+        description,
+        image,
+        orderIndex: orderIndex ? parseInt(orderIndex) : 0
+      }
+    });
+    res.status(201).json({ error: false, data: feature });
+  } catch (error) {
+    console.error('Create program area feature error:', error);
+    res.status(500).json({ error: true, message: 'Server error' });
+  }
+});
+
+// Update a feature (authenticated)
+router.put('/features/:featureId', authenticateToken, async (req, res) => {
+  try {
+    const { featureId } = req.params;
+    const { title, subtitle, description, image, orderIndex } = req.body;
+    const feature = await prisma.programAreaFeature.update({
+      where: { id: featureId },
+      data: {
+        title,
+        subtitle,
+        description,
+        image,
+        orderIndex: orderIndex !== undefined ? parseInt(orderIndex) : undefined
+      }
+    });
+    res.json({ error: false, data: feature });
+  } catch (error) {
+    console.error('Update program area feature error:', error);
+    res.status(500).json({ error: true, message: 'Server error' });
+  }
+});
+
+// Delete a feature (authenticated)
+router.delete('/features/:featureId', authenticateToken, async (req, res) => {
+  try {
+    const { featureId } = req.params;
+    await prisma.programAreaFeature.delete({ where: { id: featureId } });
+    res.json({ error: false, message: 'Feature deleted successfully' });
+  } catch (error) {
+    console.error('Delete program area feature error:', error);
     res.status(500).json({ error: true, message: 'Server error' });
   }
 });

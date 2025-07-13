@@ -1,105 +1,85 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import prisma from '../prisma/client.js';
-import { authenticateToken, isAdmin } from '../middleware/auth.js';
+import { PrismaClient } from '@prisma/client';
+import { body, validationResult } from 'express-validator';
+import { authenticateToken } from '../middleware/auth.js';
+import rateLimit from 'express-rate-limit';
 
 const router = express.Router();
+const prisma = new PrismaClient();
 
-// Register a new user (admin only)
-router.post('/register', authenticateToken, isAdmin, async (req, res) => {
-  try {
-    const { email, password, name, role } = req.body;
-
-    // Validate input
-    if (!email || !password) {
-      return res.status(400).json({ error: true, message: 'Email and password are required' });
-    }
-
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email }
-    });
-
-    if (existingUser) {
-      return res.status(400).json({ error: true, message: 'User already exists' });
-    }
-
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create user
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        name,
-        role: role || 'user'
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        createdAt: true
-      }
-    });
-
-    res.status(201).json({ error: false, data: user });
-  } catch (error) {
-    console.error('Register error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
-  }
+// Rate limiting for authentication routes to prevent brute-force attacks
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Max 100 requests per 15 minutes per IP
+  message: 'Too many login attempts from this IP, please try again after 15 minutes',
 });
 
-// Login
-router.post('/login', async (req, res) => {
+// User login
+router.post('/login', authLimiter, [
+  body('email').isEmail().withMessage('Invalid email'),
+  body('password').notEmpty().withMessage('Password is required'),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   try {
     const { email, password } = req.body;
 
-    // Validate input
-    if (!email || !password) {
-      return res.status(400).json({ error: true, message: 'Email and password are required' });
-    }
-
-    // Find user
-    const user = await prisma.user.findUnique({
-      where: { email }
-    });
-
+    const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return res.status(400).json({ error: true, message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ error: true, message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Create token
-    const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
-    );
-
-    res.json({
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.status(200).json({
       error: false,
       data: {
         token,
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role
-        }
+        user: { id: user.id, email: user.email, name: user.name, role: user.role }
       }
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ message: 'Server error during login' });
+  }
+});
+
+// User registration
+router.post('/register', authLimiter, [
+  body('email').isEmail().withMessage('Invalid email'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+  body('username').trim().notEmpty().withMessage('Username is required'),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  try {
+    const { email, password, username, role } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name: username,
+        role: role || 'user', // Default to 'user' role if not provided
+      },
+    });
+
+    res.status(201).json({ message: 'User registered successfully', user: { id: newUser.id, email: newUser.email, name: newUser.name, role: newUser.role } });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ message: 'Server error during registration' });
   }
 });
 

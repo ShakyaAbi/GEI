@@ -10,6 +10,14 @@ import { Link } from 'react-router-dom';
 import type { ProgramArea } from '../lib/programAreasApi';
 import type { Project } from '../types/project';
 import CountUp from '../components/CountUp';
+import * as LucideIcons from 'lucide-react';
+
+// Helper to get Lucide icon component by name
+function getLucideIcon(iconName: string) {
+  if (!iconName) return null;
+  const IconComponent = (LucideIcons as any)[iconName];
+  return IconComponent ? <IconComponent className="w-4 h-4 mr-1 text-blue-500 inline-block align-middle" /> : null;
+}
 
 const OurWorkPage = () => {
   const location = useLocation();
@@ -121,17 +129,17 @@ const OurWorkPage = () => {
   // Gallery images for Our Work page
   const workGalleryImages = [
     {
-      src: 'public/image1.jpeg',
+      src: 'scenic-view-residential-buildings-against-sky-winter.jpg',
       alt: 'Climate action project in rural community',
       caption: 'Climate resilience programs protecting vulnerable communities'
     },
     {
-      src: 'public/image2.jpg',
+      src: '/image2.jpg',
       alt: 'Water and sanitation infrastructure development',
       caption: 'Clean water access transforming health outcomes'
     },
     {
-      src: 'https://images.pexels.com/photos/1072824/pexels-photo-1072824.jpeg?auto=compress&cs=tinysrgb&w=1200&h=675&fit=crop',
+      src: '/137.jpg',
       alt: 'Renewable energy installation in remote area',
       caption: 'Solar energy bringing power to off-grid communities'
     },
@@ -140,16 +148,7 @@ const OurWorkPage = () => {
       alt: 'Forest conservation and restoration efforts',
       caption: 'Reforestation initiatives protecting biodiversity'
     },
-    {
-      src: 'public/image2.jpg',
-      alt: 'Community development and capacity building',
-      caption: 'Empowering communities through skills development'
-    },
-    {
-      src: 'public/image1.jpeg',
-      alt: 'Waste management and circular economy solutions',
-      caption: 'Innovative waste solutions creating circular economies'
-    }
+   
   ];
 
   if (error) {
@@ -307,13 +306,14 @@ const OurWorkPage = () => {
                     {/* Floating badge */}
                     <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <div className="px-3 py-1 bg-gradient-to-r from-white/90 to-cyan-100/90 backdrop-blur-sm text-blue-800 text-xs font-medium rounded-full border border-white/50 shadow-lg">
-                        {programArea.projectCount} Projects
+                        {(programArea.projectCount ?? 0)} Projects
                       </div>
                     </div>
                   </div>
                   
                   <div className="p-6 bg-gradient-to-br from-white via-blue-50/50 to-cyan-50/30">
-                    <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 font-playfair group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 font-playfair group-hover:text-blue-600 transition-colors flex items-center">
+                      {programArea.icon && getLucideIcon(programArea.icon)}
                       {programArea.name}
                     </h3>
                     
@@ -325,14 +325,14 @@ const OurWorkPage = () => {
                     <div className="mb-4 flex items-center justify-between">
                       <div className="flex items-center text-sm text-gray-600">
                         <Target className="w-4 h-4 mr-2 text-cyan-500" />
-                        <span className="font-medium">{programArea.projectCount} Active Projects</span>
+                        <span className="font-medium">{(programArea.projectCount ?? 0)} Active Projects</span>
                       </div>
                       
                       {/* Progress indicator */}
                       <div className="w-12 h-1 bg-gradient-to-r from-blue-200 to-cyan-200 rounded-full overflow-hidden">
                         <div 
                           className="h-full bg-gradient-to-r from-blue-500 via-blue-600 to-cyan-600 rounded-full transition-all duration-700 group-hover:from-blue-600 group-hover:to-cyan-700 shadow-sm"
-                          style={{ width: `${Math.min((programArea.projectCount / 10) * 100, 100)}%` }}
+                          style={{ width: `${Math.min(((programArea.projectCount ?? 0) / 10) * 100, 100)}%` }}
                         ></div>
                       </div>
                     </div>
@@ -477,8 +477,9 @@ const OurWorkPage = () => {
                     {/* Program area badge */}
                     {project.program_areas && (
                       <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="px-3 py-1 bg-gradient-to-r from-white/90 to-blue-100/90 backdrop-blur-sm text-blue-800 text-xs font-medium rounded-full border border-white/50 shadow-lg">
-                          {project.program_areas.name}
+                        <div className="px-3 py-1 bg-gradient-to-r from-white/90 to-blue-100/90 backdrop-blur-sm text-blue-800 text-xs font-medium rounded-full border border-white/50 shadow-lg flex items-center max-w-[260px] whitespace-nowrap overflow-hidden text-ellipsis">
+                          {project.program_areas.icon && getLucideIcon(project.program_areas.icon)}
+                          <span className="overflow-hidden text-ellipsis whitespace-nowrap">{project.program_areas.name}</span>
                         </div>
                       </div>
                     )}

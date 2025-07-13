@@ -181,7 +181,7 @@ async function main() {
         slug: 'environmental-green-tech',
         description: 'GEI pioneers clean technologies including water purification, air pollution mitigation, and waste recycling to improve environmental health.',
         seoTitle: 'Environmental Innovation | GEI',
-        seoDescription: 'Explore GEI's innovations in water purification, air quality improvement, and sustainable waste management.',
+        seoDescription: 'Explore GEI\'s innovations in water purification, air quality improvement, and sustainable waste management.',
         orderIndex: 1
       },
       {
@@ -189,7 +189,7 @@ async function main() {
         slug: 'health-capacity',
         description: 'Improving maternal and child health through infrastructure upgrades, anemia management, safe delivery training, and diagnostics innovation.',
         seoTitle: 'Maternal & Child Health Programs | GEI',
-        seoDescription: 'Discover GEI's maternal and child health programs, including nutrition, anemia prevention, and newborn care.',
+        seoDescription: 'Discover GEI\'s maternal and child health programs, including nutrition, anemia prevention, and newborn care.',
         orderIndex: 2
       },
       {
@@ -197,7 +197,7 @@ async function main() {
         slug: 'economic-development',
         description: 'Creating community-based green businesses, promoting women-led cooperatives, eco-tourism, and permaculture in underserved regions.',
         seoTitle: 'Community Development & Livelihoods | GEI',
-        seoDescription: 'Learn how GEI supports sustainable income generation, permaculture farming, and women's economic empowerment.',
+        seoDescription: 'Learn how GEI supports sustainable income generation, permaculture farming, and women\'s economic empowerment.',
         orderIndex: 3
       }
     ];
@@ -211,72 +211,370 @@ async function main() {
     }
     console.log(`Created ${programAreas.length} program areas`);
 
-    // Add dummy projects for each program area
+    // Add comprehensive GEI projects based on the project activities document
     const allAreas = await prisma.programArea.findMany();
     const projects = [
-      // Environmental
+      // I. SUSTAINABLE HEALTH CAPACITY BUILDING ACCHAM and BAJURA
       {
-        title: 'Smart Water Purification Pilot',
-        description: 'Deploying modular water purification systems in rural communities to ensure access to clean drinking water.',
-        programAreaSlug: 'environmental-green-tech'
+        title: 'Sustainable Health Capacity Building - Accham and Bajura',
+        description: 'Implementing sustainable basic health systems strengthening and capacity building in rural Nepal through public-private-academic partnerships.',
+        overview: `## Overview
+
+**Populations in rural, impoverished areas worldwide do not have access to quality health services, resulting in preventable morbidity and mortality. Women and children are particularly vulnerable.**
+
+### Project Highlights
+- **"Adopt" 2 districts in rural Nepal**
+- **Model for sustainable, systematic healthcare capacity building**
+- **Public-private-academic partnership**
+
+### 2024 Achievements
+- Comprehensive health facility evaluation
+- Addressed gaps in health service delivery, customized to each facility
+- **500+ community health workers trained**
+- **14/28 health posts upgraded to functional birthing centers**
+- Health management staff trained in quality and logistics
+
+Health facilities are now able to provide basic preventive and life-saving care.`,
+        location: 'Accham and Bajura Districts, Nepal',
+        duration: '2024-2025',
+        status: 'active',
+        budget: '$500,000',
+        beneficiaries: '500+ community health workers, 28 health facilities',
+        impactMetrics: ['500+ trained health workers', '28 health posts upgraded', '14 birthing centers functional'],
+        programAreaSlug: 'health-capacity',
+        startDate: '2024-01-01',
+        endDate: '2025-12-31',
+        slug: 'sustainable-health-capacity-building-accham-bajura'
       },
+      
+      // II. KOLTI HOSPITAL PROJECT
       {
-        title: 'Urban Air Quality Monitoring Network',
-        description: 'Establishing a real-time air quality sensor network in urban centers to track and reduce pollution.',
-        programAreaSlug: 'environmental-green-tech'
+        title: 'Kolti Referral Hospital - Western Nepal',
+        description: 'Upgrading the current Primary Health Center in Kolti to a 50-bed hospital providing emergency surgical, maternity, pediatric and general medical services.',
+        overview: `## Overview
+
+**Goal:** Upgrade the current Primary Health Center in Kolti to a **50-bed hospital** providing emergency surgical, maternity, pediatric, and general medical services to a population of **225,000**.
+
+### Key Features
+- **Public-private-academic partnership**
+- **Location:** Kolti, Budhinanda municipality
+- **Partners:** 17 municipalities from 4 districts
+- **Integration:** Linked with Dhulikhel Hospital outreach centers
+- **Community Development Center:** Economic, agricultural, and educational programs
+
+### Services
+- **CEONC:** Comprehensive emergency obstetric, neonatal intensive care
+- **Emergency room:** Trauma, cardiovascular, obstetric, dental
+- **General medical:** Laboratory, radiology, skilled care, operating room
+- **Preventive:** Prenatal, postnatal, nutrition, cancer screening, dental
+- **Community health programs**
+
+### Financing
+- **Capital investment:** $2–2.5 million
+- **Annual operating costs:** $300,000–$400,000
+- **50% construction and all operational costs covered by government after construction**
+
+### 2025 Activities
+- Hospital operations planning
+- Financial feasibility assessment
+- Secure commitments from local and central government
+- Community engagement and planning`,
+        location: 'Kolti, Budhinanda Municipality, Western Nepal',
+        duration: '2025-2027',
+        status: 'active',
+        budget: '$2.5 million',
+        beneficiaries: '225,000 population across 17 municipalities',
+        impactMetrics: ['50-bed hospital', 'Emergency services', 'Maternal care', 'Pediatric care'],
+        programAreaSlug: 'health-capacity',
+        startDate: '2025-01-01',
+        endDate: '2027-12-31',
+        slug: 'kolti-referral-hospital-western-nepal'
       },
+      
+      // III. CLEAN WATER & WASTE MANAGEMENT SYSTEMS
       {
-        title: 'Community Forest Restoration Project',
-        description: 'Engaging local communities in reforestation and sustainable forest management.',
-        programAreaSlug: 'environmental-green-tech'
+        title: 'Clean Water & Waste Management Systems',
+        description: 'Implementing affordable water filtration and treatment modalities to address water contamination issues in Nepal.',
+        overview: `## Overview
+
+**Reliable access to clean water is a basic requirement for health, well-being, and development.**
+
+### Progress (2024)
+- **Water purification plant completed at Dhulikhel Hospital**
+- First hospital in Nepal to offer safe drinking water to patients and staff
+- **180,000 liters/day** of purified water produced
+- **Cost-effective:** $90,000 total cost
+- No chemicals used—modular local filters only
+
+### 2025 Plans
+1. **Water quality certification** (Nepal Academy of Science and Technology)
+2. **Public water kiosks** at hospital entrance
+3. **Commercial sales** to local businesses, hotels, restaurants
+4. **Expansion:** Explore partnership with Kathmandu University for campus water supply
+
+### Environmental Impact
+- Reduces bottled water use and plastic waste
+- Model for scale-up in Nepal and beyond`,
+        location: 'Dhulikhel Hospital, Nepal',
+        duration: '2024-2026',
+        status: 'active',
+        budget: '$90,000',
+        beneficiaries: 'Hospital patients and staff, local community',
+        impactMetrics: ['180,000 liters/day', 'First hospital water plant', 'Cost-effective solution'],
+        programAreaSlug: 'environmental-green-tech',
+        startDate: '2024-01-01',
+        endDate: '2026-12-31',
+        slug: 'clean-water-waste-management-systems'
       },
-      // Health
+      
+      // IV. NOVEL ECONOMIC INITIATIVES
       {
-        title: 'Maternal Health Outreach Program',
-        description: 'Providing maternal health education and services to remote and underserved populations.',
-        programAreaSlug: 'health-capacity'
+        title: 'Novel Economic Initiatives and Income Generation',
+        description: 'Creating green, sustainable economies using locally available resources and connecting rural economies to markets.',
+        overview: `## Background
+
+**Poverty and lack of economic opportunity are root causes of poor health, education, and malnutrition in underserved communities.**
+
+### Approach
+- Develop replicable models for green, sustainable economies
+- Use local resources and connect rural economies to markets
+- Invest in permaculture, ecotourism, and commercial goods production
+- Launch community health outreach programs
+
+### Activities
+- **Permaculture farming**
+- **Agrotourism & ecovillage development**
+- **Community health promotion** (training, screening, referral)
+
+### Baseline Economic Surveys
+- **Helambu, Accham, Bajura**
+- 54% of boys and 45% of girls attend school regularly
+- Average annual income per person: NRs 7,003 (USD 55)
+- 76% of households have no savings or disposable income
+- Farmers lack access to marketplaces
+
+### Impact
+- Economic surveys completed
+- Permaculture training
+- Community health programs launched`,
+        location: 'Helambu, Accham, Bajura Districts, Nepal',
+        duration: '2024-2026',
+        status: 'active',
+        budget: '$200,000',
+        beneficiaries: '150+ households, local communities',
+        impactMetrics: ['Economic surveys completed', 'Permaculture training', 'Community health programs'],
+        programAreaSlug: 'economic-development',
+        startDate: '2024-01-01',
+        endDate: '2026-12-31',
+        slug: 'novel-economic-initiatives-income-generation'
       },
+      
+      // V. CENTER FOR HEALTH, AGROTOURISM AND COMMUNITY ECONOMIC DEVELOPMENT
       {
-        title: 'School Nutrition & Anemia Awareness',
-        description: 'Implementing school-based nutrition and anemia screening programs for children.',
-        programAreaSlug: 'health-capacity'
+        title: 'Center for Health, Agrotourism and Community Economic Development',
+        description: 'Building green, sustainable economies in Nepal through integrated community development approaches.',
+        overview: `## Background
+
+**Rural municipalities in Western Nepal face challenges in development, economic output, health, and education.**
+
+### Baseline Survey (2024)
+- **Accham and Bajura**: Unique resources (pure water, fertile land, natural beauty)
+- **Challenges:**
+  - Lack of unified regional economic development
+  - Underutilized natural resources
+  - Endemic poverty and malnutrition
+  - Mass migration due to lack of opportunity
+
+### Project Goals
+1. Connect people to local industrial and economic activities
+2. Launch and expand economic opportunities
+3. Build knowledge in agriculture, water management, and eco-tourism
+4. Preserve traditional culture
+5. Improve health outcomes and service quality
+
+### Components
+- Permaculture agricultural programs
+- Investment in green agriculture (olive, apple, rice, millet, potato)
+- Reforestation, water treatment, waste management
+- Economic development center, microloan program
+- Health and environment promotion
+
+### Community Contributions
+- Building donation and maintenance
+- 13 hectares for agriculture training
+- Transport logistics and sales connections
+- Community integration and personnel`,
+        location: 'Upper Karnali Region, Nepal',
+        duration: '2024-2027',
+        status: 'active',
+        budget: '$300,000',
+        beneficiaries: 'Local communities in Upper Karnali region',
+        impactMetrics: ['13 hectares land', 'Permaculture training', 'Economic development center'],
+        programAreaSlug: 'economic-development',
+        startDate: '2024-01-01',
+        endDate: '2027-12-31',
+        slug: 'center-health-agrotourism-community-economic-development'
       },
+      
+      // VI. GEI RESEARCH - ANEMIA PREVENTION
       {
-        title: 'Community Health Worker Training',
-        description: 'Training local health workers in essential maternal and child health practices.',
-        programAreaSlug: 'health-capacity'
+        title: 'Innovation in Anemia Prevention, Treatment and Screening',
+        description: 'Pilot testing of AI-powered screening tool to detect and manage anemia in Nepal using cast iron cookpots.',
+        overview: `## Overview
+
+**In 2025, GEI will pilot a novel, AI-powered anemia screening tool in Nepal, combined with a new approach to treat and prevent anemia using cast iron cookpots.**
+
+### 2024 Findings
+- Screening is intermittent and limited
+- Community screening uses "color cards" (inaccurate)
+- IFA (iron-folic-acid) provided, but no follow-up
+- Anemia distribution is not uniform; high-risk areas need long-term programs
+
+### Baseline Screening Results
+- **Nuwakot:** 1659 screened, 68% anemia overall
+- **Solukhumbhu:** 830 screened, 64% anemia overall
+- **Humla:** 159 screened, 22% anemia overall
+
+### The Tool
+- **Monere.ai**: AI-powered anemia screening app (NiADA)
+- Non-invasive, smartphone-based, 5-second test
+- No need for expensive or invasive equipment
+
+### Pilot Study Design
+1. Validate NiADA vs. lab results
+2. Qualitative research and household surveys
+3. Test cast iron pots for anemia reduction
+
+### Significance
+- Low-cost, community-based screening
+- Immediate policy impact via collaboration with Nepal National Health Research Council`,
+        location: 'Nuwakot, Solukhumbhu, Humla Districts, Nepal',
+        duration: '2025-2026',
+        status: 'active',
+        budget: '$150,000',
+        beneficiaries: '3,000+ screened individuals',
+        impactMetrics: ['AI screening tool validation', 'Cast iron cookpot intervention', 'Community-based screening'],
+        programAreaSlug: 'health-capacity',
+        startDate: '2025-01-01',
+        endDate: '2026-12-31',
+        slug: 'innovation-anemia-prevention-treatment-screening'
       },
-      // Economic
+      
+      // VII. HELAMBU LIVELIHOOD PROJECT
       {
-        title: 'Eco-Friendly Handicraft Cooperative',
-        description: 'Supporting women-led cooperatives to produce and market eco-friendly handicrafts.',
-        programAreaSlug: 'economic-development'
+        title: 'Helambu Livelihood Project',
+        description: 'Building economic capacity through social entrepreneurship and sustainable finance programs in Helambu municipality.',
+        overview: `## Baseline Evaluation (2024)
+
+- 150 households surveyed
+- 54% of boys and 45% of girls attend school regularly
+- 30–45% of household members are illiterate
+- Average annual income per person: NRs 7,003 (USD 55)
+- 76% of households have no savings or disposable income
+- Some farmers sell products from home, earning ~$30/mo
+
+## 2025 Project Steps
+1. **Build economic capacity** of Melamchi Gang (MG) and Ichok residents
+2. **Social entrepreneurship program**
+3. **Sustainable finance program** ($44,500 fund for loans)
+4. **Dairy and ghee production** for local market
+
+### Deliverables
+- Social Welfare Council approval
+- Baseline economic survey
+- Training for local co-ops
+- Community entrepreneurial management
+- Perpetual fund for loans
+- Dairy/ghee production and market access`,
+        location: 'Helambu Municipality, Nepal',
+        duration: '2024-2026',
+        status: 'active',
+        budget: '$44,500',
+        beneficiaries: '150+ households in Helambu',
+        impactMetrics: ['Dairy cow operation', 'Sustainable finance program', 'Community co-ops'],
+        programAreaSlug: 'economic-development',
+        startDate: '2024-01-01',
+        endDate: '2026-12-31',
+        slug: 'helambu-livelihood-project'
       },
+      
+      // VIII. MATERNAL NEONATAL TRAINING PROGRAM
       {
-        title: 'Green Startups Incubator',
-        description: 'Mentoring and funding green startups focused on sustainability and community impact.',
-        programAreaSlug: 'economic-development'
-      },
-      {
-        title: 'Women's Microenterprise Fund',
-        description: 'Providing microloans and business training to women entrepreneurs in rural areas.',
-        programAreaSlug: 'economic-development'
+        title: 'Maternal Neonatal Training Program - Humla and Nuwakot',
+        description: 'Building case management skills among health workers and care capacity in rural health facilities to manage IHE and postpartum hemorrhage.',
+        overview: `## Introduction
+
+**Neonatal and maternal mortality remain a significant priority for Nepal, especially in remote regions.**
+
+### Project Goal
+- Build case management skills among health workers
+- Improve care capacity in rural health facilities for IHE and postpartum hemorrhage
+- Implement Training of Trainers (TOT) for Helping Babies Breathe and Helping Mother’s Survive (HBB/HMS)
+- Disseminate knowledge to frontline care workers in Nuwakot, Accham, and Bajura
+
+### Activities
+1. **Care and service gap definition** (baseline survey)
+   - Completed in Accham and Bajura
+   - Scheduled in Nuwakot (2025)
+2. **Skills package implementation**
+   - Training centers at district hospitals
+   - Master trainer courses (Nuwakot: Jan 2025, Kolti PHC: Fall 2025)
+3. **Skills upgrading for health workers**
+   - Batches of 10–15 rural health workers trained (2025–2026)
+   - 28 facilities upgraded in Accham and Bajura; 10 in Nuwakot
+   - 170+ management committee members trained (Accham/Bajura)
+   - 500+ community health volunteers trained (Accham/Bajura); Nuwakot pending (2025)`,
+        location: 'Humla, Nuwakot, Accham, Bajura Districts, Nepal',
+        duration: '2024-2026',
+        status: 'active',
+        budget: '$300,000',
+        beneficiaries: '500+ health workers, 38 health facilities',
+        impactMetrics: ['HBB/HMS training', '38 facilities upgraded', '500+ health workers trained'],
+        programAreaSlug: 'health-capacity',
+        startDate: '2024-01-01',
+        endDate: '2026-12-31',
+        slug: 'maternal-neonatal-training-program-humla-nuwakot'
       }
     ];
 
     for (const project of projects) {
       const area = allAreas.find(a => a.slug === project.programAreaSlug);
       if (area) {
-        await prisma.project.create({
-          data: {
+        await prisma.project.upsert({
+          where: { slug: project.slug },
+          update: {
             title: project.title,
             description: project.description,
-            program_area_id: area.id
+            overview: project.overview,
+            location: project.location,
+            duration: project.duration,
+            status: project.status,
+            budget: project.budget,
+            beneficiaries: project.beneficiaries,
+            impactMetrics: project.impactMetrics,
+            programAreaId: area.id,
+            startDate: project.startDate ? new Date(project.startDate) : null,
+            endDate: project.endDate ? new Date(project.endDate) : null
+          },
+          create: {
+            title: project.title,
+            description: project.description,
+            overview: project.overview,
+            location: project.location,
+            duration: project.duration,
+            status: project.status,
+            budget: project.budget,
+            beneficiaries: project.beneficiaries,
+            impactMetrics: project.impactMetrics,
+            programAreaId: area.id,
+            startDate: project.startDate ? new Date(project.startDate) : null,
+            endDate: project.endDate ? new Date(project.endDate) : null,
+            slug: project.slug
           }
         });
       }
     }
-    console.log(`Created ${projects.length} dummy projects`);
+    console.log(`Upserted ${projects.length} comprehensive GEI projects with Markdown support`);
   } catch (error) {
     console.error('Error during GEI seed:', error);
     process.exit(1);

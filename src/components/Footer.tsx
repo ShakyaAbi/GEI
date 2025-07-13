@@ -58,7 +58,7 @@ const Footer = () => {
       {/* Back to Top Button */}
       <button
         onClick={scrollToTop}
-        className="fixed bottom-6 right-6 p-3 bg-gradient-to-r from-analogous-teal to-muted-blue text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 z-50 group"
+        className="fixed bottom-6 right-6 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 focus:bg-blue-700 transition-all duration-300 transform hover:scale-110 z-50 group"
         aria-label="Back to top"
       >
         <ArrowUp className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
@@ -70,8 +70,8 @@ const Footer = () => {
             {/* Logo and Description */}
             <div className="lg:col-span-2">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center motion-pulse bg-white">
-                  <img src="/gei-logo.svg" alt="GEI Logo" className="w-10 h-10 object-contain" />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center motion-pulse bg-white">
+                  <img src="/gei-logo.svg" alt="GEI Logo" className="w-8 h-8 object-contain" />
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold font-playfair">GEI</h3>

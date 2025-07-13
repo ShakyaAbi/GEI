@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Save, X, Upload, Loader2, Target, Eye, Search, SortAsc, SortDesc, FolderOpen } from 'lucide-react';
 import { useProgramAreas } from '../../hooks/useProgramAreas';
 import ImageUpload from './ImageUpload';
@@ -6,6 +6,7 @@ import { programAreasApi } from '../../lib/programAreasApi';
 import { imageUploadService } from '../../lib/imageUpload';
 import type { ProgramArea } from '../../lib/programAreasApi';
 import ProjectsAdmin from './ProjectsAdmin';
+import axios from 'axios';
 
 const ProgramAreasAdmin = () => {
   const { programAreas, loading, refetch } = useProgramAreas();
@@ -31,8 +32,25 @@ const ProgramAreasAdmin = () => {
     hero_image: '',
     seo_title: '',
     seo_description: '',
-    order_index: 0
+    order_index: 0,
+    icon: ''
   });
+
+  const [featuresByArea, setFeaturesByArea] = useState<Record<string, any[]>>({});
+  const [featureModal, setFeatureModal] = useState<{ open: boolean, programAreaId?: string, feature?: any }>({ open: false });
+  const [featureForm, setFeatureForm] = useState({ title: '', subtitle: '', description: '', image: '', orderIndex: 0 });
+  const [featureSubmitting, setFeatureSubmitting] = useState(false);
+
+  // Fetch features for all program areas
+  useEffect(() => {
+    if (programAreas.length > 0) {
+      programAreas.forEach(area => {
+        axios.get(`/api/program-areas/${area.id}/features`).then(res => {
+          setFeaturesByArea(prev => ({ ...prev, [area.id]: res.data.data || [] }));
+        });
+      });
+    }
+  }, [programAreas]);
 
   const filteredAreas = programAreas.filter(area =>
     area.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -74,7 +92,8 @@ const ProgramAreasAdmin = () => {
         hero_image: programArea.hero_image || '',
         seo_title: programArea.seo_title || '',
         seo_description: programArea.seo_description || '',
-        order_index: programArea.order_index
+        order_index: programArea.order_index,
+        icon: programArea.icon || ''
       });
     } else {
       setEditingProgramArea(null);
@@ -85,7 +104,8 @@ const ProgramAreasAdmin = () => {
         hero_image: '',
         seo_title: '',
         seo_description: '',
-        order_index: 0
+        order_index: 0,
+        icon: ''
       });
     }
     
@@ -161,8 +181,14 @@ const ProgramAreasAdmin = () => {
       const heroImageUrl = await uploadHeroImage();
 
       const programAreaData = {
-        ...formData,
-        hero_image: heroImageUrl
+        name: formData.name,
+        slug: formData.slug,
+        description: formData.description,
+        hero_image: heroImageUrl,
+        seo_title: formData.seo_title,
+        seo_description: formData.seo_description,
+        order_index: formData.order_index,
+        icon: formData.icon
       };
 
       if (editingProgramArea) {
@@ -199,6 +225,55 @@ const ProgramAreasAdmin = () => {
 
   const viewProgramArea = (programArea: ProgramArea) => {
     window.open(`/areas/${programArea.slug}`, '_blank');
+  };
+
+  const openFeatureModal = (programAreaId: string, feature?: any) => {
+    setFeatureForm(feature ? {
+      title: feature.title,
+      subtitle: feature.subtitle || '',
+      description: feature.description || '',
+      image: feature.image || '',
+      orderIndex: feature.orderIndex || 0
+    } : { title: '', subtitle: '', description: '', image: '', orderIndex: 0 });
+    setFeatureModal({ open: true, programAreaId, feature });
+  };
+
+  const closeFeatureModal = () => {
+    setFeatureModal({ open: false });
+    setFeatureForm({ title: '', subtitle: '', description: '', image: '', orderIndex: 0 });
+  };
+
+  const handleFeatureSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFeatureSubmitting(true);
+    try {
+      if (featureModal.feature) {
+        // Update
+        await axios.put(`/api/program-areas/features/${featureModal.feature.id}`, featureForm);
+      } else {
+        // Create
+        await axios.post(`/api/program-areas/${featureModal.programAreaId}/features`, featureForm);
+      }
+      // Refresh features
+      const res = await axios.get(`/api/program-areas/${featureModal.programAreaId}/features`);
+      setFeaturesByArea(prev => ({ ...prev, [featureModal.programAreaId!]: res.data.data || [] }));
+      closeFeatureModal();
+    } catch (err) {
+      alert('Failed to save feature.');
+    } finally {
+      setFeatureSubmitting(false);
+    }
+  };
+
+  const handleDeleteFeature = async (programAreaId: string, featureId: string) => {
+    if (!window.confirm('Delete this feature?')) return;
+    try {
+      await axios.delete(`/api/program-areas/features/${featureId}`);
+      const res = await axios.get(`/api/program-areas/${programAreaId}/features`);
+      setFeaturesByArea(prev => ({ ...prev, [programAreaId]: res.data.data || [] }));
+    } catch (err) {
+      alert('Failed to delete feature.');
+    }
   };
 
   return (
@@ -364,6 +439,11 @@ const ProgramAreasAdmin = () => {
                               <span className="text-xs text-gray-700">{programArea.seo_title}</span>
                             </div>
                           )}
+                          {programArea.icon && (
+                            <span className="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full ml-2">
+                              Icon: {programArea.icon}
+                            </span>
+                          )}
                         </div>
                       </div>
 
@@ -400,6 +480,29 @@ const ProgramAreasAdmin = () => {
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
+                    </div>
+                    <div className="mt-4">
+                      <h4 className="text-sm font-semibold mb-2">Featured Sections</h4>
+                      <button
+                        className="mb-2 px-3 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium"
+                        onClick={() => openFeatureModal(programArea.id)}
+                      >
+                        + Add Feature
+                      </button>
+                      <ul className="divide-y divide-gray-100">
+                        {(featuresByArea[programArea.id] || []).map(feature => (
+                          <li key={feature.id} className="py-2 flex items-center justify-between">
+                            <div>
+                              <span className="font-medium text-gray-900">{feature.title}</span>
+                              {feature.subtitle && <span className="ml-2 text-xs text-gray-500">{feature.subtitle}</span>}
+                            </div>
+                            <div className="flex gap-2">
+                              <button className="text-blue-600 hover:underline text-xs" onClick={() => openFeatureModal(programArea.id, feature)}>Edit</button>
+                              <button className="text-red-600 hover:underline text-xs" onClick={() => handleDeleteFeature(programArea.id, feature.id)}>Delete</button>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
                 ))}
@@ -540,6 +643,20 @@ const ProgramAreasAdmin = () => {
                     />
                   </div>
 
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Icon (Lucide icon name or URL)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.icon || ''}
+                      onChange={e => setFormData(prev => ({ ...prev, icon: e.target.value }))}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="e.g. Globe, Users, Zap, or image URL"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">Enter a Lucide icon name (e.g. Globe) or an image URL.</p>
+                  </div>
+
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       SEO Description
@@ -581,6 +698,24 @@ const ProgramAreasAdmin = () => {
                     </>
                   )}
                 </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {featureModal.open && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-lg w-full">
+            <h3 className="text-lg font-bold mb-4">{featureModal.feature ? 'Edit' : 'Add'} Feature</h3>
+            <form onSubmit={handleFeatureSubmit} className="space-y-4">
+              <input type="text" required placeholder="Title" value={featureForm.title} onChange={e => setFeatureForm(f => ({ ...f, title: e.target.value }))} className="w-full px-3 py-2 border rounded" />
+              <input type="text" placeholder="Subtitle" value={featureForm.subtitle} onChange={e => setFeatureForm(f => ({ ...f, subtitle: e.target.value }))} className="w-full px-3 py-2 border rounded" />
+              <input type="text" placeholder="Image URL" value={featureForm.image} onChange={e => setFeatureForm(f => ({ ...f, image: e.target.value }))} className="w-full px-3 py-2 border rounded" />
+              <textarea placeholder="Description" value={featureForm.description} onChange={e => setFeatureForm(f => ({ ...f, description: e.target.value }))} className="w-full px-3 py-2 border rounded" />
+              <input type="number" placeholder="Order Index" value={featureForm.orderIndex} onChange={e => setFeatureForm(f => ({ ...f, orderIndex: parseInt(e.target.value) || 0 }))} className="w-full px-3 py-2 border rounded" />
+              <div className="flex gap-2 justify-end">
+                <button type="button" onClick={closeFeatureModal} className="px-4 py-2 bg-gray-100 rounded">Cancel</button>
+                <button type="submit" disabled={featureSubmitting} className="px-4 py-2 bg-blue-600 text-white rounded">{featureSubmitting ? 'Saving...' : 'Save'}</button>
               </div>
             </form>
           </div>

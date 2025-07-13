@@ -11,6 +11,7 @@ import publicationsRoutes from './routes/publications.js';
 import programAreasRoutes from './routes/programAreas.js';
 import projectsRoutes from './routes/projects.js';
 import uploadsRoutes from './routes/uploads.js';
+import storiesRoutes from './routes/stories.js';
 
 // Load environment variables
 dotenv.config();
@@ -30,22 +31,46 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // Middleware
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174'],
-  credentials: true
-}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Dynamic CORS configuration
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? [process.env.FRONTEND_URL] // Your production frontend URL
+  : ['http://localhost:5173', 'http://localhost:5174'];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
 
 // Serve static files from uploads directory
 app.use('/uploads', express.static(uploadsDir));
 
-// Routes
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/publications', publicationsRoutes);
 app.use('/api/program-areas', programAreasRoutes);
 app.use('/api/projects', projectsRoutes);
 app.use('/api/uploads', uploadsRoutes);
+app.use('/api/stories', storiesRoutes);
+
+// Serve frontend static files
+const frontendPath = join(__dirname, '../dist');
+app.use(express.static(frontendPath));
+
+// Serve index.html for any unknown routes (for React Router)
+app.get('*', (req, res) => {
+  res.sendFile(join(frontendPath, 'index.html'));
+});
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -55,9 +80,11 @@ app.get('/api/health', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
     error: true,
-    message: err.message || 'Something went wrong on the server',
+    message: process.env.NODE_ENV === 'production' ? 'Something went wrong on the server' : err.message,
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
 });
 

@@ -43,7 +43,7 @@ const ProjectsPage = () => {
           <p className="text-red-600 mb-4">Error loading projects: {error}</p>
           <button 
             onClick={() => window.location.reload()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="bg-brand-blue text-white px-4 py-2 rounded-lg hover:bg-brand-dark-blue transition-colors"
           >
             Retry
           </button>
@@ -60,9 +60,8 @@ const ProjectsPage = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
-              <p className="text-gray-600 mt-2">Manage and track all program area projects</p>
             </div>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+            <button className="bg-brand-blue text-white px-4 py-2 rounded-lg hover:bg-brand-dark-blue transition-colors flex items-center gap-2">
               <Plus className="w-5 h-5" />
               New Project
             </button>
@@ -89,7 +88,7 @@ const ProjectsPage = () => {
                 placeholder="Search projects..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent"
               />
             </div>
             <div className="relative">
@@ -97,7 +96,7 @@ const ProjectsPage = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as 'active' | 'completed' | 'on_hold' | 'cancelled' | 'all')}
-                className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-white"
+                className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent appearance-none bg-white"
               >
                 {statusOptions.map(option => (
                   <option key={option.value} value={option.value}>
@@ -128,7 +127,7 @@ const ProjectsPage = () => {
                 : 'Get started by creating your first project'
               }
             </p>
-            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+            <button className="bg-brand-blue text-white px-6 py-3 rounded-lg hover:bg-brand-dark-blue transition-colors">
               Create Project
             </button>
           </div>

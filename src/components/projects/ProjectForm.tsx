@@ -153,6 +153,21 @@ export function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
               placeholder="Describe the project objectives and impact"
             />
           </div>
+          {/* Overview */}
+          <div>
+            <label htmlFor="overview" className="block text-sm font-medium text-gray-700 mb-2">
+              Overview
+            </label>
+            <textarea
+              id="overview"
+              name="overview"
+              value={formData.overview || ''}
+              onChange={handleInputChange}
+              rows={4}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Add a project overview (optional)"
+            />
+          </div>
 
           {/* Location and Duration */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -438,18 +453,6 @@ export function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
                 </button>
               </div>
             </div>
-          </div>
-
-          {/* Image Upload */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Project Image
-            </label>
-            <ImageUpload
-              currentImage={formData.image_url}
-              onImageUpload={handleImageUpload}
-              folder="projects"
-            />
           </div>
 
           {/* Order Index */}

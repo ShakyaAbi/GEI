@@ -27,6 +27,7 @@ import {
   Globe,
   ImageIcon
 } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 import Footer from '../components/Footer';
 import { projectsApi, fetchProjectBySlug, fetchProjectWithCustomFields, fetchProjectContent } from '../lib/projectsApi';
 import type { ProjectWithCustomFields } from '../types/project';
@@ -34,6 +35,14 @@ import { ProjectStatusBadge } from '../components/projects/ProjectStatusBadge';
 import ImageGalleryCarousel from '../components/ImageGalleryCarousel';
 import ProjectContentViewer from '../components/projects/ProjectContentViewer';
 import ProjectMediaGallery from '../components/projects/ProjectMediaGallery';
+import ReactMarkdown from 'react-markdown';
+
+// Helper to get Lucide icon component by name
+function getLucideIcon(iconName: string) {
+  if (!iconName) return null;
+  const IconComponent = (LucideIcons as any)[iconName];
+  return IconComponent ? <IconComponent className="w-5 h-5 mr-2 text-blue-500 inline-block align-middle" /> : null;
+}
 
 const ProjectDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -181,7 +190,7 @@ const ProjectDetailPage = () => {
   };
 
   // Defensive fallback for impact metrics
-  const impactMetrics = project?.impact_metrics || project?.impactMetrics || [];
+  const impactMetrics = project?.impact_metrics || [];
 
   if (loading) {
     return (
@@ -293,7 +302,8 @@ const ProjectDetailPage = () => {
                   <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-3 sm:mb-4">
                     <ProjectStatusBadge status={project.status || 'active'} size="lg" />
                     {project.program_areas?.name && (
-                      <span className="px-3 py-1 sm:px-4 sm:py-2 bg-white/20 backdrop-blur-sm text-white text-xs sm:text-sm font-medium rounded-full border border-white/30">
+                      <span className="px-3 py-1 sm:px-4 sm:py-2 bg-white/20 backdrop-blur-sm text-white text-xs sm:text-sm font-medium rounded-full border border-white/30 flex items-center">
+                        {project.program_areas.icon && getLucideIcon(project.program_areas.icon)}
                         {project.program_areas.name}
                       </span>
                     )}
@@ -308,38 +318,6 @@ const ProjectDetailPage = () => {
                       {project.description}
                     </p>
                   )}
-
-                  {/* Key Stats */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-                    {project.start_date && (
-                      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/20">
-                        <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-white/80 mb-2" />
-                        <div className="text-white text-sm sm:text-base font-semibold">Started</div>
-                        <div className="text-white/80 text-xs sm:text-sm">{formatDate(project.start_date)}</div>
-                      </div>
-                    )}
-                    {project.location && (
-                      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/20">
-                        <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-white/80 mb-2" />
-                        <div className="text-white text-sm sm:text-base font-semibold">Location</div>
-                        <div className="text-white/80 text-xs sm:text-sm">{project.location}</div>
-                      </div>
-                    )}
-                    {project.beneficiaries && (
-                      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/20">
-                        <Users className="w-5 h-5 sm:w-6 sm:h-6 text-white/80 mb-2" />
-                        <div className="text-white text-sm sm:text-base font-semibold">Beneficiaries</div>
-                        <div className="text-white/80 text-xs sm:text-sm">{project.beneficiaries}</div>
-                      </div>
-                    )}
-                    {project.budget && (
-                      <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-white/20">
-                        <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-white/80 mb-2" />
-                        <div className="text-white text-sm sm:text-base font-semibold">Budget</div>
-                        <div className="text-white/80 text-xs sm:text-sm">{project.budget}</div>
-                      </div>
-                    )}
-                  </div>
                 </div>
               </div>
             </div>
@@ -360,7 +338,8 @@ const ProjectDetailPage = () => {
                 <div className="flex flex-wrap items-center gap-2 sm:gap-4 mb-3 sm:mb-6">
                   <ProjectStatusBadge status={project.status || 'active'} size="lg" />
                   {project.program_areas?.name && (
-                    <span className="px-3 py-1 sm:px-4 sm:py-2 bg-white/20 backdrop-blur-sm text-white text-xs sm:text-sm font-medium rounded-full border border-white/30">
+                    <span className="px-3 py-1 sm:px-4 sm:py-2 bg-white/20 backdrop-blur-sm text-white text-xs sm:text-sm font-medium rounded-full border border-white/30 flex items-center">
+                      {project.program_areas.icon && getLucideIcon(project.program_areas.icon)}
                       {project.program_areas.name}
                     </span>
                   )}
@@ -380,6 +359,18 @@ const ProjectDetailPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Main Content Column */}
           <div className="lg:col-span-2 space-y-12">
+            {/* Project Overview (moved here) */}
+            {project.overview && (
+              <section className="bg-white rounded-2xl shadow-lg p-8 border border-blue-100">
+                <h2 className="text-2xl font-bold text-blue-900 mb-4 flex items-center">
+                  Project Overview
+                </h2>
+                <div className="prose max-w-none text-gray-800 text-lg">
+                  <ReactMarkdown>{project.overview}</ReactMarkdown>
+                </div>
+              </section>
+            )}
+
             {/* Project Content */}
             {project.project_content && project.project_content.length > 0 && (
               <ProjectContentViewer content={project.project_content} />
@@ -408,7 +399,7 @@ const ProjectDetailPage = () => {
                   Impact Metrics
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {impactMetrics.map((metric, index) => (
+                  {impactMetrics.map((metric: string, index: number) => (
                     <div key={index} className="flex items-start p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
                       <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mr-4 mt-2 flex-shrink-0"></div>
                       <span className="text-gray-700 leading-relaxed font-medium">{metric}</span>

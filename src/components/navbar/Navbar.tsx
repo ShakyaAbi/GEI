@@ -141,8 +141,8 @@ const Header: React.FC = () => {
               to="/" 
               className="flex items-center space-x-3 group hover:opacity-80 transition-all duration-200"
             >
-              <div className="w-14 h-14 rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow bg-white overflow-hidden">
-                <img src="/GEI_Envirohealth_Icon[1].png" alt="Global Envirohealth Initiative Logo" className="w-10 h-10 object-contain" />
+              <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden">
+                <img src="/GEI_Envirohealth_Icon[1].png" alt="Global Envirohealth Initiative Logo" className="w-12 h-12 object-contain" />
               </div>
               <div className="flex flex-col justify-center">
                 <div className="text-sm font-bold text-gray-700 group-hover:text-blue-600 transition-colors leading-tight">

@@ -1,10 +1,56 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowRight, Globe, Users, Zap, MapPin, ExternalLink, X } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { motion } from "framer-motion";
+import { MoveRight, PhoneCall, ArrowRight, Globe, Users, Zap, MapPin, ExternalLink, X } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 import ImageGalleryCarousel from './ImageGalleryCarousel';
 import CountUp from './CountUp';
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
+  const navigate = useNavigate();
   const [activeLocation, setActiveLocation] = useState<number | null>(null);
+  const [titleNumber, setTitleNumber] = useState(0);
+  const stories = useMemo(
+    () => [
+      {
+        title: "Innovation",
+        image: "/IMG_2047.jpeg",
+        link: "/our-stories/1"
+      },
+      {
+        title: "Collaborations",
+        image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80",
+        link: "/our-stories/2"
+      },
+      {
+        title: "Sustainability",
+        image: "/image2.jpg",
+        link: "/our-stories/3"
+      },
+      {
+        title: "Community",
+        image: "/Story1.jpg",
+        link: "/our-stories/4"
+      },
+      {
+        title: "Empowerment",
+        image: "https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg?auto=compress&cs=tinysrgb&w=1200&h=675&fit=crop",
+        link: "/our-stories/5"
+      }
+    ],
+    []
+  );
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (titleNumber === stories.length - 1) {
+        setTitleNumber(0);
+      } else {
+        setTitleNumber(titleNumber + 1);
+      }
+    }, 2000);
+    return () => clearTimeout(timeoutId);
+  }, [titleNumber, stories]);
 
   // Define partner logos for the trust bar
   const partnerLogos = [
@@ -83,17 +129,17 @@ const Hero = () => {
   // Gallery images for the carousel
   const galleryImages = [
     {
-      src: './public/image1.jpeg',
+      src: './image1.jpeg',
       alt: 'Community members working together on environmental project',
       caption: 'Community-led environmental initiatives creating lasting change'
     },
     {
-      src: './public/image2.jpg',
+      src: './image2.jpg',
       alt: 'Solar panels installation in rural community',
       caption: 'Renewable energy solutions powering sustainable development'
     },
     {
-      src: './public/image1.jpeg',
+      src: './image1.jpeg',
       alt: 'Clean water access project in developing region',
       caption: 'Clean water infrastructure transforming communities'
     },
@@ -108,91 +154,119 @@ const Hero = () => {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-white via-light-blue/20 to-white pt-28">
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-100 via-white to-white min-h-[80vh] flex items-center"> 
         {/* Animated background particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-base-blue/20 to-analogous-teal/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-light-blue/20 to-analogous-teal/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-28 grid lg:grid-cols-2 gap-12 items-center relative">
-          {/* Left: Text Content */}
-          <div className="space-y-8 reveal">
-            <h1 className="font-playfair text-4xl lg:text-6xl font-bold tracking-tight leading-tight">
-              Accelerating Environmental 
-              <span className="bg-gradient-to-r from-base-blue to-analogous-teal bg-clip-text text-transparent block">Innovation Worldwide</span>
-            </h1>
-            <p className="text-lg lg:text-xl text-gray-600 leading-relaxed">
-              We empower researchers, policy-makers and innovators to build a sustainable future 
-              for every corner of the planet through collaborative research and transformative solutions.
-            </p>
-            <button
-              onClick={handleExploreClick}
-              className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-base-blue to-dark-blue text-white rounded-full font-semibold shadow-lg hover:from-dark-blue hover:to-base-blue transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-base-blue"
-            >
-              Learn More
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </button>
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 w-full grid lg:grid-cols-2 gap-12 items-center relative">
+          {/* Left: Animated Text Content */}
+          <div className="w-full">
+            <div className="container mx-auto">
+              <div className="flex gap-8 items-start justify-start flex-col">
+                <div>
+                  <Button variant="secondary" size="sm" className="gap-4 font-inter">
+                    Read our Impact Stories <MoveRight className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="flex gap-4 flex-col items-start text-left w-full">
+                  <h1 className="text-5xl md:text-7xl max-w-2xl tracking-tighter font-playfair text-left">
+                    <span className="text-spektr-cyan-50">We work towards</span>
+                    <span className="relative flex w-full justify-start overflow-hidden text-left md:pb-4 md:pt-1">
+                      &nbsp;
+                      {stories.map((story, index) => (
+                        <motion.span
+                          key={index}
+                          className="absolute font-playfair font-semibold"
+                          initial={{ opacity: 0, y: "-100" }}
+                          transition={{ type: "spring", stiffness: 50 }}
+                          animate={
+                            titleNumber === index
+                              ? {
+                                  y: 0,
+                                  opacity: 1,
+                                }
+                              : {
+                                  y: titleNumber > index ? -150 : 150,
+                                  opacity: 0,
+                                }
+                          }
+                        >
+                          {story.title}
+                        </motion.span>
+                      ))}
+                    </span>
+                  </h1>
+                  <p className="text-lg md:text-xl leading-relaxed tracking-tight text-muted-foreground max-w-2xl text-left font-inter">
+                    We design and implement innovative, community-led solutions to the world’s most pressing challenges — from clean water and sustainable jobs to maternal health and climate resilience. Join us in transforming data into action and action into lasting impact.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
           {/* Right: Hero Image */}
-          <div className="w-full h-80 lg:h-[32rem] flex items-center justify-center">
+          <div className="w-full h-80 lg:h-[32rem] flex items-center justify-center cursor-pointer" onClick={() => navigate(stories[titleNumber].link)}>
             <img
-              src={galleryImages[0].src}
-              alt={galleryImages[0].alt}
-              className="w-full h-full object-cover rounded-2xl shadow-2xl"
-              />
+              src={stories[titleNumber].image}
+              alt={stories[titleNumber].title}
+              className="w-full h-full object-cover rounded-2xl shadow-2xl transition-all duration-700"
+            />
           </div>
         </div>
       </section>
 
       {/* Trust Bar */}
       <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <p className="text-center uppercase text-sm tracking-wider text-gray-500 mb-8 font-medium">
-            Trusted by forward-thinking partners
-          </p>
-          {/* Scrolling Logos Container */}
-          <div className="relative w-full overflow-hidden opacity-60">
-            <div 
-              className="flex flex-nowrap items-center w-max animate-scroll-left"
-              style={{ '--scroll-duration': '30s' } as React.CSSProperties} // Set duration via CSS variable
-            >
-              {/* Duplicate logos to create continuous scroll effect */}
-              {partnerLogos.map((logo, index) => (
-                <div key={`logo-1-${index}`} className={`flex-shrink-0 mx-6 ${logo.className}`}>
-                  {logo.name}
-                </div>
-              ))}
-              {partnerLogos.map((logo, index) => (
-                <div key={`logo-2-${index}`} className={`flex-shrink-0 mx-6 ${logo.className}`}>
-                  {logo.name}
-                </div>
-              ))}
+          {/* Trusted Partners Bar */}
+          <div className="mt-20">
+            <p className="text-center uppercase text-sm tracking-wider text-gray-500 mb-8 font-medium">
+              Trusted by forward-thinking partners
+            </p>
+            <div className="relative w-full overflow-hidden opacity-60">
+              <div 
+                className="flex flex-nowrap items-center w-max animate-scroll-left"
+                style={{ '--scroll-duration': '30s' } as React.CSSProperties}
+              >
+                {[...Array(5)].map((_, setIndex) => (
+                  [
+                    { name: 'UNESCO', className: 'text-2xl font-bold text-gray-400' },
+                    { name: 'UNEP', className: 'text-2xl font-bold text-gray-400' },
+                    { name: 'WWF', className: 'text-2xl font-bold text-gray-400' },
+                    { name: 'Greenpeace', className: 'text-2xl font-bold text-gray-400' },
+                    { name: 'IUCN', className: 'text-2xl font-bold text-gray-400' },
+                  ].map((logo, logoIndex) => (
+                    <div key={`logo-${setIndex}-${logoIndex}`} className={`flex-shrink-0 mx-6 ${logo.className}`}>
+                      {logo.name}
+                    </div>
+                  ))
+                ))}
+              </div>
             </div>
           </div>
-        </div>
       </section>
 
       {/* Impact Metrics */}
-      <section className="py-20 bg-gradient-to-r from-light-blue/30 to-analogous-teal/30">
+      <section className="py-16 bg-[#e6f4ff]">
         <div className="max-w-5xl mx-auto px-6 lg:px-10 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-          <div className="reveal">
-            <p className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-base-blue to-analogous-teal bg-clip-text text-transparent tracking-tight mb-2">
-              <CountUp from={0} to={10000} separator="," direction="up" duration={1.5} className="count-up-text" />+
+          <div>
+            <p className="text-5xl lg:text-6xl font-extrabold text-blue-500 tracking-tight mb-2">
+              <CountUp from={0} to={9453} separator="," direction="up" duration={1.5} className="count-up-text" />+
             </p>
-            <p className="text-gray-600 font-medium">Lives Impacted</p>
+            <p className="text-gray-500 text-lg font-medium">Lives Impacted</p>
           </div>
-          <div className="reveal" style={{ animationDelay: '0.1s' }}>
-            <p className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-base-blue to-analogous-teal bg-clip-text text-transparent tracking-tight mb-2">
-              <CountUp from={0} to={200} separator="," direction="up" duration={1.5} className="count-up-text" />+
+          <div>
+            <p className="text-5xl lg:text-6xl font-extrabold text-blue-500 tracking-tight mb-2">
+              <CountUp from={0} to={189} separator="," direction="up" duration={1.5} className="count-up-text" />+
             </p>
-            <p className="text-gray-600 font-medium">Active Projects</p>
+            <p className="text-gray-500 text-lg font-medium">Active Projects</p>
           </div>
-          <div className="reveal" style={{ animationDelay: '0.2s' }}>
-            <p className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-base-blue to-analogous-teal bg-clip-text text-transparent tracking-tight mb-2">
-              <CountUp from={0} to={50} separator="," direction="up" duration={1.5} className="count-up-text" />+
+          <div>
+            <p className="text-5xl lg:text-6xl font-extrabold text-blue-500 tracking-tight mb-2">
+              <CountUp from={0} to={47} separator="," direction="up" duration={1.5} className="count-up-text" />+
             </p>
-            <p className="text-gray-600 font-medium">Countries</p>
+            <p className="text-gray-500 text-lg font-medium">Countries</p>
           </div>
         </div>
       </section>
@@ -235,17 +309,13 @@ const Hero = () => {
                 }
               >
                 <div className="relative">
-                  {/* Main sleek marker in GEI blue */}
-                  <div
-                    className="
-                      w-6 h-6 rounded-full
-                      bg-base-blue border-2 border-white
-                      shadow-md
-                      transform transition-transform duration-200
-                      group-hover:scale-125
-                    "
+                  {/* Use MapPin icon for marker */}
+                  <MapPin 
+                    className="w-10 h-10 drop-shadow-lg group-hover:scale-125 transition-transform duration-200"
+                    color="white" // Tailwind base-blue-600
+                    fill="#2563eb" // Fill the inside with blue
+                    strokeWidth={1}
                   />
-            
                   {/* Hover highlight ring */}
                   <div
                     className="
