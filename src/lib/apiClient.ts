@@ -1,5 +1,4 @@
 import api from './api';
-import type { Publication, Author, ResearchCategory } from '../types/supabase';
 
 // Publications API using Supabase
 export const publicationsApi = {

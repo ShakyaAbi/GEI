@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ChevronRight, ArrowLeft, Users, Calendar, MapPin, Target, ExternalLink } from 'lucide-react';
+import { ChevronRight, ArrowLeft, Users, Calendar, MapPin, Goal, ExternalLink } from 'lucide-react';
 import { useProgramAreas } from '../hooks/useProgramAreas';
 import { useProjects } from '../hooks/useProjects';
 import { ProjectCard } from '../components/projects/ProjectCard';
@@ -160,7 +160,7 @@ const ProgramAreaDetailPage = () => {
               </div>
             ) : (
               <div className="text-center py-12 bg-gray-50 rounded-lg">
-                <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <Goal className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
                   No Projects Yet
                 </h3>

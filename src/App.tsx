@@ -31,6 +31,7 @@ const ResearchPublicationsPage = React.lazy(() => import('./pages/ResearchPublic
 const OurStoriesPage = React.lazy(() => import('./pages/OurStoriesPage'));
 const StoryDetailPage = React.lazy(() => import('./pages/StoryDetailPage'));
 const StoriesManager = React.lazy(() => import('./components/admin/StoriesManager'));
+const FacultyAdminPage = React.lazy(() => import('./pages/admin/FacultyAdminPage'));
 
 function App() {
   return (
@@ -70,6 +71,13 @@ function App() {
             <ProtectedRoute>
               <AdminLayout>
                 <ProgramAreasAdmin />
+              </AdminLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/faculty" element={
+            <ProtectedRoute>
+              <AdminLayout>
+                <FacultyAdminPage />
               </AdminLayout>
             </ProtectedRoute>
           } />

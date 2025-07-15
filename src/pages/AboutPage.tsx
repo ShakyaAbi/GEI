@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Target, Eye, Users, Lightbulb, Award, Heart, Globe, Zap, Calendar, MapPin, Mail, Linkedin, Twitter, ChevronLeft, ChevronRight, Brain, Compass, ArrowRight } from 'lucide-react';
+import { Goal, Eye, Users, Lightbulb, Award, Heart, Globe, Zap, Calendar, MapPin, Mail, Linkedin, Twitter, ChevronLeft, ChevronRight, Brain, Compass, ArrowRight } from 'lucide-react';
 import Footer from '../components/Footer';
 import TiltedCard from '../components/TiltedCard';
+import { useFaculty } from '../hooks/useFaculty';
 
 const AboutPage = () => {
   const location = useLocation();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const { facultyMembers, loading, error } = useFaculty();
 
   useEffect(() => {
     // Handle hash-based scrolling
@@ -41,53 +43,22 @@ const AboutPage = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Faculty Team (new content)
-  const facultyTeam = [
-    { name: 'Suyog, MBA', title: 'GEI business development' },
-    { name: 'Allison Judkins MD', title: 'Director: Research and Maternal child health' },
-    { name: 'Spencer Crocker MS', title: 'Founder and President' },
-    { name: 'Bibek Lamicchane MPH', title: 'Director of operations GEI Asia' },
-    { name: 'Ranjan Dhungana MPH', title: 'Project Consultant' },
-    { name: 'Rabin Dhital MPH', title: 'Field officer' },
-    { name: 'Leela Khanal MS', title: 'Project Project consultant.' },
-    { name: 'Sarala Sharma, BSN', title: 'Project consultant' },
-    { name: 'Priyanka', title: 'Program officer' },
-    { name: 'Paribesh Bidari, MS', title: 'Research and Data and Communications' },
-    { name: 'Vaskar Sapkota MPH', title: 'Project Manager' },
-  ];
+  // Remove hardcoded facultyTeam - it will now come from useFaculty hook
+  // const facultyTeam = [
+  //   { name: 'Suyog, MBA', title: 'GEI business development', photo: '/faculty/suyog.jpg' },
+  //   { name: 'Allison Judkins MD', title: 'Director: Research and Maternal child health', photo: '/faculty/allison-judkins.jpg' },
+  //   { name: 'Spencer Crocker MS', title: 'Founder and President', photo: '/faculty/spencer-crocker.jpg' },
+  //   { name: 'Bibek Lamicchane MPH', title: 'Director of operations GEI Asia', photo: '/faculty/bibek-lamicchane.jpg' },
+  //   { name: 'Ranjan Dhungana MPH', title: 'Project Consultant', photo: '/faculty/ranjan-dhungana.jpg' },
+  //   { name: 'Rabin Dhital MPH', title: 'Field officer', photo: '/faculty/rabin-dhital.jpg' },
+  //   { name: 'Leela Khanal MS', title: 'Project Project consultant.', photo: '/faculty/leela-khanal.jpg' },
+  //   { name: 'Sarala Sharma, BSN', title: 'Project consultant', photo: '/faculty/sarala-sharma.jpg' },
+  //   { name: 'Priyanka', title: 'Program officer', photo: '/faculty/priyanka.jpg' },
+  //   { name: 'Paribesh Bidari, MS', title: 'Research and Data and Communications', photo: '/faculty/paribesh-bidari.jpg' },
+  //   { name: 'Vaskar Sapkota MPH', title: 'Project Manager', photo: '/faculty/vaskar-sapkota.jpg' },
+  // ];
 
-  const values = [
-    {
-      icon: Heart,
-      title: 'Compassion',
-      description: 'We approach every challenge with empathy and understanding for communities and ecosystems, ensuring that human dignity and environmental stewardship guide our every action.'
-    },
-    {
-      icon: Globe,
-      title: 'Global Perspective',
-      description: 'We think globally while acting locally, understanding the interconnected nature of environmental challenges and their impact across borders and communities.'
-    },
-    {
-      icon: Lightbulb,
-      title: 'Innovation',
-      description: 'We embrace creative solutions and cutting-edge approaches to environmental problems, fostering a culture of continuous learning and breakthrough thinking.'
-    },
-    {
-      icon: Users,
-      title: 'Collaboration',
-      description: 'We believe in the power of partnerships and community-driven solutions, recognizing that lasting change comes through collective action and shared responsibility.'
-    },
-    {
-      icon: Award,
-      title: 'Excellence',
-      description: 'We maintain the highest standards in all our programs and research initiatives, ensuring quality, integrity, and measurable impact in everything we do.'
-    },
-    {
-      icon: Zap,
-      title: 'Impact',
-      description: 'We focus on measurable, sustainable change that transforms lives and environments, prioritizing long-term solutions over short-term fixes.'
-    }
-  ];
+  
 
   const milestones = [
     {
@@ -150,11 +121,11 @@ const AboutPage = () => {
 
   // Carousel functionality
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % Math.ceil(values.length / 3));
+    setCurrentSlide((prev) => (prev + 1) % Math.ceil(milestones.length / 3)); // Changed from values.length to milestones.length
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + Math.ceil(values.length / 3)) % Math.ceil(values.length / 3));
+    setCurrentSlide((prev) => (prev - 1 + Math.ceil(milestones.length / 3)) % Math.ceil(milestones.length / 3)); // Changed from values.length to milestones.length
   };
 
   const goToSlide = (index: number) => {
@@ -172,7 +143,7 @@ const AboutPage = () => {
     return () => clearInterval(interval);
   }, [isAutoPlaying, currentSlide]);
 
-  const totalSlides = Math.ceil(values.length / 3);
+  const totalSlides = Math.ceil(milestones.length / 3); // Changed from values.length to milestones.length
 
   // Parallax background for process section
   const ProcessParallaxBackground = () => {
@@ -307,7 +278,7 @@ const AboutPage = () => {
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 lg:p-12 border border-blue-100 reveal">
               <div className="flex items-center mb-8">
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mr-6 motion-pulse">
-                  <Target className="w-8 h-8 text-white" />
+                  <Goal className="w-8 h-8 text-white" />
                 </div>
                 <h2 className="text-3xl font-bold font-playfair text-gray-900">Our Mission</h2>
               </div>
@@ -364,14 +335,42 @@ const AboutPage = () => {
           <div className="text-center mb-16 reveal">
             <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">Faculty Team</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {facultyTeam.map((member, index) => (
-              <div key={index} className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col items-center justify-center py-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair">{member.name}</h3>
-                <p className="text-blue-600 font-semibold mb-3 text-center font-inter">{member.title}</p>
-              </div>
-            ))}
-          </div>
+          {loading && <p className="text-center text-gray-600">Loading faculty...</p>}
+          {error && <p className="text-center text-red-500">Error loading faculty: {error}</p>}
+          {!loading && !error && facultyMembers.length === 0 && (
+            <p className="text-center text-gray-600">No faculty members found.</p>
+          )}
+          {!loading && !error && facultyMembers.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {facultyMembers.map((member) => (
+                <div key={member.id} className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col items-center justify-center py-0">
+                  <div className="w-full h-48 bg-gray-100 flex items-center justify-center overflow-hidden">
+                    <img
+                      src={member.photo || '/faculty/placeholder.jpg'}
+                      alt={member.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => { e.currentTarget.src = '/faculty/placeholder.jpg'; }}
+                    />
+                  </div>
+                  <div className="flex-1 flex flex-col items-center justify-center p-8">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair text-center">{member.name}</h3>
+                    <p className="text-blue-600 font-semibold mb-3 text-center font-inter">{member.title}</p>
+                    {member.linkedin && (
+                      <a
+                        href={member.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors mt-2"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm15.5 11.268h-3v-5.604c0-1.337-.026-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.841-1.563 3.041 0 3.603 2.003 3.603 4.605v5.591z"/></svg>
+                        LinkedIn
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

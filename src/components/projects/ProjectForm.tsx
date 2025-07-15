@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Save, X, Plus, Trash2, Upload, MapPin, Calendar, Link, Mail, Hash, Type, Target, Users, DollarSign } from 'lucide-react';
+import { Save, X, Plus, Trash2, Upload, MapPin, Calendar, Link, Mail, Hash, Type, Goal, Users, DollarSign } from 'lucide-react';
 import { useProgramAreas } from '../../hooks/useProgramAreas';
 import type { Project, ProjectCustomField } from '../../types/project';
 import { generateSlug } from '../../lib/projectsApi';
@@ -354,7 +354,7 @@ export function ProjectForm({ project, onSubmit, onCancel }: ProjectFormProps) {
             <div className="space-y-3">
               {formData.impact_metrics?.map((metric, index) => (
                 <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                  <Target className="w-4 h-4 text-gray-400" />
+                  <Goal className="w-4 h-4 text-gray-400" />
                   <span className="flex-1 text-sm">{metric}</span>
                   <button
                     type="button"

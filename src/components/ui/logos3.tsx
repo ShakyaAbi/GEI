@@ -61,18 +61,12 @@ const Logos3 = ({
     {
       id: "logo-6",
       description: "Logo 6",
-      image: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/supabase-wordmark.svg",
-      className: "h-7 w-auto",
-    },
-    {
-      id: "logo-7",
-      description: "Logo 7",
       image: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/tailwind-wordmark.svg",
       className: "h-4 w-auto",
     },
     {
-      id: "logo-8",
-      description: "Logo 8",
+      id: "logo-7",
+      description: "Logo 7",
       image: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/vercel-wordmark.svg",
       className: "h-7 w-auto",
     },

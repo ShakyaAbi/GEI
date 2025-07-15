@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Save, X, Upload, Loader2, Target, Eye, Search, SortAsc, SortDesc, FolderOpen } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, Upload, Loader2, Goal, Eye, Search, SortAsc, SortDesc, FolderOpen } from 'lucide-react';
 import { useProgramAreas } from '../../hooks/useProgramAreas';
 import ImageUpload from './ImageUpload';
 import { programAreasApi } from '../../lib/programAreasApi';
@@ -325,7 +325,7 @@ const ProgramAreasAdmin = () => {
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
-                  <Target className="w-4 h-4 mr-2 inline" />
+                  <Goal className="w-4 h-4 mr-2 inline" />
                   All Projects
                 </button>
               </nav>
@@ -385,7 +385,7 @@ const ProgramAreasAdmin = () => {
               </div>
             ) : sortedAreas.length === 0 ? (
               <div className="text-center py-20">
-                <Target className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <Goal className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No Program Areas Yet</h3>
                 <p className="text-gray-600 mb-6">Get started by adding your first program area.</p>
                 <button
@@ -463,7 +463,7 @@ const ProgramAreasAdmin = () => {
                           className="p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                           title="Manage Projects"
                         >
-                          <Target className="w-4 h-4" />
+                          <Goal className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => openModal(programArea)}

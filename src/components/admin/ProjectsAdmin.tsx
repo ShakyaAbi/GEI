@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Save, X, MapPin, Calendar, Users, DollarSign, Target, Eye, Search, Filter, Loader2, AlertCircle, Upload, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, MapPin, Calendar, Users, DollarSign, Goal, Eye, Search, Filter, Loader2, AlertCircle, Upload, Image as ImageIcon } from 'lucide-react';
 import { useProjects } from '../../hooks/useProjects';
 import { useProgramAreas } from '../../hooks/useProgramAreas';
 import { ProjectStatusBadge } from '../projects/ProjectStatusBadge';
@@ -449,7 +449,7 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
           </div>
         ) : filteredProjects.length === 0 ? (
           <div className="text-center py-20">
-            <Target className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <Goal className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No Projects Found</h3>
             <p className="text-gray-600 mb-6">
               {searchTerm || statusFilter !== 'all' || programAreaFilter !== 'all'
@@ -751,7 +751,7 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
                     <div className="space-y-3">
                       {(formData.impact_metrics ?? []).map((metric: string, index: number) => (
                         <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                          <Target className="w-4 h-4 text-gray-400" />
+                          <Goal className="w-4 h-4 text-gray-400" />
                           <span className="flex-1 text-sm">{metric}</span>
                           <button
                             type="button"

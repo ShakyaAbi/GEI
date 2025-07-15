@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Target, Users, MapPin, Calendar, TrendingUp, Award, ExternalLink, Search, Filter, Eye, Loader2, AlertCircle, Plus, SortAsc, SortDesc } from 'lucide-react';
+import { Goal, Users, MapPin, Calendar, TrendingUp, Award, ExternalLink, Search, Filter, Eye, Loader2, AlertCircle, Plus, SortAsc, SortDesc } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import ImageGalleryCarousel from '../components/ImageGalleryCarousel';
@@ -69,7 +69,7 @@ const OurWorkPage = () => {
   
   const impactStats = [
     { number: '1.2M+', label: 'Lives Impacted', icon: Users, color: 'from-blue-600 to-cyan-600' },
-    { number: totalProjectsCount.toString(), label: 'Total Projects', icon: Target, color: 'from-blue-600 to-cyan-600' },
+    { number: totalProjectsCount.toString(), label: 'Total Projects', icon: Goal, color: 'from-blue-600 to-cyan-600' },
     { number: activeProjectsCount.toString(), label: 'Active Projects', icon: TrendingUp, color: 'from-green-600 to-emerald-600' },
     { number: '850+', label: 'Local Partners', icon: Award, color: 'from-blue-600 to-cyan-600' }
   ];
@@ -193,7 +193,7 @@ const OurWorkPage = () => {
                 className="inline-flex items-center px-8 py-4 text-blue-600 hover:text-white hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-600 text-lg font-medium rounded-xl border-2 border-blue-200 hover:border-transparent transition-all duration-300 group shadow-lg hover:shadow-xl"
               >
                 View Program Areas
-                <Target className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                <Goal className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </button>
               <button
                 onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
@@ -265,7 +265,7 @@ const OurWorkPage = () => {
             </div>
           ) : sortedProgramAreas.length === 0 ? (
             <div className="text-center py-20">
-              <Target className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <Goal className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 mb-2">No Program Areas Found</h3>
               <p className="text-gray-600 mb-8">
                 No program areas match your current search criteria.
@@ -296,7 +296,7 @@ const OurWorkPage = () => {
                       <div className="w-full h-full bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-600 flex items-center justify-center relative overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                        <Target className="w-16 h-16 text-white/80 relative z-10" />
+                        <Goal className="w-16 h-16 text-white/80 relative z-10" />
                       </div>
                     )}
                     
@@ -324,7 +324,7 @@ const OurWorkPage = () => {
                     {/* Projects Count */}
                     <div className="mb-4 flex items-center justify-between">
                       <div className="flex items-center text-sm text-gray-600">
-                        <Target className="w-4 h-4 mr-2 text-cyan-500" />
+                        <Goal className="w-4 h-4 mr-2 text-cyan-500" />
                         <span className="font-medium">{(programArea.projectCount ?? 0)} Active Projects</span>
                       </div>
                       
@@ -427,7 +427,7 @@ const OurWorkPage = () => {
             </div>
           ) : sortedProjects.length === 0 ? (
             <div className="text-center py-20">
-              <Target className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <Goal className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 mb-2">No Projects Found</h3>
               <p className="text-gray-600 mb-8">
                 {projectSearchTerm || projectStatusFilter !== 'all' 
@@ -455,7 +455,7 @@ const OurWorkPage = () => {
                       <div className="w-full h-full bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 flex items-center justify-center relative overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                        <Target className="w-16 h-16 text-white/80 relative z-10" />
+                        <Goal className="w-16 h-16 text-white/80 relative z-10" />
                       </div>
                     )}
                     

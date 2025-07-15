@@ -1,7 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send, Building } from 'lucide-react';
 
 const Contact = () => {
+  const [form, setForm] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    organization: '',
+    subject: '',
+    message: '',
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { id, value } = e.target;
+    setForm((prev) => ({ ...prev, [id]: value }));
+    setError('');
+    setSuccess('');
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess('Your message has been sent!');
+        setForm({ firstName: '', lastName: '', email: '', organization: '', subject: '', message: '' });
+      } else {
+        setError(data.message || 'Failed to send message.');
+      }
+    } catch (err) {
+      setError('Failed to send message.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section id="contact" className="py-20 bg-white">
       <div className="container mx-auto px-6">
@@ -73,7 +117,10 @@ const Contact = () => {
             <div className="bg-gray-50 rounded-3xl p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h3>
               
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
+                {/* Success/Error Message */}
+                {success && <div className="p-3 bg-green-100 text-green-800 rounded">{success}</div>}
+                {error && <div className="p-3 bg-red-100 text-red-800 rounded">{error}</div>}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
@@ -82,8 +129,11 @@ const Contact = () => {
                     <input
                       type="text"
                       id="firstName"
+                      value={form.firstName}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       placeholder="Enter your first name"
+                      required
                     />
                   </div>
                   <div>
@@ -93,8 +143,11 @@ const Contact = () => {
                     <input
                       type="text"
                       id="lastName"
+                      value={form.lastName}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       placeholder="Enter your last name"
+                      required
                     />
                   </div>
                 </div>
@@ -106,8 +159,11 @@ const Contact = () => {
                   <input
                     type="email"
                     id="email"
+                    value={form.email}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     placeholder="Enter your email address"
+                    required
                   />
                 </div>
 
@@ -118,6 +174,8 @@ const Contact = () => {
                   <input
                     type="text"
                     id="organization"
+                    value={form.organization}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     placeholder="Enter your organization name"
                   />
@@ -129,7 +187,10 @@ const Contact = () => {
                   </label>
                   <select
                     id="subject"
+                    value={form.subject}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    required
                   >
                     <option value="">Select a subject</option>
                     <option value="partnership">Research Partnership</option>
@@ -148,17 +209,20 @@ const Contact = () => {
                   <textarea
                     id="message"
                     rows={6}
+                    value={form.message}
+                    onChange={handleChange}
                     className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
                     placeholder="Tell us about your inquiry or how we can help you..."
+                    required
                   ></textarea>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-blue-700 to-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-800 hover:to-blue-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center group"
+                  className="w-full bg-gradient-to-r from-blue-700 to-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-800 hover:to-blue-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center group disabled:opacity-60"
+                  disabled={loading}
                 >
-                  Send Message
-                  <Send className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  {loading ? 'Sending...' : (<><span>Send Message</span><Send className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" /></>)}
                 </button>
               </form>
             </div>

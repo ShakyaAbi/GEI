@@ -395,7 +395,7 @@ const ProjectDetailPage = () => {
             {impactMetrics.length > 0 && (
               <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                  <Target className="w-6 h-6 mr-3 text-green-600" />
+                  <Goal className="w-6 h-6 mr-3 text-green-600" />
                   Impact Metrics
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

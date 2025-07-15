@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Calendar, Users, ArrowRight, Clock, Target, Award, TrendingUp } from 'lucide-react';
+import { MapPin, Calendar, Users, ArrowRight, Clock, Goal, Award, TrendingUp } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import type { Project } from '../../types/project';
 import { ProjectStatusBadge } from './ProjectStatusBadge';

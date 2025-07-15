@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, MapPin, DollarSign, Users, Target, Award, TrendingUp, Clock } from 'lucide-react';
+import { Calendar, MapPin, DollarSign, Users, Goal, Award, TrendingUp, Clock } from 'lucide-react';
 import { ProjectStatusBadge } from './ProjectStatusBadge';
 import type { Project } from '../../types/project';
 
@@ -120,7 +120,7 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
       {project.impact_metrics && project.impact_metrics.length > 0 && (
         <div className="mb-6">
           <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
-            <Target className="w-5 h-5 mr-2 text-blue-600" />
+            <Goal className="w-5 h-5 mr-2 text-blue-600" />
             Impact Metrics
           </h3>
           <div className="space-y-2">
