@@ -575,6 +575,37 @@ Health facilities are now able to provide basic preventive and life-saving care.
       }
     }
     console.log(`Upserted ${projects.length} comprehensive GEI projects with Markdown support`);
+
+    // Add or replace the faculty seeding section:
+    const facultyMembers = [
+      { name: 'Spencer Crocker MS', title: 'Founder and President' },
+      { name: 'Bernhard Fassl MD', title: 'Chief Operating Officer' },
+      { name: 'Allison Judkins MD', title: 'Director: Research and Maternal child health' },
+      { name: 'Suyog, MBA', title: 'GEI business development' },
+      { name: 'Bibek Lamicchane MPH/MPA', title: 'Director of operations GEI Asia' },
+      { name: 'Ranjan Dhungana MPH', title: 'Project Consultant' },
+      { name: 'Rabin Dhital BPH', title: 'Monitoring, Evaluation, Accountability and Learning (MEAL) Officer' },
+      { name: 'Leela Khanal MS', title: 'Project consultant.' },
+      { name: 'Sarala Sharma, MN', title: 'Project consultant' },
+      { name: 'Shreya Lohani', title: 'Field supervisor-Health project' },
+      { name: 'Priyanka Padhyay', title: 'Field supervisor-Health project' },
+      { name: 'Paribesh Bidari, MBA', title: 'Research, Data and Communications Consultant/Officer' },
+      { name: 'Vaskar Sapkota MPH', title: 'Project Coordinator-DH' },
+      { name: 'Padam', title: 'Field Supervisor-Agriculture Project' },
+      { name: 'Santosh Rawal', title: 'Field Supervisor-Health Project' },
+  
+      { name: 'Kishor Rawal BPH', title: 'District Coordinator' },
+      { name: 'Deepa Pudasaini', title: 'Field Supervisor-Health  Project' },
+      { name: 'Ramu GC', title: 'Finance Manager' },
+      { name: 'Priya Thapa RanaMagar', title: 'Support Staff' },
+    ];
+
+    // Replace the upsert loop for faculty with createMany:
+    await prisma.faculty.createMany({
+      data: facultyMembers,
+      skipDuplicates: true,
+    });
+    console.log(`Seeded ${facultyMembers.length} faculty members`);
   } catch (error) {
     console.error('Error during GEI seed:', error);
     process.exit(1);

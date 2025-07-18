@@ -178,11 +178,7 @@ const Publications = () => {
                         setSelectedCategory('all');
                       }
                     }}
-                    className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                      selectedCategory === 'all'
-                        ? 'bg-gradient-to-r from-base-blue to-muted-blue text-white shadow-lg transform scale-105'
-                        : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-base-blue/30'
-                    }`}
+                    className="px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-blue-600 text-white shadow-lg transform scale-105"
                   >
                     All Areas
                   </button>

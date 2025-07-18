@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Goal, Users, MapPin, Calendar, TrendingUp, Award, ExternalLink, Search, Filter, Eye, Loader2, AlertCircle, Plus, SortAsc, SortDesc } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -19,15 +19,29 @@ function getLucideIcon(iconName: string) {
   return IconComponent ? <IconComponent className="w-4 h-4 mr-1 text-blue-500 inline-block align-middle" /> : null;
 }
 
+function ProjectSkeletonCard() {
+  return (
+    <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 animate-pulse">
+      <div className="h-48 bg-gray-200" />
+      <div className="p-6">
+        <div className="h-6 bg-gray-200 rounded w-2/3 mb-4" />
+        <div className="h-4 bg-gray-100 rounded w-1/2 mb-2" />
+        <div className="h-4 bg-gray-100 rounded w-1/3 mb-4" />
+        <div className="h-4 bg-gray-100 rounded w-1/4 mb-4" />
+        <div className="flex gap-2 mt-4">
+          <div className="h-8 w-20 bg-gray-200 rounded" />
+          <div className="h-8 w-20 bg-gray-100 rounded" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const OurWorkPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [sortBy, setSortBy] = useState<'name' | 'created_at' | 'order_index'>('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [projectSortBy, setProjectSortBy] = useState<'title' | 'created_at' | 'status'>('created_at');
-  const [projectSortOrder, setProjectSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [projectStatusFilter, setProjectStatusFilter] = useState<'active' | 'completed' | 'on_hold' | 'cancelled' | 'all'>('all');
-  const [projectSearchTerm, setProjectSearchTerm] = useState('');
   
   const { programAreas, loading, error } = useProgramAreas();
   const { projects, loading: projectsLoading, error: projectsError } = useProjects();
@@ -68,7 +82,7 @@ const OurWorkPage = () => {
   const totalProjectsCount = projects.length;
   
   const impactStats = [
-    { number: '1.2M+', label: 'Lives Impacted', icon: Users, color: 'from-blue-600 to-cyan-600' },
+    { number: '100,000', label: 'Lives Impacted', icon: Users, color: 'from-blue-600 to-cyan-600' },
     { number: totalProjectsCount.toString(), label: 'Total Projects', icon: Goal, color: 'from-blue-600 to-cyan-600' },
     { number: activeProjectsCount.toString(), label: 'Active Projects', icon: TrendingUp, color: 'from-green-600 to-emerald-600' },
     { number: '850+', label: 'Local Partners', icon: Award, color: 'from-blue-600 to-cyan-600' }
@@ -88,30 +102,6 @@ const OurWorkPage = () => {
     }
     
     if (sortOrder === 'asc') {
-      return aValue > bValue ? 1 : -1;
-    } else {
-      return aValue < bValue ? 1 : -1;
-    }
-  });
-
-  // Filter and sort projects
-  const filteredProjects = projects.filter(project => {
-    const matchesSearch = project.title.toLowerCase().includes(projectSearchTerm.toLowerCase()) ||
-                         (project.description && project.description.toLowerCase().includes(projectSearchTerm.toLowerCase()));
-    const matchesStatus = projectStatusFilter === 'all' || project.status === projectStatusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
-  const sortedProjects = [...filteredProjects].sort((a: Project, b: Project) => {
-    let aValue: any = a[projectSortBy];
-    let bValue: any = b[projectSortBy];
-    
-    if (projectSortBy === 'created_at') {
-      aValue = new Date(a.created_at || 0);
-      bValue = new Date(b.created_at || 0);
-    }
-    
-    if (projectSortOrder === 'asc') {
       return aValue > bValue ? 1 : -1;
     } else {
       return aValue < bValue ? 1 : -1;
@@ -219,14 +209,24 @@ const OurWorkPage = () => {
                     <IconComponent className="w-8 h-8 text-white" />
                   </div>
                   <div className={`text-3xl lg:text-4xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-2`}>
-                    <CountUp
-                      from={0}
-                      to={parseInt(stat.number.replace(/[^\d]/g, '')) || 0}
-                      separator="," 
-                      direction="up"
-                      duration={1.5}
-                      className="count-up-text"
-                    />
+                    {index === 0 ? (
+                      <CountUp
+                        from={0}
+                        to={parseInt(stat.number.replace(/[^\d]/g, '')) || 0}
+                        separator="," 
+                        direction="up"
+                        duration={1.5}
+                        className="count-up-text"
+                      />
+                    ) : (
+                      <CountUp
+                        from={0}
+                        to={parseInt(stat.number.replace(/[^\d]/g, '')) || 0}
+                        direction="up"
+                        duration={1.5}
+                        className="count-up-text"
+                      />
+                    )}
                     {stat.number.match(/\D+$/) ? <span>{stat.number.match(/\D+$/)?.[0]}</span> : null}
                   </div>
                   <div className="text-gray-600 font-medium">{stat.label}</div>
@@ -367,52 +367,9 @@ const OurWorkPage = () => {
             </p>
           </div>
 
-          {/* Projects Search and Filter */}
-          <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-6 mb-12">
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search projects by title or description..."
-                  value={projectSearchTerm}
-                  onChange={(e) => setProjectSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
-                />
-              </div>
-              <div className="flex gap-4">
-                <div className="relative">
-                  <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <select
-                    value={projectStatusFilter}
-                    onChange={(e) => setProjectStatusFilter(e.target.value as 'active' | 'completed' | 'on_hold' | 'cancelled' | 'all')}
-                    className="pl-10 pr-8 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm appearance-none"
-                  >
-                    <option value="all">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="completed">Completed</option>
-                    <option value="on_hold">On Hold</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-                </div>
-                <div className="flex border border-gray-200 rounded-xl overflow-hidden bg-white/80 backdrop-blur-sm">
-                  <button
-                    onClick={() => setProjectSortOrder(projectSortOrder === 'asc' ? 'desc' : 'asc')}
-                    className="px-3 py-3 hover:bg-gray-50 transition-colors"
-                  >
-                    {projectSortOrder === 'asc' ? <SortAsc className="w-4 h-4" /> : <SortDesc className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {projectsLoading ? (
-            <div className="flex items-center justify-center py-20">
-              <div className="text-center">
-                <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-                <p className="text-gray-600">Loading projects...</p>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {Array.from({ length: 6 }).map((_, i) => <ProjectSkeletonCard key={i} />)}
             </div>
           ) : projectsError ? (
             <div className="text-center py-20">
@@ -428,20 +385,17 @@ const OurWorkPage = () => {
                 Refresh Page
               </button>
             </div>
-          ) : sortedProjects.length === 0 ? (
+          ) : projects.length === 0 ? (
             <div className="text-center py-20">
               <Goal className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 mb-2">No Projects Found</h3>
               <p className="text-gray-600 mb-8">
-                {projectSearchTerm || projectStatusFilter !== 'all' 
-                  ? 'No projects match your current search criteria. Try adjusting your filters.'
-                  : 'No projects are currently available.'
-                }
+                No projects are currently available.
               </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {sortedProjects.map((project, index) => (
+              {projects.map((project, index) => (
                 <div
                   key={project.id}
                   className="bg-white rounded-2xl overflow-hidden shadow-lg hover-lift border border-gray-100 group reveal"

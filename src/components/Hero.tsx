@@ -15,27 +15,27 @@ const Hero = () => {
       {
         title: "Innovation",
         image: "/IMG_2047.jpeg",
-        link: "/our-stories/1"
+        link: "/our-stories"
       },
       {
         title: "Collaborations",
         image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80",
-        link: "/our-stories/2"
+        link: "/our-stories"
       },
       {
         title: "Sustainability",
         image: "/image2.jpg",
-        link: "/our-stories/3"
+        link: "/our-stories"
       },
       {
         title: "Community",
         image: "/Story1.jpg",
-        link: "/our-stories/4"
+        link: "/our-stories"
       },
       {
         title: "Empowerment",
-        image: "https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg?auto=compress&cs=tinysrgb&w=1200&h=675&fit=crop",
-        link: "/our-stories/5"
+        image: "/american-physician-examines-elderly-asian-patients-using-hearing-aid.jpg",
+        link: "/our-stories"
       }
     ],
     []

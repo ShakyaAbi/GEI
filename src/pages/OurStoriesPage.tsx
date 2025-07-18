@@ -4,8 +4,6 @@ import Footer from '../components/Footer';
 import { useStories, Story } from '../hooks/useStories';
 import { useNavigate } from 'react-router-dom';
 
-const categories = ['All', 'Conservation', 'Youth Leadership', 'Renewable Energy', 'Urban Agriculture', 'Education'];
-
 const OurStoriesPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const navigate = useNavigate();
@@ -70,7 +68,8 @@ const OurStoriesPage: React.FC = () => {
       </section>
 
       {/* Category Filter */}
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      {/* Remove the category filter buttons */}
+      {/* <div className="max-w-6xl mx-auto px-6 py-8">
         <div className="flex flex-wrap gap-3 justify-center">
           {categories.map((category) => (
             <button
@@ -86,7 +85,7 @@ const OurStoriesPage: React.FC = () => {
             </button>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Unified Stories List (Alternating Format) */}
       <div className="max-w-7xl mx-auto px-6 py-8">

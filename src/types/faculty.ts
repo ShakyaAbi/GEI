@@ -4,4 +4,5 @@ export interface FacultyMember {
   title: string;
   photo: string;
   linkedin?: string;
+  orderIndex?: number;
 } 

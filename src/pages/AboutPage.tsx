@@ -220,7 +220,7 @@ const AboutPage = () => {
                 overlayContent={
                   <div className="w-full h-full p-8 flex flex-col justify-between">
                     <div className="mb-6">
-                      <div className="w-16 h-16 bg-gradient-to-br from-brand-blue to-brand-dark-blue rounded-xl flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+                      <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
                         {React.createElement(step.icon, { size: 32 })}
                       </div>
                     </div>

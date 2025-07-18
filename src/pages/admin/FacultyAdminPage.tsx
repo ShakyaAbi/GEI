@@ -11,6 +11,7 @@ interface FacultyFormState {
   photoFile?: File | null;
   photoUrl?: string;
   linkedin?: string;
+  orderIndex?: number;
 }
 
 const FacultyAdminPage: React.FC = () => {
@@ -24,6 +25,7 @@ const FacultyAdminPage: React.FC = () => {
     photoFile: null,
     photoUrl: undefined,
     linkedin: '',
+    orderIndex: 0,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -38,6 +40,7 @@ const FacultyAdminPage: React.FC = () => {
         photoFile: null,
         photoUrl: currentFaculty.photo,
         linkedin: currentFaculty.linkedin || '',
+        orderIndex: currentFaculty.orderIndex ?? 0,
       });
     } else {
       setFormData({
@@ -46,6 +49,7 @@ const FacultyAdminPage: React.FC = () => {
         photoFile: null,
         photoUrl: undefined,
         linkedin: '',
+        orderIndex: 0,
       });
     }
   }, [currentFaculty]);
@@ -59,6 +63,7 @@ const FacultyAdminPage: React.FC = () => {
         photoFile: null,
         photoUrl: member.photo || undefined,
         linkedin: member.linkedin || '',
+        orderIndex: member.orderIndex ?? 0,
       });
     } else {
       setCurrentFaculty(null);
@@ -68,6 +73,7 @@ const FacultyAdminPage: React.FC = () => {
         photoFile: null,
         photoUrl: undefined,
         linkedin: '',
+        orderIndex: 0,
       });
     }
     setIsModalOpen(true);
@@ -85,6 +91,7 @@ const FacultyAdminPage: React.FC = () => {
       photoFile: null,
       photoUrl: undefined,
       linkedin: '',
+      orderIndex: 0,
     });
     setLocalError(null);
   };
@@ -102,7 +109,8 @@ const FacultyAdminPage: React.FC = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: name === 'orderIndex' ? Number(value) : value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -145,6 +153,7 @@ const FacultyAdminPage: React.FC = () => {
         title: formData.title,
         photo: finalPhotoUrl || '/faculty/placeholder.jpg',  // Ensure photo is always a string
         linkedin: formData.linkedin || undefined,  // Use undefined instead of null
+        orderIndex: formData.orderIndex ?? 0,
       };
 
       if (currentFaculty) {
@@ -215,11 +224,12 @@ const FacultyAdminPage: React.FC = () => {
               <th className="py-3 px-6 text-left">Name</th>
               <th className="py-3 px-6 text-left">Title</th>
               <th className="py-3 px-6 text-left">LinkedIn</th>
+              <th className="py-3 px-6 text-left">Order</th>
               <th className="py-3 px-6 text-center">Actions</th>
             </tr>
           </thead>
           <tbody className="text-gray-700 text-sm font-light">
-            {facultyMembers.map((member) => (
+            {[...facultyMembers].sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0)).map((member) => (
               <tr key={member.id} className="border-b border-gray-200 hover:bg-gray-100">
                 <td className="py-3 px-6 text-left">
                   <img src={member.photo} alt={member.name} className="w-12 h-12 rounded-full object-cover" onError={(e) => { e.currentTarget.src = '/faculty/placeholder.jpg'; }} />
@@ -236,6 +246,7 @@ const FacultyAdminPage: React.FC = () => {
                     <span className="text-gray-400">—</span>
                   )}
                 </td>
+                <td className="py-3 px-6 text-left">{member.orderIndex ?? 0}</td>
                 <td className="py-3 px-6 text-center">
                   <div className="flex item-center justify-center">
                     <button
@@ -301,6 +312,17 @@ const FacultyAdminPage: React.FC = () => {
                   onChange={handleChange}
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="https://www.linkedin.com/in/username"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium mb-2">Order</label>
+                <input
+                  type="number"
+                  name="orderIndex"
+                  value={formData.orderIndex ?? 0}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  min={0}
                 />
               </div>
               <div className="mb-6">

@@ -320,6 +320,7 @@ model faculty {
   awards             Int?
   linkedin_url       String?
   google_scholar_url String?
+  orderIndex         Int      @default(0) @map("order_index")
   created_at         DateTime @default(now()) @db.Timestamptz(6)
   updated_at         DateTime @default(now()) @db.Timestamptz(6)
 }
