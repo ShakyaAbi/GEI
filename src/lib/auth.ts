@@ -70,15 +70,13 @@ export const getAuthSession = async () => {
 export const signIn = async (email: string, password: string) => {
   try {
     const response = await api.post('/auth/login', { email, password });
-    
-    if (response.data.error === false) {
-      // Store token in localStorage
+    console.log('Login API response:', response.data); // Debug log
+    if (response.data.error === false || response.data.error === 'false') {
       localStorage.setItem('token', response.data.data.token);
       return { user: response.data.data.user, error: null };
     }
-    
     return { user: null, error: new Error('Invalid credentials') };
-  } catch (error) {
+  } catch (error: any) {
     return { 
       user: null, 
       error: error.response?.data?.message || 'Login failed' 

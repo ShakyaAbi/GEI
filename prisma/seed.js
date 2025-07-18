@@ -8,12 +8,12 @@ async function main() {
     console.log('Starting GEI seed...');
 
     // Create admin user
-    const adminPassword = await bcrypt.hash('admin123', 10);
+    const adminPassword = await bcrypt.hash('admin22', 10);
     const admin = await prisma.user.upsert({
-      where: { email: 'admin@gei.org' },
+      where: { email: 'admin21@gei.org' },
       update: {},
       create: {
-        email: 'admin@gei.org',
+        email: 'admin21@gei.org',
         password: adminPassword,
         name: 'Admin User',
         role: 'admin'

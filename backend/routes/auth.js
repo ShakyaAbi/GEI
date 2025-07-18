@@ -23,19 +23,20 @@ router.post('/login', authLimiter, [
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    const errorMessages = errors.array().map(error => error.msg).join(', ');
+    return res.status(400).json({ error: true, message: errorMessages });
   }
   try {
     const { email, password } = req.body;
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ error: true, message: 'Invalid credentials' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ error: true, message: 'Invalid credentials' });
     }
 
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -48,7 +49,7 @@ router.post('/login', authLimiter, [
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error during login' });
+    res.status(500).json({ error: true, message: 'Server error during login' });
   }
 });
 
@@ -60,7 +61,8 @@ router.post('/register', authLimiter, [
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    const errorMessages = errors.array().map(error => error.msg).join(', ');
+    return res.status(400).json({ error: true, message: errorMessages });
   }
   try {
     const { email, password, username, role } = req.body;
@@ -79,7 +81,7 @@ router.post('/register', authLimiter, [
     res.status(201).json({ message: 'User registered successfully', user: { id: newUser.id, email: newUser.email, name: newUser.name, role: newUser.role } });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ message: 'Server error during registration' });
+    res.status(500).json({ error: true, message: 'Server error during registration' });
   }
 });
 

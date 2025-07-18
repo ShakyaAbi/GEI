@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast'; // New import
 import Navbar from './components/navbar/Navbar';
 // import HomePage from './pages/HomePage';
 // import PublicationsAdmin from './components/admin/PublicationsAdmin';
@@ -15,7 +16,13 @@ import ProtectedRoute from './components/admin/ProtectedRoute';
 // import ResearchPublicationsPage from './pages/ResearchPublicationsPage';
 // import OurStoriesPage from './pages/OurStoriesPage';
 import AdminLayout from './components/admin/AdminLayout';
+import PublicLayout from './components/layout/PublicLayout'; // New import
+import AdminRootLayout from './components/layout/AdminRootLayout'; // New import
+import LoadingSpinner from './components/common/LoadingSpinner'; // New import
 // import StoryDetailPage from './pages/StoryDetailPage';
+
+// New import for ProjectsAdmin
+const ProjectsAdmin = React.lazy(() => import('./components/admin/ProjectsAdmin'));
 
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const PublicationsAdmin = React.lazy(() => import('./components/admin/PublicationsAdmin'));
@@ -37,63 +44,48 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-white">
-        <Suspense fallback={<div>Loading...</div>}>
+        <Toaster /> {/* Add Toaster component here */} 
+        <Suspense fallback={<LoadingSpinner />}>
         <Routes>
-          {/* Non-admin pages use Navbar */}
-          <Route path="/" element={<><Navbar /><HomePage /></>} />
-          <Route path="/about" element={<><Navbar /><AboutPage /></>} />
-          <Route path="/our-work" element={<><Navbar /><OurWorkPage /></>} />
-          <Route path="/ideas" element={<><Navbar /><IdeasPage /></>} />
-          <Route path="/projects/:slug" element={<><Navbar /><ProjectDetailPage /></>} />
-          <Route path="/publications/:id" element={<><Navbar /><PublicationDetailPage /></>} />
-          <Route path="/areas/:slug" element={<><Navbar /><ProgramAreaDetailPage /></>} />
-          <Route path="/our-work/research-publications" element={<><Navbar /><ResearchPublicationsPage /></>} />
-          <Route path="/our-stories" element={<><Navbar /><OurStoriesPage /></>} />
-          <Route path="/our-stories/:id" element={<><Navbar /><StoryDetailPage /></>} />
+          {/* Non-admin pages use PublicLayout */}
+          <Route path="/" element={<PublicLayout><HomePage /></PublicLayout>} />
+          <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
+          <Route path="/our-work" element={<PublicLayout><OurWorkPage /></PublicLayout>} />
+          <Route path="/ideas" element={<PublicLayout><IdeasPage /></PublicLayout>} />
+          <Route path="/projects/:slug" element={<PublicLayout><ProjectDetailPage /></PublicLayout>} />
+          <Route path="/publications/:id" element={<PublicLayout><PublicationDetailPage /></PublicLayout>} />
+          <Route path="/areas/:slug" element={<PublicLayout><ProgramAreaDetailPage /></PublicLayout>} />
+          <Route path="/our-work/research-publications" element={<PublicLayout><ResearchPublicationsPage /></PublicLayout>} />
+          <Route path="/our-stories" element={<PublicLayout><OurStoriesPage /></PublicLayout>} />
+          <Route path="/our-stories/:id" element={<PublicLayout><StoryDetailPage /></PublicLayout>} />
           <Route path="/login" element={<LoginPage />} />
 
-          {/* Admin pages use AdminLayout and sidebar */}
+          {/* Admin pages use AdminRootLayout */}
           <Route path="/admin/publications" element={
-            <ProtectedRoute>
-              <AdminLayout>
+            <AdminRootLayout>
                 <PublicationsAdmin />
-              </AdminLayout>
-            </ProtectedRoute>
+            </AdminRootLayout>
           } />
-          <Route path="/admin/programs" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <ProgramAreasAdmin />
-              </AdminLayout>
-            </ProtectedRoute>
-          } />
+          {/* Consolidated program areas route */}
           <Route path="/admin/program-areas" element={
-            <ProtectedRoute>
-              <AdminLayout>
+            <AdminRootLayout>
                 <ProgramAreasAdmin />
-              </AdminLayout>
-            </ProtectedRoute>
+            </AdminRootLayout>
           } />
           <Route path="/admin/faculty" element={
-            <ProtectedRoute>
-              <AdminLayout>
+            <AdminRootLayout>
                 <FacultyAdminPage />
-              </AdminLayout>
-            </ProtectedRoute>
+            </AdminRootLayout>
           } />
           <Route path="/admin/projects" element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <ProgramAreasAdmin />
-              </AdminLayout>
-            </ProtectedRoute>
+            <AdminRootLayout>
+                <ProjectsAdmin /> {/* Corrected: should be ProjectsAdmin */} 
+            </AdminRootLayout>
           } />
           <Route path="/admin/stories" element={
-            <ProtectedRoute>
-              <AdminLayout>
+            <AdminRootLayout>
                 <StoriesManager />
-              </AdminLayout>
-            </ProtectedRoute>
+            </AdminRootLayout>
           } />
         </Routes>
         </Suspense>

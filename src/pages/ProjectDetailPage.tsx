@@ -25,7 +25,8 @@ import {
   TrendingUp,
   Award,
   Globe,
-  ImageIcon
+  ImageIcon,
+  Goal
 } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import Footer from '../components/Footer';

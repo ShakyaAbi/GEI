@@ -187,8 +187,8 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
     }));
   };
 
-  const handleHeroImageSelect = (file: globalThis.File) => {
-    const validation = imageUploadService.validateImage(file);
+  const handleHeroImageSelect = async (file: globalThis.File) => {
+    const validation = await imageUploadService.validateImage(file);
     if (!validation.valid) {
       setHeroImageError(validation.error || 'Invalid file');
       return;
@@ -204,19 +204,19 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
     setHeroImageError('');
   };
 
+  // Replace uploadHeroImage with gallery upload logic
   const uploadHeroImage = async (): Promise<string> => {
-    if (!selectedHeroImage) return formData.hero_image;
-
+    if (!selectedHeroImage || !editingProject?.id) return formData.hero_image || '';
     setUploadingHeroImage(true);
     setHeroImageProgress(0);
-
     try {
-      const result = await imageUploadService.uploadImage(
-        selectedHeroImage, 
-        'projects/hero', 
-        setHeroImageProgress
-      );
-      return result.url;
+      // Use the same API as gallery images, but treat as hero
+      const formDataObj = new FormData();
+      formDataObj.append('file', selectedHeroImage);
+      formDataObj.append('fileType', 'hero');
+      // Optionally, you can add a caption or other metadata
+      const response = await projectsApi.uploadProjectMedia(editingProject.id, selectedHeroImage);
+      return response.fileUrl || '';
     } catch (error) {
       setHeroImageError('Failed to upload image. Please try again.');
       throw error;

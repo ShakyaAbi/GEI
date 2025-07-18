@@ -38,17 +38,16 @@ app.use(express.urlencoded({ extended: true }));
 
 // Dynamic CORS configuration
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? [process.env.FRONTEND_URL] // Your production frontend URL
+  ? ['http://localhost:5000'] // Allow frontend in production
   : ['http://localhost:5173', 'http://localhost:5174'];
 
-app.use(cors({
+// Only apply CORS to API routes
+app.use('/api', cors({
   origin: function (origin, callback) {
-    if (process.env.NODE_ENV !== 'production') {
-      // Allow all origins in development
+    // Allow all origins in development or when origin is undefined (same-origin)
+    if (process.env.NODE_ENV !== 'production' || !origin) {
       return callback(null, true);
     }
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
       return callback(new Error(msg), false);
@@ -106,11 +105,19 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // Serve frontend static files
-const frontendPath = join(__dirname, '../dist');
+const frontendPath = join(__dirname, 'dist');
 app.use(express.static(frontendPath));
 
-// Serve index.html for any unknown routes (for React Router)
-app.get('*', (req, res) => {
+// Only serve index.html for non-API, non-static requests
+app.get('*', (req, res, next) => {
+  if (
+    req.path.startsWith('/api') ||
+    req.path.startsWith('/uploads') ||
+    req.path.startsWith('/assets') ||
+    req.path.match(/\.[a-zA-Z0-9]+$/) // requests for files with extensions
+  ) {
+    return next();
+  }
   res.sendFile(join(frontendPath, 'index.html'));
 });
 

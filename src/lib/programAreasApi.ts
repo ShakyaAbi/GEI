@@ -11,7 +11,8 @@ export interface ProgramArea {
   order_index: number
   created_at: string
   updated_at: string
-  icon?: string // Add icon as optional
+  icon?: string // Lucide icon name
+  icon_url?: string // Custom icon image URL
   team_members?: ProgramAreaTeamMember[]
   partners?: ProgramAreaPartner[]
   projects?: Project[]

@@ -1,5 +1,7 @@
 import express from 'express';
 import prisma from '../prisma/client.js';
+import { body, validationResult } from 'express-validator'; // New import
+
 const router = express.Router();
 
 // Map DB fields to API fields
@@ -20,10 +22,10 @@ function mapFaculty(member) {
 router.get('/', async (req, res) => {
   try {
     const faculty = await prisma.faculty.findMany({ orderBy: { created_at: 'desc' } });
-    res.json({ data: faculty.map(mapFaculty) });
+    res.json({ error: false, data: faculty.map(mapFaculty) }); // Standardize response
   } catch (error) {
     console.error('Get faculty error:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to fetch faculty.' });
   }
 });
 
@@ -31,21 +33,29 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const member = await prisma.faculty.findUnique({ where: { id: req.params.id } });
-    if (!member) return res.status(404).json({ error: 'Not found' });
-    res.json({ data: mapFaculty(member) });
+    if (!member) return res.status(404).json({ error: true, message: 'Faculty member not found' }); // Standardize 404
+    res.json({ error: false, data: mapFaculty(member) }); // Standardize response
   } catch (error) {
     console.error('Get faculty by id error:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to fetch faculty member.' });
   }
 });
 
 // CREATE faculty
-router.post('/', async (req, res) => {
+router.post('/', [
+  body('name').notEmpty().withMessage('Name is required'),
+  body('title').notEmpty().withMessage('Title is required'),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg).join(', ');
+    return res.status(400).json({ error: true, message: errorMessages });
+  }
   try {
     const { name, title, photo, linkedin } = req.body;
-    if (!name || !title) {
-      return res.status(400).json({ error: 'Name and title are required' });
-    }
+    // Removed manual validation: if (!name || !title) {
+    //   return res.status(400).json({ error: 'Name and title are required' });
+    // }
     const newMember = await prisma.faculty.create({
       data: {
         name,
@@ -54,15 +64,23 @@ router.post('/', async (req, res) => {
         linkedin_url: linkedin,
       }
     });
-    res.status(201).json({ data: mapFaculty(newMember) });
+    res.status(201).json({ error: false, data: mapFaculty(newMember) }); // Standardize response
   } catch (error) {
     console.error('Create faculty error:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to create faculty member.' });
   }
 });
 
 // UPDATE faculty
-router.put('/:id', async (req, res) => {
+router.put('/:id', [
+  body('name').notEmpty().withMessage('Name is required').optional(),
+  body('title').notEmpty().withMessage('Title is required').optional(),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg).join(', ');
+    return res.status(400).json({ error: true, message: errorMessages });
+  }
   try {
     const { name, title, photo, linkedin } = req.body;
     const updatedMember = await prisma.faculty.update({
@@ -75,10 +93,10 @@ router.put('/:id', async (req, res) => {
         updated_at: new Date(),
       }
     });
-    res.json({ data: mapFaculty(updatedMember) });
+    res.json({ error: false, data: mapFaculty(updatedMember) }); // Standardize response
   } catch (error) {
     console.error('Update faculty error:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to update faculty member.' });
   }
 });
 
@@ -86,10 +104,14 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     await prisma.faculty.delete({ where: { id: req.params.id } });
-    res.status(204).end();
+    res.status(204).send(); // Use send() for 204
   } catch (error) {
     console.error('Delete faculty error:', error);
-    res.status(500).json({ error: 'Server error' });
+    if (error.code === 'P2025') {
+      // Prisma error for record not found (e.g., trying to delete a non-existent ID)
+      return res.status(404).json({ error: true, message: 'Faculty member not found.' });
+    }
+    res.status(500).json({ error: true, message: 'Server error: Failed to delete faculty member.' });
   }
 });
 

@@ -72,13 +72,14 @@ model ProgramArea {
   seoTitle       String?                 @map("seo_title")
   seoDescription String?                 @map("seo_description")
   orderIndex     Int                     @default(0) @map("order_index")
-  icon           String?                 // New: icon name or URL
+  icon           String?                 // Icon name or URL
+  iconUrl        String?                 @map("icon_url") // New: icon URL field
   createdAt      DateTime                @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt      DateTime                @default(now()) @map("updated_at") @db.Timestamptz(6)
   partners       ProgramAreaPartner[]
   teamMembers    ProgramAreaTeamMember[]
   projects       Project[]
-  features       ProgramAreaFeature[]    // New: relation to features
+  features       ProgramAreaFeature[]    // Relation to features
 
   @@map("program_areas")
 }

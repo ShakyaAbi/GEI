@@ -144,7 +144,7 @@ const OurWorkPage = () => {
       caption: 'Solar energy bringing power to off-grid communities'
     },
     {
-      src: 'https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=1200&h=675&fit=crop',
+      src: 'Story1.jpg',
       alt: 'Forest conservation and restoration efforts',
       caption: 'Reforestation initiatives protecting biodiversity'
     },
@@ -313,7 +313,10 @@ const OurWorkPage = () => {
                   
                   <div className="p-6 bg-gradient-to-br from-white via-blue-50/50 to-cyan-50/30">
                     <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 font-playfair group-hover:text-blue-600 transition-colors flex items-center">
-                      {programArea.icon && getLucideIcon(programArea.icon)}
+                      {programArea.icon_url
+                        ? <img src={programArea.icon_url} alt="icon" className="inline w-5 h-5 mr-2 align-middle" />
+                        : programArea.icon && getLucideIcon(programArea.icon)
+                      }
                       {programArea.name}
                     </h3>
                     

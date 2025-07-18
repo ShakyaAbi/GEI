@@ -6,35 +6,28 @@ const Footer = () => {
 
   const footerLinks = {
     about: [
-      { name: 'Our Mission', href: '/about#mission' },
+      { name: 'About Us', href: '/about' },
       { name: 'Our Team', href: '/about#team' },
-      { name: 'History', href: '/about#history' },
-      { name: 'Leadership', href: '/about#leadership' },
-      { name: 'Partnerships', href: '/about#partnerships' },
-      { name: 'Careers', href: '/about#careers' }
+      { name: 'Faculty', href: '/about#faculty' },
+      { name: 'Contact', href: '/contact' }
     ],
     work: [
-      { name: 'Climate Action', href: '/our-work#climate' },
-      { name: 'Environmental Health', href: '/our-work#health' },
-      { name: 'Sustainable Development', href: '/our-work#development' },
-      { name: 'Research Projects', href: '/our-work#research' },
-      { name: 'Global Initiatives', href: '/our-work#initiatives' },
-      { name: 'Impact Stories', href: '/our-work#impact' }
+      { name: 'Our Work', href: '/our-work' },
+      { name: 'Program Areas', href: '/our-work#program-areas' },
+      { name: 'Projects', href: '/projects' },
+      { name: 'Partners', href: '/partners' }
     ],
     ideas: [
-      { name: 'Innovation Hub', href: '/ideas#innovation' },
-      { name: 'Policy Papers', href: '/ideas#policy' },
-      { name: 'Research Insights', href: '/ideas#insights' },
-      { name: 'Future Trends', href: '/ideas#trends' },
-      { name: 'Thought Leadership', href: '/ideas#leadership' },
-      { name: 'Publications', href: '/ideas#publications' }
+      { name: 'Publications', href: '/publications' },
+      { name: 'Research', href: '/research' },
+      { name: 'News', href: '/news' },
+      { name: 'Resources', href: '/resources' }
     ]
   };
 
   const socialLinks = [
     { icon: Twitter, href: '#', label: 'Twitter' },
     { icon: Linkedin, href: '#', label: 'LinkedIn' },
-    { icon: Github, href: '#', label: 'GitHub' },
     { icon: Youtube, href: '#', label: 'YouTube' }
   ];
 
@@ -93,9 +86,9 @@ const Footer = () => {
                       key={index}
                       href={social.href}
                       aria-label={social.label}
-                      className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-gradient-to-r hover:from-analogous-teal hover:to-muted-blue transition-all duration-300 group transform hover:scale-110"
+                      className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-blue-800 transition-all duration-300 group transform hover:scale-110"
                     >
-                      <IconComponent className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <IconComponent className="w-5 h-5 group-hover:text-blue-400 transition-colors group-hover:scale-110 transition-transform" />
                     </a>
                   );
                 })}
@@ -154,27 +147,6 @@ const Footer = () => {
                   </li>
                 ))}
               </ul>
-
-              {/* Newsletter Signup */}
-              <div className="p-6 bg-gradient-to-br from-gray-800 to-gray-700 rounded-2xl border border-gray-600 w-80 max-w-full">
-                <h5 className="font-semibold mb-3 flex items-center font-playfair">
-                  <Mail className="w-4 h-4 mr-2 text-analogous-teal" />
-                  Newsletter
-                </h5>
-                <p className="text-gray-400 text-sm mb-4 leading-relaxed">
-                  Get environmental insights delivered to your inbox.
-                </p>
-                <div className="flex">
-                  <input
-                    type="email"
-                    placeholder="Your email"
-                    className="flex-1 px-4 py-2 bg-gray-700 text-white text-sm rounded-l-xl focus:outline-none focus:ring-2 focus:ring-analogous-teal border border-gray-600"
-                  />
-                  <button className="px-4 py-2 bg-gradient-to-r from-base-blue to-muted-blue text-white text-sm rounded-r-xl hover:from-dark-blue hover:to-base-blue transition-all duration-300 transform hover:scale-105">
-                    Subscribe
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
 

@@ -215,7 +215,7 @@ const PublicationDetailPage = () => {
                   href={publication.pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-base-blue to-muted-blue text-white font-semibold rounded-lg hover:from-dark-blue hover:to-base-blue transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group"
+                  className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group"
                 >
                   <Download className="w-5 h-5 mr-2" />
                   Download PDF
@@ -365,7 +365,7 @@ const PublicationDetailPage = () => {
                       href={publication.pdfUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full inline-flex items-center justify-center px-4 py-3 bg-gradient-to-r from-base-blue to-muted-blue text-white font-medium rounded-lg hover:from-dark-blue hover:to-base-blue transition-all duration-300 transform hover:scale-105 group"
+                      className="w-full inline-flex items-center justify-center px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-105 group"
                     >
                       <Download className="w-4 h-4 mr-2" />
                       Download Full Paper

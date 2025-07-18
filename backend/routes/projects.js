@@ -3,6 +3,7 @@ import prisma from '../prisma/client.js';
 import { authenticateToken } from '../middleware/auth.js';
 import path from 'path';
 import fs from 'fs';
+import { body, validationResult } from 'express-validator'; // New import
 
 const router = express.Router();
 
@@ -77,7 +78,7 @@ router.get('/', async (req, res) => {
     res.json({ error: false, data: projects.map(mapProjectFields) });
   } catch (error) {
     console.error('Get projects error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to fetch projects.' });
   }
 });
 
@@ -108,7 +109,7 @@ router.get('/:id', async (req, res) => {
     res.json({ error: false, data: mapProjectFields(project) });
   } catch (error) {
     console.error('Get project error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to fetch project.' });
   }
 });
 
@@ -139,12 +140,21 @@ router.get('/slug/:slug', async (req, res) => {
     res.json({ error: false, data: mapProjectFields(project) });
   } catch (error) {
     console.error('Get project by slug error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to fetch project by slug.' });
   }
 });
 
 // Create project (authenticated)
-router.post('/', authenticateToken, async (req, res) => {
+router.post('/', authenticateToken, [
+  body('title').notEmpty().withMessage('Title is required'),
+  body('slug').notEmpty().withMessage('Slug is required'),
+  body('programAreaId').notEmpty().withMessage('Program Area is required'),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg).join(', ');
+    return res.status(400).json({ error: true, message: errorMessages });
+  }
   try {
     let { 
       title, description, overview, location, duration, status, budget, 
@@ -171,10 +181,10 @@ router.post('/', authenticateToken, async (req, res) => {
     if (startDate) startDate = new Date(startDate);
     if (endDate) endDate = new Date(endDate);
     
-    // Validate required fields
-    if (!title) {
-      return res.status(400).json({ error: true, message: 'Title is required' });
-    }
+    // Validate required fields (moved to express-validator)
+    // if (!title) {
+    //   return res.status(400).json({ error: true, message: 'Title is required' });
+    // }
     
     // Create project
     const project = await prisma.project.create({
@@ -211,12 +221,21 @@ router.post('/', authenticateToken, async (req, res) => {
     if (error.message) {
       return res.status(500).json({ error: true, message: error.message });
     }
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to create project.' });
   }
 });
 
 // Update project (authenticated)
-router.put('/:id', authenticateToken, async (req, res) => {
+router.put('/:id', authenticateToken, [
+  body('title').notEmpty().withMessage('Title is required').optional(), // Optional for updates
+  body('slug').notEmpty().withMessage('Slug is required').optional(),
+  body('programAreaId').notEmpty().withMessage('Program Area is required').optional(),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg).join(', ');
+    return res.status(400).json({ error: true, message: errorMessages });
+  }
   try {
     const { id } = req.params;
     let { 
@@ -299,7 +318,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
     if (error.message) {
       return res.status(500).json({ error: true, message: error.message });
     }
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to update project.' });
   }
 });
 
@@ -322,10 +341,10 @@ router.delete('/:id', authenticateToken, async (req, res) => {
       where: { id }
     });
     
-    res.json({ error: false, message: 'Project deleted successfully' });
+    res.status(204).send(); // No content for successful deletion
   } catch (error) {
     console.error('Delete project error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to delete project.' });
   }
 });
 
@@ -362,7 +381,7 @@ router.post('/:id/custom-fields', authenticateToken, async (req, res) => {
     res.status(201).json({ error: false, data: customField });
   } catch (error) {
     console.error('Add custom field error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to add custom field.' });
   }
 });
 
@@ -402,7 +421,7 @@ router.post('/:id/stakeholders', authenticateToken, async (req, res) => {
     res.status(201).json({ error: false, data: stakeholder });
   } catch (error) {
     console.error('Add stakeholder error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to add stakeholder.' });
   }
 });
 
@@ -441,7 +460,7 @@ router.post('/:id/updates', authenticateToken, async (req, res) => {
     res.status(201).json({ error: false, data: update });
   } catch (error) {
     console.error('Add update error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to add update.' });
   }
 });
 
@@ -457,7 +476,7 @@ router.get('/:id/content', async (req, res) => {
     res.json({ error: false, data: content.map(mapProjectContentFields) });
   } catch (error) {
     console.error('Get project content error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to fetch project content.' });
   }
 });
 
@@ -483,7 +502,7 @@ router.post('/:id/content', authenticateToken, async (req, res) => {
     res.status(201).json({ error: false, data: mapProjectContentFields(newContent) });
   } catch (error) {
     console.error('Create project content error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to create project content.' });
   }
 });
 
@@ -506,7 +525,7 @@ router.put('/content/:contentId', authenticateToken, async (req, res) => {
     res.json({ error: false, data: mapProjectContentFields(updated) });
   } catch (error) {
     console.error('Update project content error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to update project content.' });
   }
 });
 
@@ -518,7 +537,7 @@ router.delete('/content/:contentId', authenticateToken, async (req, res) => {
     res.json({ error: false, message: 'Content deleted' });
   } catch (error) {
     console.error('Delete project content error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to delete project content.' });
   }
 });
 
@@ -562,7 +581,7 @@ router.delete('/:projectId/media/:mediaId', authenticateToken, async (req, res) 
     res.json({ error: false, message: 'Media deleted successfully' });
   } catch (error) {
     console.error('Delete project media error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to delete project media.' });
   }
 });
 
@@ -584,7 +603,7 @@ router.put('/:projectId/media/reorder', authenticateToken, async (req, res) => {
     res.json({ error: false, message: 'Media order updated' });
   } catch (error) {
     console.error('Reorder project media error:', error);
-    res.status(500).json({ error: true, message: 'Server error' });
+    res.status(500).json({ error: true, message: 'Server error: Failed to reorder project media.' });
   }
 });
 

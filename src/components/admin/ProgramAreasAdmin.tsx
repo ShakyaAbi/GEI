@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Save, X, Upload, Loader2, Goal, Eye, Search, SortAsc, SortDesc, FolderOpen } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 import { useProgramAreas } from '../../hooks/useProgramAreas';
 import ImageUpload from './ImageUpload';
 import { programAreasApi } from '../../lib/programAreasApi';
@@ -7,6 +8,13 @@ import { imageUploadService } from '../../lib/imageUpload';
 import type { ProgramArea } from '../../lib/programAreasApi';
 import ProjectsAdmin from './ProjectsAdmin';
 import axios from 'axios';
+
+// Helper to get Lucide icon component by name
+function getLucideIcon(iconName: string) {
+  if (!iconName) return null;
+  const IconComponent = (LucideIcons as any)[iconName];
+  return IconComponent ? <IconComponent className="w-5 h-5 mr-2 text-blue-500 inline-block align-middle" /> : null;
+}
 
 const ProgramAreasAdmin = () => {
   const { programAreas, loading, refetch } = useProgramAreas();
@@ -25,6 +33,13 @@ const ProgramAreasAdmin = () => {
   const [heroImageProgress, setHeroImageProgress] = useState(0);
   const [heroImageError, setHeroImageError] = useState<string>('');
 
+  // Add state for icon type and custom icon upload
+  const [iconType, setIconType] = useState<'lucide' | 'custom'>('lucide');
+  const [selectedIconImage, setSelectedIconImage] = useState<File | null>(null);
+  const [uploadingIconImage, setUploadingIconImage] = useState(false);
+  const [iconImageProgress, setIconImageProgress] = useState(0);
+  const [iconImageError, setIconImageError] = useState('');
+
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
@@ -33,7 +48,8 @@ const ProgramAreasAdmin = () => {
     seo_title: '',
     seo_description: '',
     order_index: 0,
-    icon: ''
+    icon: '',
+    icon_url: ''
   });
 
   const [featuresByArea, setFeaturesByArea] = useState<Record<string, any[]>>({});
@@ -93,8 +109,14 @@ const ProgramAreasAdmin = () => {
         seo_title: programArea.seo_title || '',
         seo_description: programArea.seo_description || '',
         order_index: programArea.order_index,
-        icon: programArea.icon || ''
+        icon: programArea.icon || '',
+        icon_url: programArea.icon_url || ''
       });
+      if (programArea.icon_url) {
+        setIconType('custom');
+      } else {
+        setIconType('lucide');
+      }
     } else {
       setEditingProgramArea(null);
       setFormData({
@@ -105,8 +127,10 @@ const ProgramAreasAdmin = () => {
         seo_title: '',
         seo_description: '',
         order_index: 0,
-        icon: ''
+        icon: '',
+        icon_url: ''
       });
+      setIconType('lucide');
     }
     
     // Reset image upload states
@@ -115,6 +139,12 @@ const ProgramAreasAdmin = () => {
     setHeroImageProgress(0);
     setHeroImageError('');
     
+    // Reset icon image states
+    setSelectedIconImage(null);
+    setUploadingIconImage(false);
+    setIconImageProgress(0);
+    setIconImageError('');
+
     setIsModalOpen(true);
   };
 
@@ -133,13 +163,12 @@ const ProgramAreasAdmin = () => {
     }));
   };
 
-  const handleHeroImageSelect = (file: globalThis.File) => {
-    const validation = imageUploadService.validateImage(file);
+  const handleHeroImageSelect = async (file: globalThis.File) => {
+    const validation = await imageUploadService.validateImage(file);
     if (!validation.valid) {
       setHeroImageError(validation.error || 'Invalid file');
       return;
     }
-    
     setSelectedHeroImage(file);
     setHeroImageError('');
   };
@@ -151,18 +180,16 @@ const ProgramAreasAdmin = () => {
   };
 
   const uploadHeroImage = async (): Promise<string> => {
-    if (!selectedHeroImage) return formData.hero_image;
-
+    if (!selectedHeroImage) return formData.hero_image || '';
     setUploadingHeroImage(true);
     setHeroImageProgress(0);
-
     try {
       const result = await imageUploadService.uploadImage(
-        selectedHeroImage, 
-        'program-areas/hero', 
+        selectedHeroImage,
+        'program-areas/hero',
         setHeroImageProgress
       );
-      return result.url;
+      return result.url || '';
     } catch (error) {
       setHeroImageError('Failed to upload image. Please try again.');
       throw error;
@@ -171,16 +198,54 @@ const ProgramAreasAdmin = () => {
     }
   };
 
+  // Icon image upload handler
+  const handleIconImageSelect = (file: File) => {
+    const validation = imageUploadService.validateImage(file);
+    if (!validation.valid) {
+      setIconImageError(validation.error || 'Invalid file');
+      return;
+    }
+    setSelectedIconImage(file);
+    setIconImageError('');
+  };
+  const handleIconImageRemove = () => {
+    setSelectedIconImage(null);
+    setFormData(prev => ({ ...prev, icon_url: '' }));
+    setIconImageError('');
+  };
+  const uploadIconImage = async (): Promise<string> => {
+    if (!selectedIconImage) return formData.icon_url || '';
+    setUploadingIconImage(true);
+    setIconImageProgress(0);
+    try {
+      const result = await imageUploadService.uploadImage(
+        selectedIconImage,
+        'program-areas/icons',
+        setIconImageProgress
+      );
+      return result.url;
+    } catch (error) {
+      setIconImageError('Failed to upload icon image. Please try again.');
+      throw error;
+    } finally {
+      setUploadingIconImage(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setHeroImageError('');
+    setIconImageError('');
 
     try {
       // Upload hero image if selected
       const heroImageUrl = await uploadHeroImage();
-
-      const programAreaData = {
+      let iconUrl = formData.icon_url || '';
+      if (iconType === 'custom') {
+        iconUrl = await uploadIconImage();
+      }
+      const programAreaData: any = {
         name: formData.name,
         slug: formData.slug,
         description: formData.description,
@@ -188,7 +253,8 @@ const ProgramAreasAdmin = () => {
         seo_title: formData.seo_title,
         seo_description: formData.seo_description,
         order_index: formData.order_index,
-        icon: formData.icon
+        icon: iconType === 'lucide' ? formData.icon : null,
+        icon_url: iconType === 'custom' ? iconUrl : null
       };
 
       if (editingProgramArea) {
@@ -415,6 +481,11 @@ const ProgramAreasAdmin = () => {
                         
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
+                            {/* Icon display logic */}
+                            {programArea.icon_url
+                              ? <img src={programArea.icon_url} alt="icon" className="inline w-5 h-5 mr-2 align-middle" />
+                              : programArea.icon && getLucideIcon(programArea.icon)
+                            }
                             <h3 className="text-lg font-semibold text-gray-900">
                               {programArea.name}
                             </h3>
@@ -645,16 +716,56 @@ const ProgramAreasAdmin = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Icon (Lucide icon name or URL)
+                      Icon
                     </label>
-                    <input
-                      type="text"
-                      value={formData.icon || ''}
-                      onChange={e => setFormData(prev => ({ ...prev, icon: e.target.value }))}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="e.g. Globe, Users, Zap, or image URL"
-                    />
-                    <p className="mt-1 text-xs text-gray-500">Enter a Lucide icon name (e.g. Globe) or an image URL.</p>
+                    <div className="flex items-center gap-4 mb-2">
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="iconType"
+                          value="lucide"
+                          checked={iconType === 'lucide'}
+                          onChange={() => setIconType('lucide')}
+                        />
+                        <span>Lucide Icon</span>
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="iconType"
+                          value="custom"
+                          checked={iconType === 'custom'}
+                          onChange={() => setIconType('custom')}
+                        />
+                        <span>Custom Upload</span>
+                      </label>
+                    </div>
+                    {iconType === 'lucide' ? (
+                      <input
+                        type="text"
+                        value={formData.icon || ''}
+                        onChange={e => setFormData(prev => ({ ...prev, icon: e.target.value }))}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="e.g. Globe, Users, Zap"
+                      />
+                    ) : (
+                      <ImageUpload
+                        onImageSelect={handleIconImageSelect}
+                        onImageRemove={handleIconImageRemove}
+                        selectedImage={selectedIconImage}
+                        currentImageUrl={formData.icon_url}
+                        uploading={uploadingIconImage}
+                        uploadProgress={iconImageProgress}
+                        error={iconImageError}
+                        label="Upload Custom Icon"
+                        maxSize={1}
+                      />
+                    )}
+                    <p className="mt-1 text-xs text-gray-500">
+                      {iconType === 'lucide'
+                        ? 'Enter a Lucide icon name (e.g. Globe)'
+                        : 'Upload a small PNG, JPEG, or WebP icon (max 1MB).'}
+                    </p>
                   </div>
 
                   <div className="md:col-span-2">
@@ -683,13 +794,13 @@ const ProgramAreasAdmin = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting || uploadingHeroImage}
+                  disabled={isSubmitting || uploadingHeroImage || uploadingIconImage}
                   className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
-                  {isSubmitting || uploadingHeroImage ? (
+                  {isSubmitting || uploadingHeroImage || uploadingIconImage ? (
                     <>
                       <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      {uploadingHeroImage ? 'Uploading...' : 'Saving...'}
+                      {uploadingHeroImage ? 'Uploading...' : uploadingIconImage ? 'Uploading Icon...' : 'Saving...'}
                     </>
                   ) : (
                     <>

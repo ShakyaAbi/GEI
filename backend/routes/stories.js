@@ -1,6 +1,7 @@
 import express from 'express';
 import prisma from '../prisma/client.js';
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
+import { body, validationResult } from 'express-validator'; // New import
 
 const router = express.Router();
 
@@ -12,7 +13,8 @@ router.get('/', async (req, res) => {
     });
     res.json(stories);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch stories' });
+    console.error('Get stories error:', error);
+    res.status(500).json({ error: true, message: 'Server error: Failed to fetch stories.' });
   }
 });
 
@@ -23,28 +25,46 @@ router.get('/:id', async (req, res) => {
       where: { id: req.params.id },
     });
     if (!story) {
-      return res.status(404).json({ error: 'Story not found' });
+      return res.status(404).json({ error: true, message: 'Story not found' });
     }
     res.json(story);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch story' });
+    console.error('Get story error:', error);
+    res.status(500).json({ error: true, message: 'Server error: Failed to fetch story.' });
   }
 });
 
 // POST a new story (Admin only)
-router.post('/', authenticateToken, isAdmin, async (req, res) => {
+router.post('/', authenticateToken, isAdmin, [
+  body('title').notEmpty().withMessage('Title is required'),
+  body('content').notEmpty().withMessage('Content is required'),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg).join(', ');
+    return res.status(400).json({ error: true, message: errorMessages });
+  }
   try {
     const newStory = await prisma.story.create({
       data: req.body,
     });
     res.status(201).json(newStory);
   } catch (error) {
-    res.status(400).json({ error: 'Failed to create story' });
+    console.error('Create story error:', error);
+    res.status(500).json({ error: true, message: 'Server error: Failed to create story.' });
   }
 });
 
 // PUT to update a story (Admin only)
-router.put('/:id', authenticateToken, isAdmin, async (req, res) => {
+router.put('/:id', authenticateToken, isAdmin, [
+  body('title').notEmpty().withMessage('Title is required').optional(),
+  body('content').notEmpty().withMessage('Content is required').optional(),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(error => error.msg).join(', ');
+    return res.status(400).json({ error: true, message: errorMessages });
+  }
   try {
     const updatedStory = await prisma.story.update({
       where: { id: req.params.id },
@@ -52,7 +72,8 @@ router.put('/:id', authenticateToken, isAdmin, async (req, res) => {
     });
     res.json(updatedStory);
   } catch (error) {
-    res.status(400).json({ error: 'Failed to update story' });
+    console.error('Update story error:', error);
+    res.status(500).json({ error: true, message: 'Server error: Failed to update story.' });
   }
 });
 
@@ -64,7 +85,8 @@ router.delete('/:id', authenticateToken, isAdmin, async (req, res) => {
     });
     res.status(204).send();
   } catch (error) {
-    res.status(400).json({ error: 'Failed to delete story' });
+    console.error('Delete story error:', error);
+    res.status(500).json({ error: true, message: 'Server error: Failed to delete story.' });
   }
 });
 

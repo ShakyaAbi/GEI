@@ -86,12 +86,7 @@ const Research = () => {
                   {area.description}
                 </p>
                 
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500 font-medium">
-                    {area.projects} Active Projects
-                  </span>
-                  <div className={`h-1 w-12 bg-gradient-to-r ${area.color} rounded-full`}></div>
-                </div>
+                {/* Removed project count and progress bar */}
               </div>
             );
           })}

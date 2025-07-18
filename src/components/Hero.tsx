@@ -118,7 +118,7 @@ const Hero = () => {
       country: 'Cambodia',
       x: 75,
       y: 48,
-      image: 'https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=400&q=80',
+      image: 'kandawgyi-lake-yangon-burma-myanmar.jpg',
       description: 'Building water security infrastructure and training communities in environmental conservation practices.',
       impact: '25,000+ people with clean water',
       icon: Users,
@@ -127,7 +127,7 @@ const Hero = () => {
   ];
 
   // Gallery images for the carousel
-  const galleryImages = [
+  /*const galleryImages = [
     {
       src: './image1.jpeg',
       alt: 'Community members working together on environmental project',
@@ -149,7 +149,7 @@ const Hero = () => {
       caption: 'Forest conservation protecting biodiversity and climate'
     },
   
-  ];
+  ];*/
 
   return (
     <>
@@ -290,7 +290,7 @@ const Hero = () => {
               {/* World Map Background */}
               <div className="absolute inset-0 p-8">
                 <img 
-                  src="./public/2987330-01.png" 
+                  src="/2987330-01.png" 
                   alt="World Map showing global presence" 
                   className="w-full h-full object-cover rounded-2xl"
                 />

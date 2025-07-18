@@ -227,9 +227,6 @@ const AboutPage = () => {
                     <div>
                       <h3 className="text-2xl font-bold text-gray-900 mb-2 font-playfair">{step.title}</h3>
                       <p className="text-gray-600 mb-4 font-inter">{step.description}</p>
-                      <span className="inline-flex items-center text-brand-blue font-semibold cursor-pointer hover:underline">
-                        {step.linkText} <span className="ml-2">→</span>
-                      </span>
                     </div>
                   </div>
                 }
@@ -314,7 +311,7 @@ const AboutPage = () => {
           <div className="relative max-w-7xl mx-auto">
             {/* Animated Connection Lines */}
             <div className="hidden lg:block absolute top-32 left-1/2 transform -translate-x-1/2 w-full max-w-4xl">
-              <div className="flex justify-between items-center px-8">
+              <div className="flex justify-center items-center px-8">
                 <div className="w-1/3 h-0.5 bg-gradient-to-r from-blue-300/60 to-blue-500/80 relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
                 </div>
@@ -344,28 +341,28 @@ const AboutPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {facultyMembers.map((member) => (
                 <div key={member.id} className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col items-center justify-center py-0">
-                  <div className="w-full h-48 bg-gray-100 flex items-center justify-center overflow-hidden">
+                  <div className="w-full aspect-[3/4] bg-gray-100 flex items-center justify-center overflow-hidden">
                     <img
                       src={member.photo || '/faculty/placeholder.jpg'}
                       alt={member.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover object-center rounded-t-2xl"
                       onError={(e) => { e.currentTarget.src = '/faculty/placeholder.jpg'; }}
                     />
                   </div>
                   <div className="flex-1 flex flex-col items-center justify-center p-8">
                     <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair text-center">{member.name}</h3>
                     <p className="text-blue-600 font-semibold mb-3 text-center font-inter">{member.title}</p>
-                    {member.linkedin && (
-                      <a
-                        href={member.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors mt-2"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm15.5 11.268h-3v-5.604c0-1.337-.026-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.841-1.563 3.041 0 3.603 2.003 3.603 4.605v5.591z"/></svg>
-                        LinkedIn
-                      </a>
-                    )}
+                    <a
+                      href={member.linkedin || '#'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center justify-center px-3 py-2 mt-2 rounded-full font-semibold transition-colors ${member.linkedin ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-300 text-gray-400 cursor-not-allowed'}`}
+                      tabIndex={member.linkedin ? 0 : -1}
+                      aria-disabled={!member.linkedin}
+                      onClick={e => { if (!member.linkedin) e.preventDefault(); }}
+                    >
+                      <Linkedin className="w-5 h-5" />
+                    </a>
                   </div>
                 </div>
               ))}

@@ -51,7 +51,25 @@ const FacultyAdminPage: React.FC = () => {
   }, [currentFaculty]);
 
   const openModal = (member?: FacultyMember) => {
-    setCurrentFaculty(member || null);
+    if (member) {
+      setCurrentFaculty(member);
+      setFormData({
+        name: member.name,
+        title: member.title,
+        photoFile: null,
+        photoUrl: member.photo || undefined,
+        linkedin: member.linkedin || '',
+      });
+    } else {
+      setCurrentFaculty(null);
+      setFormData({
+        name: '',
+        title: '',
+        photoFile: null,
+        photoUrl: undefined,
+        linkedin: '',
+      });
+    }
     setIsModalOpen(true);
     setUploadProgress(0);
     setUploading(false);
@@ -73,10 +91,14 @@ const FacultyAdminPage: React.FC = () => {
 
   const handleImageSelect = (file: File) => {
     setFormData(prev => ({ ...prev, photoFile: file, photoUrl: URL.createObjectURL(file) }));
+    setUploading(false);
+    setUploadProgress(0);
   };
 
   const handleImageRemove = () => {
     setFormData(prev => ({ ...prev, photoFile: null, photoUrl: undefined }));
+    setUploading(false);
+    setUploadProgress(0);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -91,26 +113,38 @@ const FacultyAdminPage: React.FC = () => {
     try {
       let finalPhotoUrl = formData.photoUrl;
 
+      // Handle image upload if there's a new file
       if (formData.photoFile) {
         setUploading(true);
-        const uploadResult = await imageUploadService.uploadImage(formData.photoFile, 'faculty', (progress: number) => {
-          setUploadProgress(progress);
-        });
+        const uploadResult = await imageUploadService.uploadImage(
+          formData.photoFile,
+          'faculty',
+          (progress: number) => {
+            setUploadProgress(progress);
+          }
+        );
         finalPhotoUrl = uploadResult.url;
         setUploading(false);
-      } else if (currentFaculty && !formData.photoUrl) {
-        // If photo was removed and it was an existing faculty, set to placeholder
-        finalPhotoUrl = '/faculty/placeholder.jpg';
-      } else if (!currentFaculty && !formData.photoFile) {
-        // If adding new faculty and no photo uploaded, use placeholder
-        finalPhotoUrl = '/faculty/placeholder.jpg';
       }
 
-      const facultyData: Omit<FacultyMember, 'id'> = {
+      // If editing and photo was removed (no new upload and no existing URL)
+      if (currentFaculty && !formData.photoFile && !formData.photoUrl) {
+        finalPhotoUrl = '/faculty/placeholder.jpg';
+      }
+      // If adding new faculty and no photo provided
+      else if (!currentFaculty && !formData.photoFile && !formData.photoUrl) {
+        finalPhotoUrl = '/faculty/placeholder.jpg';
+      }
+      // If editing and keeping existing photo
+      else if (currentFaculty && !formData.photoFile) {
+        finalPhotoUrl = formData.photoUrl || '/faculty/placeholder.jpg';
+      }
+
+      const facultyData = {
         name: formData.name,
         title: formData.title,
-        photo: finalPhotoUrl || '/faculty/placeholder.jpg', // Ensure a default if no photo is provided
-        linkedin: formData.linkedin,
+        photo: finalPhotoUrl || '/faculty/placeholder.jpg',  // Ensure photo is always a string
+        linkedin: formData.linkedin || undefined,  // Use undefined instead of null
       };
 
       if (currentFaculty) {
@@ -120,7 +154,7 @@ const FacultyAdminPage: React.FC = () => {
       }
 
       closeModal();
-      refreshFaculty(); // Re-fetch to ensure latest data
+      refreshFaculty();
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : 'An unexpected error occurred');
       setUploading(false);
