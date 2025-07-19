@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: gei-db-test
+    environment:
+      POSTGRES_DB: gei
+      POSTGRES_USER: geiuser
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-geipassword}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U geiuser -d gei"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - gei-network
+
+  # GEI Website Application (Direct access, no nginx)
+  app:
+    build: .
+    container_name: gei-website-test
+    ports:
+      - "5000:5000"  # Direct access to the app
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - DATABASE_URL=postgresql://geiuser:${DB_PASSWORD:-geipassword}@db:5432/gei?schema=public
+      - JWT_SECRET=${JWT_SECRET:-test-jwt-secret}
+      - UPLOAD_DIR=/app/uploads
+      - MAX_FILE_SIZE=15728640
+      - VITE_API_URL=http://localhost:5000/api  # HTTP for testing
+      - SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_SECURE=${SMTP_SECURE:-false}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - SMTP_FROM=${SMTP_FROM}
+      - CONTACT_RECEIVER=${CONTACT_RECEIVER}
+    volumes:
+      - uploads_data:/app/uploads
+      - ./prisma:/app/prisma:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - gei-network
+
+volumes:
+  postgres_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  gei-network:
+    driver: bridge 
