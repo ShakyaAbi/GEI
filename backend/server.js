@@ -38,15 +38,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Dynamic CORS configuration
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? [process.env.FRONTEND_URL]
+  ? ['http://localhost:5000'] // Allow frontend in production
   : ['http://localhost:5173', 'http://localhost:5174'];
-
-// Warn if required SMTP environment variables are missing
-const requiredSmtpVars = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'SMTP_FROM', 'CONTACT_RECEIVER'];
-const missingSmtpVars = requiredSmtpVars.filter((key) => !process.env[key]);
-if (missingSmtpVars.length > 0) {
-  console.warn('Warning: Missing SMTP environment variables:', missingSmtpVars.join(', '));
-}
 
 // Only apply CORS to API routes
 app.use('/api', cors({
