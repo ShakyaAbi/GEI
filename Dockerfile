@@ -21,10 +21,10 @@ WORKDIR /app
 
 # Install dependencies
 COPY package.json package-lock.json ./
-COPY prisma/ ./prisma/
 RUN npm install
 
-# Generate Prisma Client
+# Copy Prisma schema and generate client
+COPY prisma/ ./prisma/
 RUN npx prisma generate
 
 # Copy backend source code
@@ -43,4 +43,4 @@ EXPOSE 5000
 WORKDIR /app/backend
 
 # Run migrations and start the server
-CMD ["sh", "-c", "cd .. && npx prisma migrate deploy && cd backend && node server.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy --schema=../prisma/schema.prisma && node server.js"]

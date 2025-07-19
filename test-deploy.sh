@@ -38,11 +38,14 @@ if ! command -v docker-compose &> /dev/null; then
 fi
 
 # Load environment variables
-if [ -f ".env" ]; then
+if [ -f "env.test" ]; then
+    print_status "Loading test environment variables..."
+    export $(cat env.test | grep -v '^#' | xargs)
+elif [ -f ".env" ]; then
     print_status "Loading environment variables..."
     export $(cat .env | grep -v '^#' | xargs)
 else
-    print_warning "No .env file found. Using default values for testing."
+    print_warning "No environment file found. Using default values for testing."
 fi
 
 # Stop existing containers

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # PostgreSQL Database
   db:
@@ -61,4 +59,4 @@ volumes:
 
 networks:
   gei-network:
-    driver: bridge 
+    driver: bridge
