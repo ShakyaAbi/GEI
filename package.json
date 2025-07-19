@@ -11,7 +11,6 @@
     "server": "node backend/server.js",
     "dev:server": "nodemon --experimental-modules backend/server.js",
     "build": "vite build",
-    "start": "NODE_ENV=production node backend/server.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "prisma:generate": "prisma generate",

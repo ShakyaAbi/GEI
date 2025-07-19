@@ -19,17 +19,17 @@ FROM node:18-alpine AS backend-builder
 
 WORKDIR /app
 
-# Install PostgreSQL client tools for database health checks
-RUN apk add --no-cache postgresql-client
-
 # Install dependencies
 COPY package.json package-lock.json ./
 RUN npm install
 
 # Copy Prisma schema and generate client
 COPY prisma/ ./prisma/
-# Generate Prisma client with proper environment
 RUN npx prisma generate
+
+# Copy entrypoint script
+COPY backend/entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
 
 # Copy backend source code
 COPY backend/ ./backend/
@@ -42,20 +42,10 @@ COPY --from=frontend-builder /app/dist ./backend/dist
 COPY uploads/ ./uploads/
 COPY scripts/ ./scripts/
 
-# Copy entrypoint script
-COPY docker-entrypoint.sh /app/docker-entrypoint.sh
-RUN chmod +x /app/docker-entrypoint.sh
-
-# Create logs directory
-RUN mkdir -p logs
-
 EXPOSE 5000
 
 WORKDIR /app/backend
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:5000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
-
-# Use the entrypoint script
-ENTRYPOINT ["/app/docker-entrypoint.sh"]
+# Run migrations and start the server
+CMD ["sh", "-c", "npx prisma migrate deploy --schema=../prisma/schema.prisma && node server.js"]
+ENTRYPOINT ["sh", "./entrypoint.sh"]

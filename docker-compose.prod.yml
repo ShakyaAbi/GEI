@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: gei-db-prod
+    environment:
+      POSTGRES_DB: gei
+      POSTGRES_USER: geiuser
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-geipassword}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"  # Only accessible from localhost
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U geiuser -d gei"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - gei-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: gei-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - app
+    restart: unless-stopped
+    networks:
+      - gei-network
+
+  # GEI Website Application
+  app:
+    build: .
+    container_name: gei-website-prod
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - DATABASE_URL=postgresql://geiuser:${DB_PASSWORD:-geipassword}@db:5432/gei?schema=public
+      - JWT_SECRET=${JWT_SECRET}
+      - UPLOAD_DIR=/app/uploads
+      - MAX_FILE_SIZE=15728640
+      - VITE_API_URL=${VITE_API_URL}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_SECURE=${SMTP_SECURE}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - SMTP_FROM=${SMTP_FROM}
+      - CONTACT_RECEIVER=${CONTACT_RECEIVER}
+    volumes:
+      - uploads_data:/app/uploads
+      - ./prisma:/app/prisma:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - gei-network
+    expose:
+      - "5000"
+
+volumes:
+  postgres_data:
+    driver: local
+  uploads_data:
+    driver: local
+  nginx_logs:
+    driver: local
+
+networks:
+  gei-network:
+    driver: bridge 
