@@ -6,18 +6,21 @@ services:
     image: postgres:15-alpine
     container_name: gei-db-prod
     environment:
-      POSTGRES_DB: gei
-      POSTGRES_USER: geiuser
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-geipassword}
+      POSTGRES_DB: ${POSTGRES_DB:-gei}
+      POSTGRES_USER: ${POSTGRES_USER:-geiuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-geipassword}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     ports:
       - "127.0.0.1:5432:5432"  # Only accessible from localhost
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U geiuser -d gei"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-geiuser} -d ${POSTGRES_DB:-gei}"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 30s
     restart: unless-stopped
     networks:
       - gei-network
@@ -44,23 +47,33 @@ services:
     build: .
     container_name: gei-website-prod
     environment:
-      - NODE_ENV=production
-      - PORT=5000
-      - DATABASE_URL=postgresql://geiuser:${DB_PASSWORD:-geipassword}@db:5432/gei?schema=public
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=${PORT:-5000}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-geiuser}:${POSTGRES_PASSWORD:-geipassword}@db:5432/${POSTGRES_DB:-gei}?schema=public
       - JWT_SECRET=${JWT_SECRET}
-      - UPLOAD_DIR=/app/uploads
-      - MAX_FILE_SIZE=15728640
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-7d}
+      - UPLOAD_DIR=${UPLOAD_DIR:-/app/uploads}
+      - MAX_FILE_SIZE=${MAX_FILE_SIZE:-15728640}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - DOMAIN=${DOMAIN}
       - VITE_API_URL=${VITE_API_URL}
+      - SEED_DATABASE=${SEED_DATABASE:-false}
+      
+      # SMTP settings for contact form
       - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
-      - SMTP_SECURE=${SMTP_SECURE}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_SECURE=${SMTP_SECURE:-false}
       - SMTP_USER=${SMTP_USER}
       - SMTP_PASS=${SMTP_PASS}
-      - SMTP_FROM=${SMTP_FROM}
-      - CONTACT_RECEIVER=${CONTACT_RECEIVER}
+      - SMTP_FROM=${SMTP_FROM:-${SMTP_USER}}
+      - CONTACT_RECEIVER=${CONTACT_RECEIVER:-${SMTP_USER}}
+      
+      # Security
+      - SESSION_SECRET=${SESSION_SECRET}
     volumes:
       - uploads_data:/app/uploads
       - ./prisma:/app/prisma:ro
+      - ./logs:/app/backend/logs
     depends_on:
       db:
         condition: service_healthy
@@ -69,6 +82,12 @@ services:
       - gei-network
     expose:
       - "5000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
 volumes:
   postgres_data:

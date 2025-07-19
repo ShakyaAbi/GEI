@@ -22,4 +22,21 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files
 .env
+docker.env.*
+env.example
+
+# Docker
+.dockerignore
+
+# Uploads
+uploads/*
+!uploads/.gitkeep
+
+# SSL certificates
+ssl/
+*.pem
+*.key
+*.crt

@@ -5,6 +5,8 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs';
 import nodemailer from 'nodemailer';
+import helmet from 'helmet';
+import compression from 'compression';
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -33,13 +35,27 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
+}));
+app.use(compression());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Dynamic CORS configuration
 const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? ['http://localhost:5000'] // Allow frontend in production
-  : ['http://localhost:5173', 'http://localhost:5174'];
+  ? [
+      process.env.FRONTEND_URL || 'http://localhost:3000',
+      process.env.DOMAIN || 'http://localhost:3000'
+    ]
+  : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'];
 
 // Only apply CORS to API routes
 app.use('/api', cors({
