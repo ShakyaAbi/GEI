@@ -240,13 +240,6 @@ const PublicationDetailPage = () => {
                       Share on Twitter
                     </button>
                     <button
-                      onClick={() => handleShare('linkedin')}
-                      className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
-                    >
-                      <Linkedin className="w-4 h-4 mr-3 text-blue-600" />
-                      Share on LinkedIn
-                    </button>
-                    <button
                       onClick={() => handleShare('email')}
                       className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
                     >
@@ -290,18 +283,6 @@ const PublicationDetailPage = () => {
                   </div>
                 </div>
               )}
-
-              {/* DOI */}
-              {publication.doi && (
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Digital Object Identifier</h3>
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
-                    <code className="text-sm text-gray-600 font-mono">
-                      DOI: {publication.doi}
-                    </code>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Sidebar */}
@@ -321,22 +302,6 @@ const PublicationDetailPage = () => {
                     <span className="text-sm font-medium text-gray-600">Type</span>
                     <span className="text-sm text-gray-900">{publication.publicationType}</span>
                   </div>
-
-                  {/* Journal */}
-                  {publication.journal && (
-                    <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                      <span className="text-sm font-medium text-gray-600">Journal</span>
-                      <span className="text-sm text-gray-900">{publication.journal}</span>
-                    </div>
-                  )}
-
-                  {/* Category */}
-                  {publication.category && (
-                    <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                      <span className="text-sm font-medium text-gray-600">Category</span>
-                      <span className="text-sm text-gray-900">{publication.category.name}</span>
-                    </div>
-                  )}
 
                   {/* Authors */}
                   {publication.publicationAuthors && publication.publicationAuthors.length > 0 && (

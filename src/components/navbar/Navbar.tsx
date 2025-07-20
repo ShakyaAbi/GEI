@@ -49,8 +49,8 @@ const Header: React.FC = () => {
       path: '/ideas',
       hasDropdown: true,
       dropdownItems: [
-        { name: 'Collaborate with Us', path: '/collaborate', description: 'Partner or volunteer with us to make an impact' },
-        { name: 'Contact Us', path: '/contact', description: 'Get in touch with our team' }
+        { name: 'Collaborate with Us', path: '/ideas', description: 'Partner or volunteer with us to make an impact' },
+        { name: 'Contact Us', path: '/ideas', description: 'Get in touch with our team' }
       ]
     }
   ];

@@ -4,6 +4,7 @@ import { Goal, Eye, Users, Lightbulb, Award, Heart, Globe, Zap, Calendar, MapPin
 import Footer from '../components/Footer';
 import TiltedCard from '../components/TiltedCard';
 import { useFaculty } from '../hooks/useFaculty';
+import { Link } from 'react-router-dom';
 
 const AboutPage = () => {
   const location = useLocation();
@@ -326,6 +327,54 @@ const AboutPage = () => {
         </div>
       </section>
 
+      {/* History Timeline */}
+      <section id="history" className="py-24 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-6xl mx-auto px-6 lg:px-10">
+          <div className="text-center mb-16 reveal">
+            <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">Our Journey</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-inter">
+              From humble beginnings to global impact - the story of GEI's growth, evolution, and unwavering commitment to environmental sustainability.
+            </p>
+          </div>
+
+          <div className="relative">
+            {/* Timeline Line */}
+            <div className="absolute left-8 top-8 bottom-8 w-0.5 bg-gradient-to-b from-blue-500 to-indigo-500 hidden md:block"></div>
+            
+            <div className="space-y-12">
+              {milestones.map((milestone, index) => (
+                <div
+                  key={index}
+                  className={
+                    `relative flex flex-col md:flex-row items-center md:items-start md:space-x-8 space-y-4 md:space-y-0 reveal timeline-animate opacity-0 translate-y-8 transition-all duration-700` +
+                    ` delay-[${index * 200}ms]`
+                  }
+                  style={{ transitionDelay: `${index * 200}ms` }}
+                >
+                  {/* Timeline Dot */}
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-800 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg motion-pulse border-4 border-white mb-4 md:mb-0">
+                    <span className="text-white font-bold text-sm">
+                      {milestone.year}
+                    </span>
+                  </div>
+                  {/* Content */}
+                  <div className="flex-1 bg-white rounded-2xl p-8 shadow-lg hover-lift border border-gray-100 w-full">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-2xl font-bold text-gray-900 font-playfair">
+                        {milestone.title}
+                      </h3>
+                    </div>
+                    <p className="text-gray-600 leading-relaxed text-lg font-inter">
+                      {milestone.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Team Section */}
       <section id="team" className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
@@ -339,7 +388,7 @@ const AboutPage = () => {
           )}
           {!loading && !error && facultyMembers.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {facultyMembers.map((member) => (
+              {[...facultyMembers].sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0)).map((member) => (
                 <div key={member.id} className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col items-center justify-center py-0">
                   <div className="w-full aspect-[3/4] bg-gray-100 flex items-center justify-center overflow-hidden">
                     <img
@@ -368,58 +417,6 @@ const AboutPage = () => {
               ))}
             </div>
           )}
-        </div>
-      </section>
-
-      {/* History Timeline */}
-      <section id="history" className="py-24 bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-6xl mx-auto px-6 lg:px-10">
-          <div className="text-center mb-16 reveal">
-            <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">Our Journey</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-inter">
-              From humble beginnings to global impact - the story of GEI's growth, evolution, and unwavering commitment to environmental sustainability.
-            </p>
-          </div>
-
-          <div className="relative">
-            {/* Timeline Line */}
-            <div className="absolute left-8 top-8 bottom-8 w-0.5 bg-gradient-to-b from-blue-500 to-indigo-500 hidden md:block"></div>
-            
-            <div className="space-y-12">
-              {milestones.map((milestone, index) => (
-                <div
-                  key={index}
-                  className={
-                    `relative flex items-center space-x-8 reveal timeline-animate opacity-0 translate-y-8 transition-all duration-700` +
-                    ` delay-[${index * 200}ms]`
-                  }
-                  style={{ transitionDelay: `${index * 200}ms` }}
-                >
-                  {/* Timeline Dot */}
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-800 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg motion-pulse border-4 border-white">
-                    <span className="text-white font-bold text-sm">
-                      {milestone.year}
-                    </span>
-                  </div>
-                  
-                  {/* Content */}
-                  <div className="flex-1 bg-white rounded-2xl p-8 shadow-lg hover-lift border border-gray-100">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-2xl font-bold text-gray-900 font-playfair">
-                        {milestone.title}
-                      </h3>
-                      <span className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-800 text-white text-sm font-medium rounded-full">
-                        {milestone.impact}
-                      </span>
-                    </div>
-                    <p className="text-gray-600 leading-relaxed text-lg font-inter">
-                      {milestone.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
@@ -499,12 +496,12 @@ const AboutPage = () => {
             there are many ways to contribute to our global environmental mission.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-white text-blue-700 font-semibold rounded-full hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg">
+            <Link to="/ideas" className="px-8 py-4 bg-white text-blue-700 font-semibold rounded-full hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center">
               Make a Difference
-            </button>
-            <button className="px-8 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-blue-700 transition-all duration-300 transform hover:scale-105">
+            </Link>
+            <Link to="/ideas" className="px-8 py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-blue-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
               Partner With Us
-            </button>
+            </Link>
           </div>
         </div>
       </section>

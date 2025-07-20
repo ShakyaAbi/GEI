@@ -54,6 +54,7 @@ const FacultyAdminPage: React.FC = () => {
     }
   }, [currentFaculty]);
 
+  // When opening the modal for a new faculty member, set orderIndex to max + 1
   const openModal = (member?: FacultyMember) => {
     if (member) {
       setCurrentFaculty(member);
@@ -66,6 +67,7 @@ const FacultyAdminPage: React.FC = () => {
         orderIndex: member.orderIndex ?? 0,
       });
     } else {
+      const maxOrder = facultyMembers.length > 0 ? Math.max(...facultyMembers.map(f => f.orderIndex ?? 0)) : 0;
       setCurrentFaculty(null);
       setFormData({
         name: '',
@@ -73,7 +75,7 @@ const FacultyAdminPage: React.FC = () => {
         photoFile: null,
         photoUrl: undefined,
         linkedin: '',
-        orderIndex: 0,
+        orderIndex: maxOrder + 1,
       });
     }
     setIsModalOpen(true);

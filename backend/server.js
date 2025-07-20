@@ -37,22 +37,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Dynamic CORS configuration
-const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? ['http://localhost:5000'] // Allow frontend in production
-  : ['http://localhost:5173', 'http://localhost:5174'];
+const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:5173', 'http://localhost:5174'].filter(Boolean);
 
 // Only apply CORS to API routes
 app.use('/api', cors({
   origin: function (origin, callback) {
-    // Allow all origins in development or when origin is undefined (same-origin)
-    if (process.env.NODE_ENV !== 'production' || !origin) {
+    // Allow all origins if origin is undefined (same-origin, server-to-server, or curl)
+    if (!origin) {
       return callback(null, true);
     }
-    if (allowedOrigins.indexOf(origin) === -1) {
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
       return callback(new Error(msg), false);
-    }
-    return callback(null, true);
   },
   credentials: true
 }));

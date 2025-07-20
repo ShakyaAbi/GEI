@@ -475,30 +475,14 @@ const ProjectDetailPage = () => {
                 Share Project
               </h3>
               <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => handleShare('twitter')}
-                  className="flex items-center justify-center p-3 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors"
-                >
-                  <Twitter className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => handleShare('linkedin')}
-                  className="flex items-center justify-center p-3 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors"
-                >
-                  <Linkedin className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => handleShare('email')}
-                  className="flex items-center justify-center p-3 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg transition-colors"
-                >
-                  <Mail className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => handleShare('copy')}
-                  className="flex items-center justify-center p-3 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg transition-colors"
-                >
-                  {copied ? <CheckCircle className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5" />}
-                </button>
+                <div className="flex flex-col justify-center items-center h-32">
+                  <button
+                    onClick={() => handleShare('copy')}
+                    className="flex items-center justify-center p-3 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded-lg transition-colors w-24 h-16 mx-auto"
+                  >
+                    {copied ? <CheckCircle className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5" />}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -588,9 +572,9 @@ const ProjectDetailPage = () => {
               <p className="text-blue-100 mb-4 text-sm">
                 Interested in supporting or learning more about this project?
               </p>
-              <button className="w-full bg-white text-blue-600 font-semibold py-3 px-4 rounded-lg hover:bg-blue-50 transition-colors">
+              <Link to="/ideas" className="w-full block bg-white text-blue-600 font-semibold py-3 px-4 rounded-lg hover:bg-blue-50 transition-colors text-center">
                 Contact Us
-              </button>
+              </Link>
             </div>
           </div>
         </div>

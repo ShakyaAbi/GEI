@@ -1,35 +1,113 @@
-import React from 'react';
-import Footer from '../components/Footer';
+import React, { useState } from 'react';
+import { Send } from 'lucide-react';
 
-const IdeasPage = () => {
+const subjects = [
+  'General Inquiry',
+  'Collaboration',
+  'Media',
+  'Support',
+  'Other'
+];
+
+const JoinUsPage = () => {
+  const [form, setForm] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    organization: '',
+    subject: '',
+    message: ''
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
   return (
-    <div className="min-h-screen bg-white flex flex-col justify-between">
-      <main className="flex-1 flex items-center justify-center py-24">
-        <div className="max-w-lg w-full mx-auto bg-white rounded-2xl shadow-lg p-10 border border-gray-100">
-          <h1 className="text-3xl font-bold text-center text-brand-dark-blue mb-6 font-playfair">Contact Us for Collaboration</h1>
-          <p className="text-gray-700 text-center mb-8">
-            Interested in collaborating with GEI? Fill out the form below and our team will get in touch with you soon.
-            </p>
-          <form className="space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-              <input type="text" id="name" name="name" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent" required />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input type="email" id="email" name="email" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent" required />
-            </div>
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Message</label>
-              <textarea id="message" name="message" rows={4} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent" required />
-            </div>
-            <button type="submit" className="w-full py-3 bg-brand-blue text-white font-semibold rounded-lg hover:bg-brand-dark-blue transition-colors">Send Message</button>
-          </form>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50 py-16">
+      <form className="max-w-xl w-full bg-white rounded-2xl shadow-lg p-8 space-y-6">
+        <h2 className="text-3xl font-bold mb-2">Send us a Message</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">First Name</label>
+            <input
+              name="firstName"
+              value={form.firstName}
+              onChange={handleChange}
+              placeholder="Enter your first name"
+              className="w-full border rounded-lg px-4 py-2"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Last Name</label>
+            <input
+              name="lastName"
+              value={form.lastName}
+              onChange={handleChange}
+              placeholder="Enter your last name"
+              className="w-full border rounded-lg px-4 py-2"
+              required
+            />
+          </div>
         </div>
-      </main>
-      <Footer />
+        <div>
+          <label className="block text-sm font-medium mb-1">Email Address</label>
+          <input
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="Enter your email address"
+            className="w-full border rounded-lg px-4 py-2"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Organization (Optional)</label>
+          <input
+            name="organization"
+            value={form.organization}
+            onChange={handleChange}
+            placeholder="Enter your organization name"
+            className="w-full border rounded-lg px-4 py-2"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Subject</label>
+          <select
+            name="subject"
+            value={form.subject}
+            onChange={handleChange}
+            className="w-full border rounded-lg px-4 py-2"
+            required
+          >
+            <option value="">Select a subject</option>
+            {subjects.map((subj) => (
+              <option key={subj} value={subj}>{subj}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Message</label>
+          <textarea
+            name="message"
+            value={form.message}
+            onChange={handleChange}
+            placeholder="Tell us about your inquiry or how we can help you..."
+            className="w-full border rounded-lg px-4 py-2 min-h-[120px]"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold rounded-lg py-3 mt-2 hover:from-blue-600 hover:to-blue-800 transition-all"
+        >
+          Send Message <Send className="w-5 h-5" />
+        </button>
+      </form>
     </div>
   );
 };
 
-export default IdeasPage;
+export default JoinUsPage;

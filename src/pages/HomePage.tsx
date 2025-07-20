@@ -31,7 +31,7 @@ const HomePage = () => {
       
       <Research />
      
-      <Publications />
+      <Publications limit={5} />
       <Contact />
       <Footer />
     </div>

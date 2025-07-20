@@ -199,8 +199,8 @@ const ProgramAreasAdmin = () => {
   };
 
   // Icon image upload handler
-  const handleIconImageSelect = (file: File) => {
-    const validation = imageUploadService.validateImage(file);
+  const handleIconImageSelect = async (file: File) => {
+    const validation = await imageUploadService.validateImage(file);
     if (!validation.valid) {
       setIconImageError(validation.error || 'Invalid file');
       return;
@@ -749,17 +749,29 @@ const ProgramAreasAdmin = () => {
                         placeholder="e.g. Globe, Users, Zap"
                       />
                     ) : (
-                      <ImageUpload
-                        onImageSelect={handleIconImageSelect}
-                        onImageRemove={handleIconImageRemove}
-                        selectedImage={selectedIconImage}
-                        currentImageUrl={formData.icon_url}
-                        uploading={uploadingIconImage}
-                        uploadProgress={iconImageProgress}
-                        error={iconImageError}
-                        label="Upload Custom Icon"
-                        maxSize={1}
-                      />
+                      <>
+                        <ImageUpload
+                          onImageSelect={handleIconImageSelect}
+                          onImageRemove={handleIconImageRemove}
+                          selectedImage={selectedIconImage}
+                          currentImageUrl={formData.icon_url}
+                          uploading={uploadingIconImage}
+                          uploadProgress={iconImageProgress}
+                          error={iconImageError}
+                          label="Upload Custom Icon"
+                          maxSize={1}
+                        />
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            value={formData.icon_url}
+                            onChange={e => setFormData(prev => ({ ...prev, icon_url: e.target.value }))}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Or paste an image URL (SVG, PNG, JPG, WebP)"
+                          />
+                          <p className="mt-1 text-xs text-gray-500">Paste a direct image URL (SVG, PNG, JPG, WebP) or use upload above.</p>
+                        </div>
+                      </>
                     )}
                     <p className="mt-1 text-xs text-gray-500">
                       {iconType === 'lucide'

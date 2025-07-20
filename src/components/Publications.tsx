@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BookOpen, ExternalLink, Calendar, Users, Filter, Loader2, AlertCircle, Download, Eye, ChevronDown } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { usePublications } from '../hooks/usePublications';
 import { useCategories } from '../hooks/useCategories';
 import type { Publication, PublicationAuthor } from '../types/prisma';
 
-const Publications = () => {
+const Publications = ({ limit }: { limit?: number }) => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedPublicationType, setSelectedPublicationType] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(6);
   
-  const { publications = [], loading: publicationsLoading, error: publicationsError } = usePublications({
+  const { publications = [], loading: publicationsLoading, error: publicationsError, refetch } = usePublications({
     category: selectedCategory
   });
   
@@ -37,6 +38,16 @@ const Publications = () => {
 
     return () => observer.disconnect();
   }, [publications]);
+
+  useEffect(() => {
+    setVisibleCount(6);
+  }, [selectedCategory, selectedPublicationType]);
+
+  // Refetch publications when publication type changes
+  useEffect(() => {
+    setSelectedCategory('all'); // Reset category to avoid filter mismatch
+    if (refetch) refetch();
+  }, [selectedPublicationType]);
 
   const formatDate = (year: number | null | undefined) => {
     return year ? year.toString() : 'N/A';
@@ -178,7 +189,7 @@ const Publications = () => {
                         setSelectedCategory('all');
                       }
                     }}
-                    className="px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-blue-600 text-white shadow-lg transform scale-105"
+                    className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 ${selectedCategory === 'all' ? 'bg-blue-600 text-white shadow-lg border border-blue-600' : 'bg-white text-blue-600 border border-blue-600 hover:bg-blue-50'}`}
                   >
                     All Areas
                   </button>
@@ -198,11 +209,7 @@ const Publications = () => {
                             setSelectedCategory(category.slug);
                           }
                         }}
-                        className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                          selectedCategory === category.slug
-                            ? 'bg-gradient-to-r from-base-blue to-muted-blue text-white shadow-lg transform scale-105'
-                            : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-base-blue/30'
-                        }`}
+                        className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 ${selectedCategory === category.slug ? 'bg-blue-600 text-white shadow-lg border border-blue-600' : 'bg-white text-blue-600 border border-blue-600 hover:bg-blue-50'}`}
                       >
                         {category.name}
                       </button>
@@ -294,108 +301,117 @@ const Publications = () => {
             </button>
           </div>
         ) : (
-          <div className="space-y-8">
-            {filteredPublications.map((publication, index) => (
-              <div
-                key={publication.id}
-                className="bg-white border border-gray-200 rounded-2xl p-8 hover-lift group reveal"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-                  <div className="flex-1">
-                    {/* Publication Type & Year */}
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 text-xs font-medium rounded-full border border-blue-200">
-                        <BookOpen className="w-3 h-3 mr-1" />
-                        {publication.publicationType}
-                      </span>
-                      <span className="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full border border-gray-200">
-                        <Calendar className="w-3 h-3 mr-1" />
-                        {formatDate(publication.publicationYear)}
-                      </span>
-                      {publication.category && (
-                        <span className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full border ${getCategoryColor(publication.category.name)}`}>
-                          {publication.category.name}
+          <>
+            <div className="space-y-8">
+              {(limit ? filteredPublications.slice(0, limit) : filteredPublications).map((publication, index) => (
+                <div
+                  key={publication.id}
+                  className="bg-white border border-gray-200 rounded-2xl p-8 hover-lift group reveal"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+                    <div className="flex-1">
+                      {/* Publication Type & Year */}
+                      <div className="flex flex-wrap items-center gap-3 gap-y-2 mb-4">
+                        <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700 text-xs font-medium rounded-full border border-blue-200 whitespace-normal break-words max-w-xs text-center">
+                          <BookOpen className="w-3 h-3 mr-1" />
+                          {publication.publicationType}
                         </span>
+                        <span className="inline-flex items-center px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full border border-gray-200 whitespace-normal break-words max-w-xs text-center">
+                          <Calendar className="w-3 h-3 mr-1" />
+                          {formatDate(publication.publicationYear)}
+                        </span>
+                        {publication.category && (
+                          <span className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full border ${getCategoryColor(publication.category.name)} whitespace-normal break-words max-w-xs text-center`}>
+                            {publication.category.name}
+                          </span>
+                        )}
+                        {publication.isFeatured && (
+                          <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-amber/10 to-amber/20 text-amber text-xs font-medium rounded-full border border-amber/20 whitespace-normal break-words max-w-xs text-center">
+                            Featured
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4 group-hover:text-base-blue transition-colors leading-tight cursor-pointer"
+                          onClick={() => viewPublication(publication.id)}>
+                        {publication.title}
+                      </h3>
+
+                      {/* Authors */}
+                      {publication.publicationAuthors && publication.publicationAuthors.length > 0 && (
+                        <div className="flex items-center gap-2 mb-4">
+                          <Users className="w-4 h-4 text-gray-500" />
+                          <p className="text-gray-600 text-sm">
+                            {publication.publicationAuthors
+                              .sort((a: PublicationAuthor, b: PublicationAuthor) => a.authorOrder - b.authorOrder)
+                              .map((pa: PublicationAuthor) => pa.author?.name)
+                              .join(', ')}
+                          </p>
+                        </div>
                       )}
-                      {publication.isFeatured && (
-                        <span className="inline-flex items-center px-3 py-1 bg-gradient-to-r from-amber/10 to-amber/20 text-amber text-xs font-medium rounded-full border border-amber/20">
-                          Featured
-                        </span>
+
+                      {/* Journal */}
+                      {publication.journal && (
+                        <p className="text-base-blue font-medium mb-4 text-lg">
+                          {publication.journal}
+                        </p>
+                      )}
+
+                      {/* Abstract */}
+                      {publication.abstract && (
+                        <p className="text-gray-600 leading-relaxed mb-4 line-clamp-3">
+                          {publication.abstract}
+                        </p>
+                      )}
+
+                      {/* DOI */}
+                      {publication.doi && (
+                        <p className="text-xs text-gray-500 mb-2 font-mono">
+                          DOI: {publication.doi}
+                        </p>
                       )}
                     </div>
 
-                    {/* Title */}
-                    <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4 group-hover:text-base-blue transition-colors leading-tight cursor-pointer"
-                        onClick={() => viewPublication(publication.id)}>
-                      {publication.title}
-                    </h3>
-
-                    {/* Authors */}
-                    {publication.publicationAuthors && publication.publicationAuthors.length > 0 && (
-                      <div className="flex items-center gap-2 mb-4">
-                        <Users className="w-4 h-4 text-gray-500" />
-                        <p className="text-gray-600 text-sm">
-                          {publication.publicationAuthors
-                            .sort((a: PublicationAuthor, b: PublicationAuthor) => a.authorOrder - b.authorOrder)
-                            .map((pa: PublicationAuthor) => pa.author?.name)
-                            .join(', ')}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Journal */}
-                    {publication.journal && (
-                      <p className="text-base-blue font-medium mb-4 text-lg">
-                        {publication.journal}
-                      </p>
-                    )}
-
-                    {/* Abstract */}
-                    {publication.abstract && (
-                      <p className="text-gray-600 leading-relaxed mb-4 line-clamp-3">
-                        {publication.abstract}
-                      </p>
-                    )}
-
-                    {/* DOI */}
-                    {publication.doi && (
-                      <p className="text-xs text-gray-500 mb-2 font-mono">
-                        DOI: {publication.doi}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Stats & Actions */}
-                  <div className="lg:text-right lg:min-w-[200px]">
-                    <div className="flex lg:flex-col gap-3">
-                      <button
-                        onClick={() => viewPublication(publication.id)}
-                        className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        View Details
-                        <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                      </button>
-                      
-                      {publication.pdfUrl && (
-                        <a
-                          href={publication.pdfUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                    {/* Stats & Actions */}
+                    <div className="lg:text-right lg:min-w-[200px]">
+                      <div className="flex lg:flex-col gap-3">
+                        <button
+                          onClick={() => viewPublication(publication.id)}
                           className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
                         >
-                          <Download className="w-4 h-4 mr-2" />
-                          Download PDF
+                          <Eye className="w-4 h-4 mr-2" />
+                          View Details
                           <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                        </a>
-                      )}
+                        </button>
+                        
+                        {publication.pdfUrl && (
+                          <a
+                            href={publication.pdfUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
+                          >
+                            <Download className="w-4 h-4 mr-2" />
+                            Download PDF
+                            <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
+              ))}
+            </div>
+            {limit && filteredPublications.length > limit && (
+              <div className="flex justify-center mt-8">
+                <Link to="/publications" className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-300">
+                  Show More
+                </Link>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
 
       </div>

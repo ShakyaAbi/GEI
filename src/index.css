@@ -59,3 +59,15 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+.filter-blue-icon {
+  filter: invert(32%) sepia(99%) saturate(747%) hue-rotate(176deg) brightness(95%) contrast(92%);
+}
+
+.filter-green-icon {
+  filter: invert(62%) sepia(41%) saturate(749%) hue-rotate(63deg) brightness(92%) contrast(92%);
+}
+
+.filter-red-icon {
+  filter: invert(23%) sepia(97%) saturate(7492%) hue-rotate(340deg) brightness(90%) contrast(110%);
+}

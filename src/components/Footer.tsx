@@ -133,7 +133,7 @@ const Footer = () => {
 
             {/* Ideas & Resources */}
             <div>
-              <h4 className="text-lg font-semibold mb-6 font-playfair">Ideas & Innovation</h4>
+              <h4 className="text-lg font-semibold mb-6 font-playfair">Join Us</h4>
               <ul className="space-y-3 mb-8">
                 {footerLinks.ideas.map((link, index) => (
                   <li key={index}>
