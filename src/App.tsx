@@ -40,6 +40,7 @@ const StoryDetailPage = React.lazy(() => import('./pages/StoryDetailPage'));
 const StoriesManager = React.lazy(() => import('./components/admin/StoriesManager'));
 const FacultyAdminPage = React.lazy(() => import('./pages/admin/FacultyAdminPage'));
 const CollaboratePage = React.lazy(() => import('./pages/CollaboratePage'));
+const CollaboratePage = React.lazy(() => import('./pages/CollaboratePage'));
 
 function App() {
   return (
@@ -59,6 +60,8 @@ function App() {
           <Route path="/our-work/research-publications" element={<PublicLayout><ResearchPublicationsPage /></PublicLayout>} />
           <Route path="/our-stories" element={<PublicLayout><OurStoriesPage /></PublicLayout>} />
           <Route path="/our-stories/:id" element={<PublicLayout><StoryDetailPage /></PublicLayout>} />
+          <Route path="/collaborate" element={<PublicLayout><CollaboratePage /></PublicLayout>} />
+          <Route path="/donate" element={<PublicLayout><CollaboratePage /></PublicLayout>} />
           <Route path="/collaborate" element={<PublicLayout><CollaboratePage /></PublicLayout>} />
           <Route path="/donate" element={<PublicLayout><CollaboratePage /></PublicLayout>} />
           <Route path="/login" element={<LoginPage />} />
