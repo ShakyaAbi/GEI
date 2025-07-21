@@ -1,8 +1,5 @@
 import React, { useEffect } from 'react';
 import { Brain, Atom, Globe, Cpu, Dna, Zap, ArrowRight } from 'lucide-react';
-import PlanetEarth from '../../public/planet-earth_7276001.svg';
-import GreenTech from '../../public/green-technology_8939660.svg';
-import Benefits from '../../public/benefits_1481549.svg';
 
 const Research = () => {
   useEffect(() => {
@@ -80,11 +77,11 @@ const Research = () => {
               >
                 <div className={`w-16 h-16 bg-gradient-to-br ${area.bgColor} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
                   {area.icon === 'planet' ? (
-                    <img src={PlanetEarth} alt="Planet Earth" className="w-8 h-8 filter-blue-icon" />
+                    <img src="/planet-earth_7276001.svg" alt="Planet Earth" className="w-8 h-8 filter-blue-icon" />
                   ) : area.icon === 'benefits' ? (
-                    <img src={Benefits} alt="Community Health" className="w-8 h-8 filter-red-icon" />
+                    <img src="/benefits_1481549.svg" alt="Community Health" className="w-8 h-8 filter-red-icon" />
                   ) : area.icon === 'greentech' ? (
-                    <img src={GreenTech} alt="Green Technology" className="w-8 h-8 filter-green-icon" />
+                    <img src="/green-technology_8939660.svg" alt="Green Technology" className="w-8 h-8 filter-green-icon" />
                   ) : null}
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-700 group-hover:to-cyan-600 transition-all duration-300">

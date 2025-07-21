@@ -333,7 +333,7 @@ const FacultyAdminPage: React.FC = () => {
                   onImageSelect={handleImageSelect}
                   onImageRemove={handleImageRemove}
                   selectedImage={formData.photoFile ?? null}
-                  currentImageUrl={currentFaculty?.photo}
+                  currentImageUrl={formData.photoUrl || undefined} // Use formData.photoUrl, not currentFaculty?.photo
                   uploadProgress={uploadProgress}
                   uploading={uploading}
                 />

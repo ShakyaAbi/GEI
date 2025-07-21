@@ -5,6 +5,8 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs';
 import nodemailer from 'nodemailer';
+import helmet from 'helmet'; // Security headers
+import rateLimit from 'express-rate-limit'; // Rate limiting
 
 // Import routes
 import authRoutes from './routes/auth.js';
@@ -36,10 +38,14 @@ if (!fs.existsSync(uploadsDir)) {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Dynamic CORS configuration
-const allowedOrigins = [process.env.FRONTEND_URL, 'http://localhost:5173', 'http://localhost:5174'].filter(Boolean);
+// Security headers
+app.use(helmet());
 
-// Only apply CORS to API routes
+// API rate limiting (100 requests per 15 min per IP)
+app.use('/api/', rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
+
+// CORS: Only allow your production frontend domain
+const allowedOrigins = [process.env.FRONTEND_URL].filter(Boolean);
 app.use('/api', cors({
   origin: function (origin, callback) {
     // Allow all origins if origin is undefined (same-origin, server-to-server, or curl)
@@ -49,8 +55,8 @@ app.use('/api', cors({
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
+    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+    return callback(new Error(msg), false);
   },
   credentials: true
 }));

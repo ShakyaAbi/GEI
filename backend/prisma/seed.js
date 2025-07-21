@@ -203,13 +203,25 @@ async function main() {
     ];
 
     for (const area of programAreas) {
-      await prisma.programArea.upsert({
-        where: { slug: area.slug },
-        update: {},
-        create: area
+      // Try to find by slug or name
+      const existing = await prisma.programArea.findFirst({
+        where: {
+          OR: [
+            { slug: area.slug },
+            { name: area.name }
+          ]
+        }
       });
+      if (existing) {
+        await prisma.programArea.update({
+          where: { id: existing.id },
+          data: area
+        });
+      } else {
+        await prisma.programArea.create({ data: area });
+      }
     }
-    console.log(`Created ${programAreas.length} program areas`);
+    console.log(`Created or updated ${programAreas.length} program areas`);
 
     // Add comprehensive GEI projects based on the project activities document
     const allAreas = await prisma.programArea.findMany();
@@ -578,29 +590,27 @@ Health facilities are now able to provide basic preventive and life-saving care.
 
     // Add or replace the faculty seeding section:
     const facultyMembers = [
-      { name: 'Spencer Crocker MS', title: 'Founder and President' },
-      { name: 'Bernhard Fassl MD', title: 'Chief Operating Officer' },
-      { name: 'Allison Judkins MD', title: 'Director: Research and Maternal child health' },
-      { name: 'Suyog, MBA', title: 'GEI business development' },
-      { name: 'Bibek Lamicchane MPH/MPA', title: 'Director of operations GEI Asia' },
-      { name: 'Ranjan Dhungana MPH', title: 'Project Consultant' },
-      { name: 'Rabin Dhital BPH', title: 'Monitoring, Evaluation, Accountability and Learning (MEAL) Officer' },
-      { name: 'Leela Khanal MS', title: 'Project consultant.' },
-      { name: 'Sarala Sharma, MN', title: 'Project consultant' },
-      { name: 'Shreya Lohani', title: 'Field supervisor-Health project' },
-      { name: 'Priyanka Padhyay', title: 'Field supervisor-Health project' },
-      { name: 'Paribesh Bidari, MBA', title: 'Research, Data and Communications Consultant/Officer' },
-      { name: 'Vaskar Sapkota MPH', title: 'Project Coordinator-DH' },
-      { name: 'Padam', title: 'Field Supervisor-Agriculture Project' },
-      { name: 'Santosh Rawal', title: 'Field Supervisor-Health Project' },
-  
-      { name: 'Kishor Rawal BPH', title: 'District Coordinator' },
-      { name: 'Deepa Pudasaini', title: 'Field Supervisor-Health  Project' },
-      { name: 'Ramu GC', title: 'Finance Manager' },
-      { name: 'Priya Thapa RanaMagar', title: 'Support Staff' },
+      { name: 'Spencer Crocker MS', title: 'Founder and President', photo: 'https://example.com/photos/spencer.jpg', linkedin: '', orderIndex: 1 },
+      { name: 'Bernhard Fassl MD', title: 'Chief Operating Officer', photo: 'https://example.com/photos/bernhard.jpg', linkedin: '', orderIndex: 2 },
+      { name: 'Allison Judkins MD', title: 'Director: Research and Maternal child health', photo: 'https://example.com/photos/allison.jpg', linkedin: '', orderIndex: 3 },
+      { name: 'Bibek Lamicchane MPH/MPA', title: 'Director of operations GEI Asia', photo: 'https://example.com/photos/bibek.jpg', linkedin: '', orderIndex: 4 },
+      { name: 'Suyog, MBA', title: 'GEI business development', photo: 'https://example.com/photos/suyog.jpg', linkedin: '', orderIndex: 5 },
+      { name: 'Leela Khanal MS', title: 'Project consultant.', photo: 'https://example.com/photos/leela.jpg', linkedin: '', orderIndex: 6 },
+      { name: 'Shreya Lohani', title: 'Field supervisor-Health project', photo: 'https://example.com/photos/shreya.jpg', linkedin: '', orderIndex: 7 },
+      { name: 'Ranjan Dhungana MPH', title: 'Project Consultant', photo: 'https://example.com/photos/ranjan.jpg', linkedin: '', orderIndex: 8 },
+      { name: 'Rabin Dhital BPH', title: 'Monitoring, Evaluation, Accountability and Learning (MEAL) Officer', photo: 'https://example.com/photos/rabin.jpg', linkedin: '', orderIndex: 9 },
+      { name: 'Sarala Sharma, MN', title: 'Project consultant', photo: 'https://example.com/photos/sarala.jpg', linkedin: '', orderIndex: 10 },
+      { name: 'Paribesh Bidari, MBA', title: 'Research, Data and Communications Consultant/Officer', photo: 'https://example.com/photos/paribesh.jpg', linkedin: '', orderIndex: 11 },
+      { name: 'Priyanka Padhyay', title: 'Field supervisor-Health project', photo: 'https://example.com/photos/priyanka.jpg', linkedin: '', orderIndex: 12 },
+      { name: 'Vaskar Sapkota MPH', title: 'Project Coordinator-DH', photo: 'https://example.com/photos/vaskar.jpg', linkedin: '', orderIndex: 13 },
+      { name: 'Padam', title: 'Field Supervisor-Agriculture Project', photo: 'https://example.com/photos/padam.jpg', linkedin: '', orderIndex: 14 },
+      { name: 'Santosh Rawal', title: 'Field Supervisor-Health Project', photo: 'https://example.com/photos/santosh.jpg', linkedin: '', orderIndex: 15 },
+      { name: 'Kishor Rawal BPH', title: 'District Coordinator', photo: 'https://example.com/photos/kishor.jpg', linkedin: '', orderIndex: 16 },
+      { name: 'Deepa Pudasaini', title: 'Field Supervisor-Health  Project', photo: 'https://example.com/photos/deepa.jpg', linkedin: '', orderIndex: 17 },
+      { name: 'Ramu GC', title: 'Finance Manager', photo: 'https://example.com/photos/ramu.jpg', linkedin: '', orderIndex: 18 },
+      { name: 'Priya Thapa RanaMagar', title: 'Support Staff', photo: 'https://example.com/photos/priya.jpg', linkedin: '', orderIndex: 19 },
     ];
 
-    // Replace the upsert loop for faculty with createMany:
     await prisma.faculty.createMany({
       data: facultyMembers,
       skipDuplicates: true,

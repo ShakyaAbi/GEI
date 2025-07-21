@@ -388,33 +388,40 @@ const AboutPage = () => {
           )}
           {!loading && !error && facultyMembers.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[...facultyMembers].sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0)).map((member) => (
-                <div key={member.id} className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col items-center justify-center py-0">
-                  <div className="w-full aspect-[3/4] bg-gray-100 flex items-center justify-center overflow-hidden">
-                    <img
-                      src={member.photo || '/faculty/placeholder.jpg'}
-                      alt={member.name}
-                      className="w-full h-full object-cover object-center rounded-t-2xl"
-                      onError={(e) => { e.currentTarget.src = '/faculty/placeholder.jpg'; }}
-                    />
+              {[...facultyMembers]
+                .filter(member => typeof member.orderIndex === 'number') // Only show valid orderIndex
+                .sort((a, b) => {
+                  if (a.orderIndex == null) return 1; // Put missing orderIndex at the end
+                  if (b.orderIndex == null) return -1;
+                  return a.orderIndex - b.orderIndex;
+                })
+                .map((member) => (
+                  <div key={member.id} className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col items-center justify-center py-0">
+                    <div className="w-full aspect-[3/4] bg-gray-100 flex items-center justify-center overflow-hidden">
+                      <img
+                        src={member.photo || '/faculty/placeholder.jpg'}
+                        alt={member.name}
+                        className="w-full h-full object-cover object-center rounded-t-2xl"
+                        onError={(e) => { e.currentTarget.src = '/faculty/placeholder.jpg'; }}
+                      />
+                    </div>
+                    <div className="flex-1 flex flex-col items-center justify-center p-8">
+                      <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair text-center">{member.name}</h3>
+                      <p className="text-blue-600 font-semibold mb-3 text-center font-inter">{member.title}</p>
+                      <a
+                        href={member.linkedin || '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-flex items-center justify-center px-3 py-2 mt-2 rounded-full font-semibold transition-colors ${member.linkedin ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-300 text-gray-400 cursor-not-allowed'}`}
+                        tabIndex={member.linkedin ? 0 : -1}
+                        aria-disabled={!member.linkedin}
+                        onClick={e => { if (!member.linkedin) e.preventDefault(); }}
+                      >
+                        <Linkedin className="w-5 h-5" />
+                      </a>
+                    </div>
                   </div>
-                  <div className="flex-1 flex flex-col items-center justify-center p-8">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair text-center">{member.name}</h3>
-                    <p className="text-blue-600 font-semibold mb-3 text-center font-inter">{member.title}</p>
-                    <a
-                      href={member.linkedin || '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`inline-flex items-center justify-center px-3 py-2 mt-2 rounded-full font-semibold transition-colors ${member.linkedin ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-300 text-gray-400 cursor-not-allowed'}`}
-                      tabIndex={member.linkedin ? 0 : -1}
-                      aria-disabled={!member.linkedin}
-                      onClick={e => { if (!member.linkedin) e.preventDefault(); }}
-                    >
-                      <Linkedin className="w-5 h-5" />
-                    </a>
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           )}
         </div>

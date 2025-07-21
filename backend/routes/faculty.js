@@ -13,6 +13,7 @@ function mapFaculty(member) {
     title: member.title,
     photo: member.image,
     linkedin: member.linkedin_url,
+    orderIndex: member.orderIndex, // Add orderIndex to API response
     createdAt: member.created_at,
     updatedAt: member.updated_at,
   };
@@ -21,7 +22,7 @@ function mapFaculty(member) {
 // GET all faculty
 router.get('/', async (req, res) => {
   try {
-    const faculty = await prisma.faculty.findMany({ orderBy: { created_at: 'desc' } });
+    const faculty = await prisma.faculty.findMany({ orderBy: { orderIndex: 'asc' } }); // Order by orderIndex
     res.json({ error: false, data: faculty.map(mapFaculty) }); // Standardize response
   } catch (error) {
     console.error('Get faculty error:', error);
@@ -45,6 +46,9 @@ router.get('/:id', async (req, res) => {
 router.post('/', [
   body('name').notEmpty().withMessage('Name is required'),
   body('title').notEmpty().withMessage('Title is required'),
+  body('photo').optional(),
+  body('linkedin').optional(),
+  body('orderIndex').optional().isInt().withMessage('Order index must be an integer'),
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -52,16 +56,14 @@ router.post('/', [
     return res.status(400).json({ error: true, message: errorMessages });
   }
   try {
-    const { name, title, photo, linkedin } = req.body;
-    // Removed manual validation: if (!name || !title) {
-    //   return res.status(400).json({ error: 'Name and title are required' });
-    // }
+    const { name, title, photo, linkedin, orderIndex } = req.body;
     const newMember = await prisma.faculty.create({
       data: {
         name,
         title,
         image: photo,
         linkedin_url: linkedin,
+        orderIndex: orderIndex !== undefined ? parseInt(orderIndex) : undefined,
       }
     });
     res.status(201).json({ error: false, data: mapFaculty(newMember) }); // Standardize response
@@ -75,6 +77,9 @@ router.post('/', [
 router.put('/:id', [
   body('name').notEmpty().withMessage('Name is required').optional(),
   body('title').notEmpty().withMessage('Title is required').optional(),
+  body('photo').optional(),
+  body('linkedin').optional(),
+  body('orderIndex').optional().isInt().withMessage('Order index must be an integer'),
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -82,7 +87,7 @@ router.put('/:id', [
     return res.status(400).json({ error: true, message: errorMessages });
   }
   try {
-    const { name, title, photo, linkedin } = req.body;
+    const { name, title, photo, linkedin, orderIndex } = req.body;
     const updatedMember = await prisma.faculty.update({
       where: { id: req.params.id },
       data: {
@@ -90,6 +95,7 @@ router.put('/:id', [
         title,
         image: photo,
         linkedin_url: linkedin,
+        orderIndex: orderIndex !== undefined ? parseInt(orderIndex) : undefined,
         updated_at: new Date(),
       }
     });
