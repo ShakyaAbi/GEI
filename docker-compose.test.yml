@@ -51,6 +51,24 @@ services:
     networks:
       - gei-network
 
+  # Prisma Studio (for DB browser access)
+  prisma-studio:
+    image: node:18-alpine
+    container_name: gei-prisma-studio
+    working_dir: /app
+    command: sh -c "npm install -g prisma && prisma studio --port 5555 --schema=./prisma/schema.prisma"
+    environment:
+      - DATABASE_URL=postgresql://geiuser:${DB_PASSWORD:-geipassword}@db:5432/gei?schema=public
+    volumes:
+      - ./prisma:/app/prisma:ro
+    ports:
+      - "5555:5555"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - gei-network
+
 volumes:
   postgres_data:
     driver: local
