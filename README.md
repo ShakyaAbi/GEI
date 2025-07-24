@@ -6,7 +6,7 @@ A modern, responsive website for the Global Environmental Initiative (GEI) built
 
 - **Modern Design**: Clean, professional design with smooth animations and micro-interactions
 - **Responsive Layout**: Optimized for all device sizes from mobile to desktop
-- **Content Management**: Admin panels for managing publications, program areas, and projects
+- **Content Management**: Admin panels for managing publications, program areas, projects, stories, and faculty
 - **Database Integration**: Powered by Supabase for real-time data management
 - **File Uploads**: Support for PDF documents and images with secure cloud storage
 - **Search & Filtering**: Advanced search and filtering capabilities across all content
@@ -15,10 +15,12 @@ A modern, responsive website for the Global Environmental Initiative (GEI) built
 ## Tech Stack
 
 - **Frontend**: React 18, TypeScript, Tailwind CSS
-- **Backend**: Supabase (PostgreSQL, Authentication, Storage)
+- **Backend**: Supabase (PostgreSQL, Authentication, Storage), Node.js/Express
 - **Build Tool**: Vite
 - **Icons**: Lucide React
 - **Routing**: React Router DOM
+- **ORM**: Prisma
+- **Deployment**: Docker, Nginx
 
 ## Getting Started
 
@@ -49,7 +51,7 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 4. Run database migrations:
-Apply the SQL migrations in the `supabase/migrations` folder to your Supabase project.
+Apply the SQL migrations in the `prisma/migrations` folder to your database.
 
 5. Start the development server:
 ```bash
@@ -61,14 +63,20 @@ npm run dev
 ```
 src/
 ├── components/          # Reusable UI components
-│   ├── admin/          # Admin panel components
-│   ├── navbar/         # Navigation components
-│   └── projects/       # Project-specific components
-├── hooks/              # Custom React hooks
-├── lib/                # Utility functions and API clients
-├── pages/              # Page components
-├── types/              # TypeScript type definitions
-└── constants/          # Application constants
+│   ├── admin/           # Admin panel components (Publications, Program Areas, Projects, Stories, Faculty, File/Image Upload)
+│   ├── navbar/          # Navigation components
+│   ├── projects/        # Project-specific components
+│   ├── layout/          # Layout wrappers (AdminRootLayout, PublicLayout)
+│   ├── ui/              # Reusable UI elements (buttons, carousels, logos)
+│   └── common/          # Shared/common UI (e.g., LoadingSpinner)
+├── hooks/               # Custom React hooks (useProjects, usePublications, useStories, etc.)
+├── lib/                 # Utility functions and API clients
+├── pages/               # Page components (Home, About, Our Work, Projects, Publications, Admin, etc.)
+│   └── admin/           # Admin page routes (e.g., FacultyAdminPage)
+├── types/               # TypeScript type definitions
+├── constants/           # Application constants (navigation, app config)
+├── data/                # Static data (if any)
+└── index.css            # Global styles
 ```
 
 ## Admin Features
@@ -78,11 +86,16 @@ The application includes comprehensive admin panels for:
 - **Publications Management**: Add, edit, and organize research publications
 - **Program Areas Management**: Manage program areas and their associated projects
 - **Projects Management**: Create and manage individual projects with custom fields
+- **Stories Management**: Add and manage stories
+- **Faculty Management**: Add and manage faculty members
 - **File Management**: Upload and manage PDFs and images
 
 Access admin panels at:
 - `/admin/publications`
 - `/admin/program-areas`
+- `/admin/projects`
+- `/admin/stories`
+- `/admin/faculty`
 
 ## Authentication
 
@@ -97,7 +110,7 @@ The application uses Supabase Authentication. To set up admin access:
 
 ## Backend Setup
 
-The backend is a Node.js/Express server located in the `backend/` directory. It provides REST API endpoints for authentication, publications, program areas, projects, and file uploads.
+The backend is a Node.js/Express server located in the `backend/` directory. It provides REST API endpoints for authentication, publications, program areas, projects, stories, faculty, and file uploads.
 
 ### Prerequisites
 - Node.js 18+
@@ -121,7 +134,7 @@ The backend is a Node.js/Express server located in the `backend/` directory. It 
    ```bash
    npx prisma migrate deploy
    npx prisma generate
-   node prisma/seed.js
+   node backend/prisma/seed.js
    ```
 4. Start the backend server:
    ```bash
@@ -136,9 +149,9 @@ The backend will be available at `http://localhost:5000` by default.
 
 ## Database Setup
 
-- The database schema is defined in `prisma/schema.prisma`.
-- Migrations are in `prisma/migrations/`.
-- Seed data is in `prisma/seed.js`.
+- The database schema is defined in `backend/prisma/schema.prisma`.
+- Migrations are in `backend/prisma/migrations/`.
+- Seed data is in `backend/prisma/seed.js`.
 - You can use any PostgreSQL instance (local, Supabase, or Hostinger’s managed DB).
 
 ---
@@ -169,6 +182,10 @@ UPLOAD_DIR=uploads
 - `GET    /api/program-areas` — List program areas
 - `GET    /api/projects` — List projects
 - `POST   /api/projects` — Create project (admin)
+- `GET    /api/stories` — List stories
+- `GET    /api/faculty` — List faculty
+- `POST   /api/stories` — Create story (admin)
+- `POST   /api/faculty` — Create faculty (admin)
 - `GET    /api/health` — Health check
 - ...and more (see `backend/routes/` for full list)
 
@@ -176,69 +193,26 @@ UPLOAD_DIR=uploads
 - `/admin/publications` — Manage publications
 - `/admin/program-areas` — Manage program areas
 - `/admin/projects` — Manage projects
+- `/admin/stories` — Manage stories
+- `/admin/faculty` — Manage faculty
 
 ---
 
-## Deployment to Hostinger (VPS)
+## Custom Hooks & UI Components
 
-### 1. Prepare your VPS
-- Deploy an Ubuntu server (Hostinger VPS panel)
-- SSH into your VPS
-- Install Node.js, npm, and PostgreSQL:
-  ```bash
-  sudo apt update && sudo apt install nodejs npm postgresql
-  ```
-- (Optional) Install Nginx for reverse proxy
-
-### 2. Clone your repository
-```bash
-git clone https://github.com/ShakyaAbi/GEI.git
-cd GEI
-```
-
-### 3. Set up environment variables
-- Create `.env` files as described above for both frontend and backend
-
-### 4. Install dependencies and build frontend
-```bash
-npm install
-npm run build
-```
-
-### 5. Set up the database
-- Create a PostgreSQL database and user
-- Update `DATABASE_URL` in your `.env`
-- Run migrations and seed:
-  ```bash
-  npx prisma migrate deploy
-  npx prisma generate
-  node prisma/seed.js
-  ```
-
-### 6. Start the backend server
-```bash
-npm run server
-```
-
-### 7. Serve the frontend
-- You can use Nginx or serve static files with a Node.js static server (e.g., `serve`)
-- Example Nginx config:
-  - Serve `dist/` as static files
-  - Proxy `/api` requests to backend server
-
-### 8. (Optional) Use PM2 for process management
-```bash
-npm install -g pm2
-pm2 start backend/server.js --name gei-backend
-pm2 start npx --name gei-frontend -- serve -s dist
-pm2 save
-```
+- **Custom Hooks**: Located in `src/hooks/` (e.g., `useProjects`, `usePublications`, `useStories`, `useFaculty`, `useCategories`, `useProgramAreas`)
+- **UI Components**: Located in `src/components/ui/` (e.g., `button`, `carousel`, `logos3`)
+- **Layout Components**: Located in `src/components/layout/` (e.g., `AdminRootLayout`, `PublicLayout`)
+- **Common Components**: Located in `src/components/common/` (e.g., `LoadingSpinner`)
 
 ---
 
-## Notes for Hostinger Shared Hosting
-- Node.js/Express is not supported on shared hosting. Use VPS or Docker hosting for full-stack deployment.
-- For static frontend only, upload the `dist/` folder to Hostinger’s static file manager.
+## Deployment
+
+- The project supports deployment using Docker and Nginx for production environments.
+- For detailed deployment steps, SSL setup, backups, and monitoring, **see [`DEPLOYMENT_GUIDE.md`](./DEPLOYMENT_GUIDE.md)**.
+- Example deployment stack: Hostinger VPS, Docker Compose, Nginx reverse proxy, PostgreSQL, Certbot for SSL.
+- Use `deploy.sh` for automated deployment and `backup.sh` for database backups.
 
 ---
 
@@ -247,6 +221,7 @@ pm2 save
 - Check database connection and run migrations
 - Use `npm run dev:server` for backend debugging
 - Use Nginx or Caddy for production reverse proxy
+- For Docker-specific and advanced troubleshooting, see `DEPLOYMENT_GUIDE.md`
 
 ## Contributing
 
