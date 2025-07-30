@@ -85,7 +85,7 @@ const OurWorkPage = () => {
     { number: '100,000', label: 'Lives Impacted', icon: Users, color: 'from-blue-600 to-cyan-600' },
     { number: totalProjectsCount.toString(), label: 'Total Projects', icon: Goal, color: 'from-blue-600 to-cyan-600' },
     { number: activeProjectsCount.toString(), label: 'Active Projects', icon: TrendingUp, color: 'from-green-600 to-emerald-600' },
-    { number: '850+', label: 'Local Partners', icon: Award, color: 'from-blue-600 to-cyan-600' }
+    { number: '20+', label: 'Local Partners', icon: Award, color: 'from-blue-600 to-cyan-600' }
   ];
 
   const filteredProgramAreas = programAreas.filter(programArea => {
@@ -129,14 +129,14 @@ const OurWorkPage = () => {
       caption: 'Clean water access transforming health outcomes'
     },
     {
-      src: '/137.jpg',
-      alt: 'Renewable energy installation in remote area',
-      caption: 'Solar energy bringing power to off-grid communities'
+      src: '/IMG_2039 (Large).jpeg',
+      alt: 'Community healthcare initiative',
+      caption: 'Improving access to quality healthcare and maternal health services'
     },
     {
       src: 'Story1.jpg',
-      alt: 'Forest conservation and restoration efforts',
-      caption: 'Reforestation initiatives protecting biodiversity'
+      alt: 'Sustainable job creation initiatives',
+      caption: 'Empowering communities through green jobs and sustainable livelihoods'
     },
    
   ];

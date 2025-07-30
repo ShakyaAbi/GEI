@@ -40,7 +40,6 @@ const StoryDetailPage = React.lazy(() => import('./pages/StoryDetailPage'));
 const StoriesManager = React.lazy(() => import('./components/admin/StoriesManager'));
 const FacultyAdminPage = React.lazy(() => import('./pages/admin/FacultyAdminPage'));
 const CollaboratePage = React.lazy(() => import('./pages/CollaboratePage'));
-const CollaboratePage = React.lazy(() => import('./pages/CollaboratePage'));
 
 function App() {
   return (

@@ -1,6 +1,6 @@
 # GEI Website
 
-A modern, responsive website for the Global Environmental Initiative (GEI) built with React, TypeScript, and Tailwind CSS.
+A modern, responsive website for the Global Envirohealth Institute (GEI) built with React, TypeScript, and Tailwind CSS.
 
 ## Features
 

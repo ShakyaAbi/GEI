@@ -1,7 +1,7 @@
 
 # GEI Web Application - User Guide
 
-Welcome to the user guide for the GEI (Global Environmental Initiative) web application. This guide will walk you through the main features of the admin panel, enabling you to manage the content of the public-facing website.
+Welcome to the user guide for the GEI (Global Envirohealth Institute) web application. This guide will walk you through the main features of the admin panel, enabling you to manage the content of the public-facing website.
 
 ## Table of Contents
 

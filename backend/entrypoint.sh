@@ -1,8 +1,5 @@
 #!/bin/sh
 set -e
 
-# Run Prisma migrations
-npx prisma migrate deploy
-
-# Start the server
-exec node server.js 
+npx prisma migrate deploy --schema=../prisma/schema.prisma
+  node server.js

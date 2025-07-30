@@ -99,7 +99,7 @@ router.post('/', contactLimiter, [
         </blockquote>
         <p>Best regards,<br>The GEI Team</p>
         <hr>
-        <p><small>Global Environmental Initiative<br>
+        <p><small>Global Envirohealth Institute<br>
         Email: info@gei.org<br>
         Website: https://gei.org</small></p>
       `
@@ -193,7 +193,7 @@ router.post('/collaborate', contactLimiter, [
         </blockquote>
         <p>Best regards,<br>The GEI Partnerships Team</p>
         <hr>
-        <p><small>Global Environmental Initiative<br>
+        <p><small>Global Envirohealth Institute<br>
         Email: partnerships@gei.org<br>
         Website: https://gei.org</small></p>
       `

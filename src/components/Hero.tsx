@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from "framer-motion";
-import { MoveRight, PhoneCall, ArrowRight, Globe, Users, Zap, MapPin, ExternalLink, X } from 'lucide-react';
+import { MoveRight, PhoneCall, ArrowRight, Globe, Users, Zap, MapPin, ExternalLink, X, Heart } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import ImageGalleryCarousel from './ImageGalleryCarousel';
 import CountUp from './CountUp';
 import { useNavigate } from 'react-router-dom';
+import { useProjects } from '../hooks/useProjects';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -92,9 +93,9 @@ const Hero = () => {
       id: 1,
       name: 'Nepal Office',
       country: 'Nepal',
-      x: 72,
+      x: 71,
       y: 36,
-      image: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=400&q=80',
+      image: 'nepal.jpg',
       description: 'Supporting climate-resilient agriculture and sustainable water management systems for mountain communities.',
       impact: '15,000+ farmers supported',
       icon: Globe,
@@ -106,7 +107,7 @@ const Hero = () => {
       country: 'India',
       x: 69,
       y: 42,
-      image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=400&q=80',
+      image: 'Flag_of_India.png',
       description: 'Implementing renewable energy solutions and sustainable development programs in rural communities.',
       impact: '50,000+ people with clean energy',
       icon: Zap,
@@ -118,11 +119,24 @@ const Hero = () => {
       country: 'Cambodia',
       x: 75,
       y: 48,
-      image: 'kandawgyi-lake-yangon-burma-myanmar.jpg',
+      image: 'Flag_of_Cambodia.svg.webp',
       description: 'Building water security infrastructure and training communities in environmental conservation practices.',
       impact: '25,000+ people with clean water',
       icon: Users,
       color: 'from-analogous-teal to-light-blue'
+    },
+    // Kenya Office
+    {
+      id: 4,
+      name: 'Kenya Office',
+      country: 'Kenya',
+      x: 58,
+      y: 52,
+      image: 'Flag_of_Kenya.svg.png',
+      description: 'Delivering healthcare and supporting sustainable agriculture in East Africa.',
+      impact: '10,000+ lives improved',
+      icon: Heart,
+      color: 'from-green-500 to-blue-500'
     }
   ];
 
@@ -150,6 +164,22 @@ const Hero = () => {
     },
   
   ];*/
+
+  const clientLogos = [
+    { src: '/client-1.png', alt: 'Client 1' },
+    { src: '/client-2.png', alt: 'Client 2' },
+    { src: '/client-3.png', alt: 'Client 3' },
+    { src: '/client-4.png', alt: 'Client 4' },
+    { src: '/client-5.png', alt: 'Client 5' },
+    { src: '/client-6.png', alt: 'Client 6' },
+    { src: '/client-7.png', alt: 'Client 7' },
+    { src: '/client-8.png', alt: 'Client 8' },
+    { src: '/client-9.png', alt: 'Client 9' },
+    { src: '/client-10.png', alt: 'Client 10' },
+  ];
+
+  const { projects, loading } = useProjects();
+  const activeProjectsCount = projects.filter(p => p.status === 'active').length;
 
   return (
     <>
@@ -229,16 +259,10 @@ const Hero = () => {
                 className="flex flex-nowrap items-center w-max animate-scroll-left"
                 style={{ '--scroll-duration': '30s' } as React.CSSProperties}
               >
-                {[...Array(5)].map((_, setIndex) => (
-                  [
-                    { name: 'UNESCO', className: 'text-2xl font-bold text-gray-400' },
-                    { name: 'UNEP', className: 'text-2xl font-bold text-gray-400' },
-                    { name: 'WWF', className: 'text-2xl font-bold text-gray-400' },
-                    { name: 'Greenpeace', className: 'text-2xl font-bold text-gray-400' },
-                    { name: 'IUCN', className: 'text-2xl font-bold text-gray-400' },
-                  ].map((logo, logoIndex) => (
-                    <div key={`logo-${setIndex}-${logoIndex}`} className={`flex-shrink-0 mx-6 ${logo.className}`}>
-                      {logo.name}
+                {[...Array(3)].map((_, setIndex) => (
+                  clientLogos.map((logo, logoIndex) => (
+                    <div key={`logo-${setIndex}-${logoIndex}`} className="flex-shrink-0 mx-6">
+                      <img src={logo.src} alt={logo.alt} className="h-16 w-auto object-contain" />
                     </div>
                   ))
                 ))}
@@ -258,13 +282,13 @@ const Hero = () => {
           </div>
           <div>
             <p className="text-5xl lg:text-6xl font-extrabold text-blue-500 tracking-tight mb-2">
-              <CountUp from={0} to={189} separator="," direction="up" duration={1.5} className="count-up-text" />+
+              <CountUp from={0} to={loading ? 0 : activeProjectsCount} separator="," direction="up" duration={1.5} className="count-up-text" />+
             </p>
             <p className="text-gray-500 text-lg font-medium">Active Projects</p>
           </div>
           <div>
             <p className="text-5xl lg:text-6xl font-extrabold text-blue-500 tracking-tight mb-2">
-              <CountUp from={0} to={47} separator="," direction="up" duration={1.5} className="count-up-text" />+
+              <CountUp from={0} to={4} separator="," direction="up" duration={1.5} className="count-up-text" />+
             </p>
             <p className="text-gray-500 text-lg font-medium">Countries</p>
           </div>
@@ -337,43 +361,43 @@ const Hero = () => {
       </section>
 
       {/* Centered Modal Popup */}
-      {activeLocation && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow border border-gray-200 overflow-hidden max-w-sm w-full animate-fadeInUp">
-            {(() => {
-              const location = locations.find(loc => loc.id === activeLocation);
-              if (!location) return null;
+{activeLocation && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-50">
+    <div className="bg-white rounded-2xl shadow border border-gray-200 overflow-hidden max-w-md w-full animate-fadeInUp">
+      {(() => {
+        const location = locations.find(loc => loc.id === activeLocation);
+        if (!location) return null;
 
-              return (
-                <>
-                  {/* Close Button */}
-                  <button
-                    onClick={() => setActiveLocation(null)}
-                    className="absolute top-3 right-3 w-7 h-7 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors z-30"
-                  >
-                    <X className="w-4 h-4 text-gray-600" />
-                  </button>
+        return (
+          <>
+            {/* Close Button */}
+            <button
+              onClick={() => setActiveLocation(null)}
+              className="absolute top-3 right-3 w-7 h-7 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors z-30"
+            >
+              <X className="w-4 h-4 text-gray-600" />
+            </button>
 
-                  {/* Image Header (no overlay) */}
-                  <div className="relative h-32 overflow-hidden">
-                    <img
-                      src={location.image}
-                      alt={location.country}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  
-                  {/* Minimal Content */}
-                  <div className="p-4">
-                    <h3 className="font-bold text-lg text-gray-900 mb-2">{location.name}</h3>
-                    <p className="text-gray-600 text-sm mb-0">{location.description}</p>
-                  </div>
-                </>
-              );
-            })()}
-          </div>
-        </div>
-      )}
+            {/* Enlarged Image Header */}
+            <div className="relative h-56 overflow-hidden">
+              <img
+                src={location.image}
+                alt={location.country}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            {/* Content */}
+            <div className="p-5">
+              <h3 className="font-bold text-xl text-gray-900 mb-2">{location.name}</h3>
+              <p className="text-gray-600 text-sm mb-0">{location.description}</p>
+            </div>
+          </>
+        );
+      })()}
+    </div>
+  </div>
+)}
     </>
   );
 };

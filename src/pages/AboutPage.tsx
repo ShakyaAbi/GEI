@@ -247,6 +247,19 @@ const AboutPage = () => {
     );
   };
 
+  const clientLogos = [
+    { src: '/client-1.png', alt: 'Client 1' },
+    { src: '/client-2.png', alt: 'Client 2' },
+    { src: '/client-3.png', alt: 'Client 3' },
+    { src: '/client-4.png', alt: 'Client 4' },
+    { src: '/client-5.png', alt: 'Client 5' },
+    { src: '/client-6.png', alt: 'Client 6' },
+    { src: '/client-7.png', alt: 'Client 7' },
+    { src: '/client-8.png', alt: 'Client 8' },
+    { src: '/client-9.png', alt: 'Client 9' },
+    { src: '/client-10.png', alt: 'Client 10' },
+  ];
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -439,14 +452,14 @@ const AboutPage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white rounded-2xl p-8 shadow-lg hover-lift border border-gray-100 reveal">
-              <h3 className="text-xl font-bold text-gray-900 mb-4 font-playfair">UN Agencies</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4 font-playfair">Local Partnerships</h3>
               <p className="text-gray-600 leading-relaxed font-inter">
-                Strategic partnerships with UNEP, UNESCO, and other UN agencies to align our work with global sustainability goals.
+              Collaboration with local partners at the grassroots level to drive community-led, sustainable solutions.
               </p>
             </div>
             
             <div className="bg-white rounded-2xl p-8 shadow-lg hover-lift border border-gray-100 reveal" style={{ animationDelay: '0.1s' }}>
-              <h3 className="text-xl font-bold text-gray-900 mb-4 font-playfair">Government Partners</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4 font-playfair">Government Partnerships</h3>
               <p className="text-gray-600 leading-relaxed font-inter">
                 Collaboration with national and local governments to implement policy-driven environmental solutions.
               </p>
@@ -470,16 +483,10 @@ const AboutPage = () => {
                 className="flex flex-nowrap items-center w-max animate-scroll-left"
                 style={{ '--scroll-duration': '30s' } as React.CSSProperties}
               >
-                {[...Array(5)].map((_, setIndex) => (
-                  [
-                    { name: 'UNESCO', className: 'text-2xl font-bold text-gray-400' },
-                    { name: 'UNEP', className: 'text-2xl font-bold text-gray-400' },
-                    { name: 'WWF', className: 'text-2xl font-bold text-gray-400' },
-                    { name: 'Greenpeace', className: 'text-2xl font-bold text-gray-400' },
-                    { name: 'IUCN', className: 'text-2xl font-bold text-gray-400' },
-                  ].map((logo, logoIndex) => (
-                    <div key={`logo-${setIndex}-${logoIndex}`} className={`flex-shrink-0 mx-6 ${logo.className}`}>
-                      {logo.name}
+                {[...Array(3)].map((_, setIndex) => (
+                  clientLogos.map((logo, logoIndex) => (
+                    <div key={`logo-${setIndex}-${logoIndex}`} className="flex-shrink-0 mx-6">
+                      <img src={logo.src} alt={logo.alt} className="h-16 w-auto object-contain" />
                     </div>
                   ))
                 ))}

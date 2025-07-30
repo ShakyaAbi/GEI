@@ -68,7 +68,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold font-playfair">GEI</h3>
-                  <p className="text-gray-400 text-sm">Global Environmental Initiative</p>
+                  <p className="text-gray-400 text-sm">Global Envirohealth Institute</p>
                 </div>
               </div>
               
@@ -154,7 +154,7 @@ const Footer = () => {
           <div className="border-t border-gray-700 mt-16 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <p className="text-gray-400 text-sm mb-4 md:mb-0">
-                © {currentYear} Global Environmental Initiative. All rights reserved.
+                © {currentYear} Global Envirohealth Institute. All rights reserved.
               </p>
               
               <div className="flex flex-wrap gap-6 text-sm text-gray-400">

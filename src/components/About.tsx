@@ -30,7 +30,7 @@ const About = () => {
             About GEI
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            The Global Environmental Initiative is dedicated to creating sustainable solutions 
+            The Global Envirohealth Institute is dedicated to creating sustainable solutions 
             that transform communities and protect our planet through innovative programs and collaborative partnerships.
           </p>
         </div>

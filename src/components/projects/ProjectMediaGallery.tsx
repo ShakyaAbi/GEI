@@ -31,6 +31,17 @@ const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({
   const [viewerOpen, setViewerOpen] = useState(false);
   const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
 
+  // Effect to handle media changes while viewer is open
+  useEffect(() => {
+    if (viewerOpen && selectedMediaIndex >= media.length) {
+      if (media.length > 0) {
+        setSelectedMediaIndex(0); // Reset to first image if media still exists
+      } else {
+        setViewerOpen(false); // Close viewer if no media left
+      }
+    }
+  }, [media, selectedMediaIndex, viewerOpen]);
+
   const handleImageSelect = async (file: File) => {
     try {
       setSelectedImage(file);
@@ -72,7 +83,8 @@ const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({
   };
 
   const openViewer = (index: number) => {
-    setSelectedMediaIndex(index);
+    if (media.length === 0) return; // Don't open if no media
+    setSelectedMediaIndex(Math.min(index, media.length - 1)); // Ensure index is valid
     setViewerOpen(true);
   };
 
@@ -136,12 +148,12 @@ const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({
       </div>
 
       {/* Full Screen Viewer */}
-      {viewerOpen && (
+      {viewerOpen && media.length > 0 && (
         <div className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center">
           {/* Close button */}
           <button
             onClick={() => setViewerOpen(false)}
-            className="absolute top-4 right-4 text-white p-2 hover:bg-white/10 rounded-full transition-colors"
+            className="absolute top-6 right-6 text-white p-3 hover:bg-white/10 rounded-full transition-colors z-50"
           >
             <X className="w-6 h-6" />
           </button>

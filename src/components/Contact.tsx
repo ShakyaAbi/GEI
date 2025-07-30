@@ -78,10 +78,10 @@ const Contact = () => {
                     <div>
                       <h4 className="text-lg font-semibold text-gray-900 mb-1">Address</h4>
                       <p className="text-gray-600 leading-relaxed">
-                        Planetary Health Research Center<br />
-                        123 Sustainability Drive<br />
-                        Health Campus, HC 12345<br />
-                        United States
+                        Global Envirohealth Institute<br />
+                        2825 E COTTONWOOD PKWY STE 330<br />
+                        SALT LAKE CTY UT 84121-7088<br />
+                        USA
                       </p>
                     </div>
                   </div>
@@ -92,9 +92,8 @@ const Contact = () => {
                       <Phone className="w-6 h-6 text-blue-700" />
                     </div>
                     <div>
-                      <h4 className="text-lg font-semibold text-gray-900 mb-1">Phone</h4>
-                      <p className="text-gray-600">+1 (555) 123-4567</p>
-                      <p className="text-gray-600">+1 (555) 123-4568 (Fax)</p>
+                      <h4 className="text-lg font-semibold text-gray-900 mb-1">Phone and Whatsapp</h4>
+                      <p className="text-gray-600">+1 801 455-7657</p>
                     </div>
                   </div>
 
@@ -105,8 +104,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h4 className="text-lg font-semibold text-gray-900 mb-1">Email</h4>
-                      <p className="text-gray-600">info@phrc.org</p>
-                      <p className="text-gray-600">partnerships@phrc.org</p>
+                      <p className="text-gray-600">geiglobal61@gmail.com</p>
                     </div>
                   </div>
                 </div>
@@ -228,14 +226,19 @@ const Contact = () => {
             </div>
           </div>
 
-          {/* Map Placeholder */}
+          {/* Map */}
           <div className="mt-16">
-            <div className="bg-gray-200 rounded-3xl h-64 flex items-center justify-center">
-              <div className="text-center">
-                <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 font-medium">Interactive Map</p>
-                <p className="text-gray-500 text-sm">Location: Health Campus, HC 12345</p>
-              </div>
+            <div className="bg-gray-200 rounded-3xl h-96 flex items-center justify-center overflow-hidden">
+              <iframe
+                className="rounded-3xl"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3028.499439534994!2d-111.8102!3d40.6197!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8752630d29ce7743%3A0x4f7b1f8d8b9b7c1c!2s2825%20E%20Cottonwood%20Pkwy%20%23330%2C%20Salt%20Lake%20City%2C%20UT%2084121%2C%20USA!5e0!3m2!1sen!2snp!4v1722241542011!5m2!1sen!2snp"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen={true}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
             </div>
           </div>
         </div>
