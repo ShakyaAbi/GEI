@@ -42,6 +42,8 @@ const OurWorkPage = () => {
   const navigate = useNavigate();
   const [sortBy, setSortBy] = useState<'name' | 'created_at' | 'order_index'>('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [showAllProjects, setShowAllProjects] = useState(false);
+  const [visibleProjects, setVisibleProjects] = useState(6); // Show 6 initially
   
   const { programAreas, loading, error } = useProgramAreas();
   const { projects, loading: projectsLoading, error: projectsError } = useProjects();
@@ -49,10 +51,9 @@ const OurWorkPage = () => {
   useEffect(() => {
     // Handle hash-based scrolling
     if (location.hash) {
-      const elementId = location.hash.substring(1); // Remove the '#'
+      const elementId = location.hash.substring(1);
       const element = document.getElementById(elementId);
       if (element) {
-        // Small delay to ensure the page is fully rendered
         setTimeout(() => {
           element.scrollIntoView({ behavior: 'smooth' });
         }, 100);
@@ -76,37 +77,49 @@ const OurWorkPage = () => {
     document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
 
     return () => observer.disconnect();
-  }, [programAreas]);
+  }, [programAreas, projects]);
 
-  const activeProjectsCount = projects.filter(p => p.status === 'active').length;
-  const totalProjectsCount = projects.length;
+  // Memoize expensive calculations
+  const activeProjectsCount = useMemo(() => 
+    projects.filter(p => p.status === 'active').length, 
+    [projects]
+  );
   
-  const impactStats = [
+  const totalProjectsCount = useMemo(() => projects.length, [projects]);
+  
+  const impactStats = useMemo(() => [
     { number: '100,000', label: 'Lives Impacted', icon: Users, color: 'from-blue-600 to-cyan-600' },
     { number: totalProjectsCount.toString(), label: 'Total Projects', icon: Goal, color: 'from-blue-600 to-cyan-600' },
     { number: activeProjectsCount.toString(), label: 'Active Projects', icon: TrendingUp, color: 'from-green-600 to-emerald-600' },
     { number: '850+', label: 'Local Partners', icon: Award, color: 'from-blue-600 to-cyan-600' }
-  ];
+  ], [activeProjectsCount, totalProjectsCount]);
 
-  const filteredProgramAreas = programAreas.filter(programArea => {
-    return true; // Show all program areas
-  });
+  const sortedProgramAreas = useMemo(() => {
+    return [...programAreas].sort((a: ProgramArea, b: ProgramArea) => {
+      let aValue: any = a[sortBy];
+      let bValue: any = b[sortBy];
+      
+      if (sortBy === 'created_at') {
+        aValue = new Date(a.created_at || 0);
+        bValue = new Date(b.created_at || 0);
+      }
+      
+      if (sortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+  }, [programAreas, sortBy, sortOrder]);
 
-  const sortedProgramAreas = [...filteredProgramAreas].sort((a: ProgramArea, b: ProgramArea) => {
-    let aValue: any = a[sortBy];
-    let bValue: any = b[sortBy];
-    
-    if (sortBy === 'created_at') {
-      aValue = new Date(a.created_at || 0);
-      bValue = new Date(b.created_at || 0);
-    }
-    
-    if (sortOrder === 'asc') {
-      return aValue > bValue ? 1 : -1;
-    } else {
-      return aValue < bValue ? 1 : -1;
-    }
-  });
+  // Paginate projects for better performance
+  const displayedProjects = useMemo(() => {
+    return showAllProjects ? projects : projects.slice(0, visibleProjects);
+  }, [projects, showAllProjects, visibleProjects]);
+
+  const loadMoreProjects = () => {
+    setVisibleProjects(prev => Math.min(prev + 6, projects.length));
+  };
 
   const viewProgramArea = (programArea: any) => {
     navigate(`/areas/${programArea.slug}`);
@@ -116,8 +129,8 @@ const OurWorkPage = () => {
     navigate(`/projects/${project.slug || project.id}`);
   };
 
-  // Gallery images for Our Work page
-  const workGalleryImages = [
+  // Optimized gallery images with lazy loading
+  const workGalleryImages = useMemo(() => [
     {
       src: 'scenic-view-residential-buildings-against-sky-winter.jpg',
       alt: 'Climate action project in rural community',
@@ -138,8 +151,7 @@ const OurWorkPage = () => {
       alt: 'Forest conservation and restoration efforts',
       caption: 'Reforestation initiatives protecting biodiversity'
     },
-   
-  ];
+  ], []);
 
   if (error) {
     return (
@@ -245,7 +257,6 @@ const OurWorkPage = () => {
         autoScrollSpeed={3500}
       />
 
-      {/* Search and Filter */}
       {/* All Program Areas Grid */}
       <section id="development" className="py-20 bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-100">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
@@ -285,11 +296,14 @@ const OurWorkPage = () => {
                   className="bg-white rounded-2xl overflow-hidden shadow-lg hover-lift border border-gray-100 group reveal"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
+                  {/* COMMENTED OUT: Program Area Image Section */}
+                  {/* 
                   <div className="relative overflow-hidden h-48">
                     {programArea.hero_image ? (
                       <img
                         src={programArea.hero_image}
                         alt={programArea.name}
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
                     ) : (
@@ -300,21 +314,20 @@ const OurWorkPage = () => {
                       </div>
                     )}
                     
-                    {/* Gradient overlay for better text readability */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     
-                    {/* Floating badge */}
                     <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <div className="px-3 py-1 bg-gradient-to-r from-white/90 to-cyan-100/90 backdrop-blur-sm text-blue-800 text-xs font-medium rounded-full border border-white/50 shadow-lg">
                         {(programArea.projectCount ?? 0)} Projects
                       </div>
                     </div>
                   </div>
+                  */}
                   
                   <div className="p-6 bg-gradient-to-br from-white via-blue-50/50 to-cyan-50/30">
                     <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 font-playfair group-hover:text-blue-600 transition-colors flex items-center">
                       {programArea.icon_url
-                        ? <img src={programArea.icon_url} alt="icon" className="inline w-5 h-5 mr-2 align-middle" />
+                        ? <img src={programArea.icon_url} alt="icon" className="inline w-5 h-5 mr-2 align-middle" loading="lazy" />
                         : programArea.icon && getLucideIcon(programArea.icon)
                       }
                       {programArea.name}
@@ -324,14 +337,12 @@ const OurWorkPage = () => {
                       {programArea.description}
                     </p>
 
-                    {/* Projects Count */}
                     <div className="mb-4 flex items-center justify-between">
                       <div className="flex items-center text-sm text-gray-600">
                         <Goal className="w-4 h-4 mr-2 text-cyan-500" />
                         <span className="font-medium">{(programArea.projectCount ?? 0)} Active Projects</span>
                       </div>
                       
-                      {/* Progress indicator */}
                       <div className="w-12 h-1 bg-gradient-to-r from-blue-200 to-cyan-200 rounded-full overflow-hidden">
                         <div 
                           className="h-full bg-gradient-to-r from-blue-500 via-blue-600 to-cyan-600 rounded-full transition-all duration-700 group-hover:from-blue-600 group-hover:to-cyan-700 shadow-sm"
@@ -357,7 +368,7 @@ const OurWorkPage = () => {
         </div>
       </section>
 
-      {/* All Projects Section */}
+      {/* All Projects Section with Pagination */}
       <section id="projects" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <div className="text-center mb-16 reveal">
@@ -394,103 +405,129 @@ const OurWorkPage = () => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {projects.map((project, index) => (
-                <div
-                  key={project.id}
-                  className="bg-white rounded-2xl overflow-hidden shadow-lg hover-lift border border-gray-100 group reveal"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <div className="relative overflow-hidden h-48">
-                    {project.hero_image ? (
-                      <img
-                        src={project.hero_image}
-                        alt={project.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 flex items-center justify-center relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                        <Goal className="w-16 h-16 text-white/80 relative z-10" />
-                      </div>
-                    )}
-                    
-                    {/* Gradient overlay for better text readability */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    
-                                         {/* Status badge */}
-                     <div className="absolute top-4 left-4">
-                       <div className={`px-3 py-1 text-xs font-medium rounded-full border backdrop-blur-sm ${
-                         project.status === 'active' ? 'bg-green-100/90 text-green-800 border-green-200' :
-                         project.status === 'completed' ? 'bg-blue-100/90 text-blue-800 border-blue-200' :
-                         project.status === 'on_hold' ? 'bg-yellow-100/90 text-yellow-800 border-yellow-200' :
-                         'bg-red-100/90 text-red-800 border-red-200'
-                       }`}>
-                         {project.status ? project.status.charAt(0).toUpperCase() + project.status.slice(1) : 'Unknown'}
-                       </div>
-                     </div>
-                    
-                    {/* Program area badge */}
-                    {project.program_areas && (
-                      <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="px-3 py-1 bg-gradient-to-r from-white/90 to-blue-100/90 backdrop-blur-sm text-blue-800 text-xs font-medium rounded-full border border-white/50 shadow-lg flex items-center max-w-[260px] whitespace-nowrap overflow-hidden text-ellipsis">
-                          {project.program_areas.icon && getLucideIcon(project.program_areas.icon)}
-                          <span className="overflow-hidden text-ellipsis whitespace-nowrap">{project.program_areas.name}</span>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {displayedProjects.map((project, index) => (
+                  <div
+                    key={project.id}
+                    className="bg-white rounded-2xl overflow-hidden shadow-lg hover-lift border border-gray-100 group reveal"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
+                    <div className="relative overflow-hidden h-48">
+                      {project.hero_image ? (
+                        <img
+                          src={project.hero_image}
+                          alt={project.title}
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-green-500 via-green-600 to-emerald-600 flex items-center justify-center relative overflow-hidden">
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                          <Goal className="w-16 h-16 text-white/80 relative z-10" />
+                        </div>
+                      )}
+                      
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      
+                      <div className="absolute top-4 left-4">
+                        <div className={`px-3 py-1 text-xs font-medium rounded-full border backdrop-blur-sm ${
+                          project.status === 'active' ? 'bg-green-100/90 text-green-800 border-green-200' :
+                          project.status === 'completed' ? 'bg-blue-100/90 text-blue-800 border-blue-200' :
+                          project.status === 'on_hold' ? 'bg-yellow-100/90 text-yellow-800 border-yellow-200' :
+                          'bg-red-100/90 text-red-800 border-red-200'
+                        }`}>
+                          {project.status ? project.status.charAt(0).toUpperCase() + project.status.slice(1) : 'Unknown'}
                         </div>
                       </div>
-                    )}
-                  </div>
-                  
-                  <div className="p-6 bg-gradient-to-br from-white via-green-50/50 to-emerald-50/30">
-                    <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 font-playfair group-hover:text-green-600 transition-colors">
-                      {project.title}
-                    </h3>
+                      
+                      {project.program_areas && (
+                        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <div className="px-3 py-1 bg-gradient-to-r from-white/90 to-blue-100/90 backdrop-blur-sm text-blue-800 text-xs font-medium rounded-full border border-white/50 shadow-lg flex items-center max-w-[260px] whitespace-nowrap overflow-hidden text-ellipsis">
+                            {project.program_areas.icon && getLucideIcon(project.program_areas.icon)}
+                            <span className="overflow-hidden text-ellipsis whitespace-nowrap">{project.program_areas.name}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                     
-                    <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
-                      {project.description}
-                    </p>
+                    <div className="p-6 bg-gradient-to-br from-white via-green-50/50 to-emerald-50/30">
+                      <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 font-playfair group-hover:text-green-600 transition-colors">
+                        {project.title}
+                      </h3>
+                      
+                      <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
+                        {project.description}
+                      </p>
 
-                    {/* Project details */}
-                    <div className="space-y-3 mb-4">
-                      {project.location && (
-                        <div className="flex items-center text-sm text-gray-600">
-                          <MapPin className="w-4 h-4 mr-2 text-green-500" />
-                          <span>{project.location}</span>
-                        </div>
-                      )}
-                      {project.duration && (
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Calendar className="w-4 h-4 mr-2 text-green-500" />
-                          <span>{project.duration}</span>
-                        </div>
-                      )}
-                      {project.beneficiaries && (
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Users className="w-4 h-4 mr-2 text-green-500" />
-                          <span>{project.beneficiaries}</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                      <button
-                        onClick={() => viewProject(project)}
-                        className="inline-flex items-center px-4 py-2 text-green-600 hover:text-white hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 text-sm font-medium rounded-lg border border-green-200 hover:border-transparent transition-all duration-300 group/btn shadow-sm hover:shadow-md"
-                      >
-                        View Details
-                        <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                      </button>
+                      <div className="space-y-3 mb-4">
+                        {project.location && (
+                          <div className="flex items-center text-sm text-gray-600">
+                            <MapPin className="w-4 h-4 mr-2 text-green-500 flex-shrink-0" />
+                            <span className="truncate">{project.location}</span>
+                          </div>
+                        )}
+                        {project.duration && (
+                          <div className="flex items-center text-sm text-gray-600">
+                            <Calendar className="w-4 h-4 mr-2 text-green-500 flex-shrink-0" />
+                            <span>{project.duration}</span>
+                          </div>
+                        )}
+                        {project.beneficiaries && (
+                          <div className="flex items-center text-sm text-gray-600">
+                            <Users className="w-4 h-4 mr-2 text-green-500 flex-shrink-0" />
+                            <span>{project.beneficiaries}</span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                        <button
+                          onClick={() => viewProject(project)}
+                          className="inline-flex items-center px-4 py-2 text-green-600 hover:text-white hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 text-sm font-medium rounded-lg border border-green-200 hover:border-transparent transition-all duration-300 group/btn shadow-sm hover:shadow-md"
+                        >
+                          View Details
+                          <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                        </button>
+                      </div>
                     </div>
                   </div>
+                ))}
+              </div>
+
+              {/* Load More Button */}
+              {!showAllProjects && visibleProjects < projects.length && (
+                <div className="text-center mt-12">
+                  <button
+                    onClick={loadMoreProjects}
+                    className="inline-flex items-center px-8 py-4 text-green-600 hover:text-white hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 text-lg font-medium rounded-xl border-2 border-green-200 hover:border-transparent transition-all duration-300 group shadow-lg hover:shadow-xl"
+                  >
+                    Load More Projects
+                    <Plus className="w-5 h-5 ml-2 group-hover:rotate-90 transition-transform" />
+                  </button>
+                  <p className="text-gray-600 mt-4">
+                    Showing {visibleProjects} of {projects.length} projects
+                  </p>
                 </div>
-              ))}
-            </div>
+              )}
+
+              {/* Show All Button */}
+              {visibleProjects >= projects.length && !showAllProjects && (
+                <div className="text-center mt-12">
+                  <button
+                    onClick={() => setShowAllProjects(true)}
+                    className="inline-flex items-center px-8 py-4 text-blue-600 hover:text-white hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-600 text-lg font-medium rounded-xl border-2 border-blue-200 hover:border-transparent transition-all duration-300 group shadow-lg hover:shadow-xl"
+                  >
+                    Viewing All {projects.length} Projects
+                    <Eye className="w-5 h-5 ml-2" />
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
-
-      {/* Admin Panel Link */}
 
       <Footer />
     </div>

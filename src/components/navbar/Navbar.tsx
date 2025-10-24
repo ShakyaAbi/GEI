@@ -34,7 +34,7 @@ const Header: React.FC = () => {
       dropdownItems: [
         { name: 'All Programs', path: '/our-work', description: 'All program areas' },
         { name: 'Research & Publications', path: '/our-work/research-publications', description: 'Explore our research and publications' },
-        { name: 'Donations & Microloans', path: '/our-work/donations-microloans', description: 'Support and empower communities through giving and microfinance' },
+        //{ name: 'Donations & Microloans', path: '/our-work/donations-microloans', description: 'Support and empower communities through giving and microfinance' },
         ...(programAreas && programAreas.length > 0
           ? programAreas.map(area => ({
               name: area.name,

@@ -5,11 +5,16 @@ import { Button } from "@/components/ui/button";
 import ImageGalleryCarousel from './ImageGalleryCarousel';
 import CountUp from './CountUp';
 import { useNavigate } from 'react-router-dom';
+import { useProjects } from '../hooks/useProjects';
 
 const Hero = () => {
   const navigate = useNavigate();
   const [activeLocation, setActiveLocation] = useState<number | null>(null);
   const [titleNumber, setTitleNumber] = useState(0);
+  
+  // Fetch projects data from backend
+  const { projects, loading: projectsLoading } = useProjects();
+
   const stories = useMemo(
     () => [
       {
@@ -52,13 +57,55 @@ const Hero = () => {
     return () => clearTimeout(timeoutId);
   }, [titleNumber, stories]);
 
-  // Define partner logos for the trust bar
+  // Calculate real statistics from backend data
+  const statistics = useMemo(() => {
+    // Count active projects
+    const activeProjectsCount = projects.filter(p => p.status === 'active').length;
+    
+    // Extract unique countries from projects
+    const countries = new Set<string>();
+    projects.forEach(project => {
+      if (project.location) {
+        // Extract country from location string (assuming format like "City, Country")
+        const parts = project.location.split(',');
+        if (parts.length > 0) {
+          const country = parts[parts.length - 1].trim();
+          if (country) countries.add(country);
+        }
+      }
+    });
+    
+    // Calculate total beneficiaries
+    let totalBeneficiaries = 0;
+    projects.forEach(project => {
+      if (project.beneficiaries) {
+        // Extract numbers from beneficiaries string (e.g., "15,000+ farmers" -> 15000)
+        const match = project.beneficiaries.match(/[\d,]+/);
+        if (match) {
+          totalBeneficiaries += parseInt(match[0].replace(/,/g, ''));
+        }
+      }
+    });
+    
+    return {
+      livesImpacted: totalBeneficiaries > 0 ? totalBeneficiaries : 9453,
+      activeProjects: activeProjectsCount > 0 ? activeProjectsCount : projects.length,
+      countries: countries.size > 0 ? countries.size : 47
+    };
+  }, [projects]);
+
+  // Define partner logos with actual images
   const partnerLogos = [
-    { name: 'UNESCO', className: 'text-2xl font-bold text-gray-400' },
-    { name: 'UNEP', className: 'text-2xl font-bold text-gray-400' },
-    { name: 'WWF', className: 'text-2xl font-bold text-gray-400' },
-    { name: 'Greenpeace', className: 'text-2xl font-bold text-gray-400' },
-    { name: 'IUCN', className: 'text-2xl font-bold text-gray-400' },
+    { name: 'Partner 1', src: '/client-1.png' },
+    { name: 'Partner 2', src: '/client-2.png' },
+    { name: 'Partner 3', src: '/client-3.png' },
+    { name: 'Partner 4', src: '/client-4.png' },
+    { name: 'Partner 5', src: '/client-5.png' },
+    { name: 'Partner 6', src: '/client-6.png' },
+    { name: 'Partner 7', src: '/client-7.png' },
+    { name: 'Partner 8', src: '/client-8.png' },
+    { name: 'Partner 9', src: '/client-9.png' },
+    { name: 'Partner 10', src: '/client-10.png' },
   ];
 
   useEffect(() => {
@@ -126,31 +173,6 @@ const Hero = () => {
     }
   ];
 
-  // Gallery images for the carousel
-  /*const galleryImages = [
-    {
-      src: './image1.jpeg',
-      alt: 'Community members working together on environmental project',
-      caption: 'Community-led environmental initiatives creating lasting change'
-    },
-    {
-      src: './image2.jpg',
-      alt: 'Solar panels installation in rural community',
-      caption: 'Renewable energy solutions powering sustainable development'
-    },
-    {
-      src: './image1.jpeg',
-      alt: 'Clean water access project in developing region',
-      caption: 'Clean water infrastructure transforming communities'
-    },
-    {
-      src: 'https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=1200&h=675&fit=crop',
-      alt: 'Reforestation and conservation efforts',
-      caption: 'Forest conservation protecting biodiversity and climate'
-    },
-  
-  ];*/
-
   return (
     <>
       {/* Hero Section */}
@@ -200,7 +222,7 @@ const Hero = () => {
                     </span>
                   </h1>
                   <p className="text-lg md:text-xl leading-relaxed tracking-tight text-muted-foreground max-w-2xl text-left font-inter">
-                    We design and implement innovative, community-led solutions to the world’s most pressing challenges — from clean water and sustainable jobs to maternal health and climate resilience. Join us in transforming data into action and action into lasting impact.
+                    We design and implement innovative, community-led solutions to the world's most pressing challenges — from clean water and sustainable jobs to maternal health and climate resilience. Join us in transforming data into action and action into lasting impact.
                   </p>
                 </div>
               </div>
@@ -217,54 +239,91 @@ const Hero = () => {
         </div>
       </section>
 
-      {/* Trust Bar */}
+      {/* Trust Bar - Updated with actual images */}
       <section className="py-16 bg-white">
-          {/* Trusted Partners Bar */}
-          <div className="mt-20">
-            <p className="text-center uppercase text-sm tracking-wider text-gray-500 mb-8 font-medium">
-              Trusted by forward-thinking partners
-            </p>
-            <div className="relative w-full overflow-hidden opacity-60">
-              <div 
-                className="flex flex-nowrap items-center w-max animate-scroll-left"
-                style={{ '--scroll-duration': '30s' } as React.CSSProperties}
-              >
-                {[...Array(5)].map((_, setIndex) => (
-                  [
-                    { name: 'UNESCO', className: 'text-2xl font-bold text-gray-400' },
-                    { name: 'UNEP', className: 'text-2xl font-bold text-gray-400' },
-                    { name: 'WWF', className: 'text-2xl font-bold text-gray-400' },
-                    { name: 'Greenpeace', className: 'text-2xl font-bold text-gray-400' },
-                    { name: 'IUCN', className: 'text-2xl font-bold text-gray-400' },
-                  ].map((logo, logoIndex) => (
-                    <div key={`logo-${setIndex}-${logoIndex}`} className={`flex-shrink-0 mx-6 ${logo.className}`}>
-                      {logo.name}
-                    </div>
-                  ))
-                ))}
-              </div>
+        <div className="mt-20">
+          <p className="text-center uppercase text-sm tracking-wider text-gray-500 mb-8 font-medium">
+            Trusted by forward-thinking partners
+          </p>
+          <div className="relative w-full overflow-hidden">
+            <div 
+              className="flex flex-nowrap items-center w-max animate-scroll-left"
+              style={{ '--scroll-duration': '30s' } as React.CSSProperties}
+            >
+              {[...Array(3)].map((_, setIndex) => (
+                partnerLogos.map((logo, logoIndex) => (
+                  <div 
+                    key={`logo-${setIndex}-${logoIndex}`} 
+                    className="flex-shrink-0 mx-8 grayscale hover:grayscale-0 transition-all duration-300 opacity-60 hover:opacity-100"
+                  >
+                    <img
+                      src={logo.src}
+                      alt={logo.name}
+                      className="h-12 w-auto object-contain"
+                      loading="lazy"
+                    />
+                  </div>
+                ))
+              ))}
             </div>
           </div>
+        </div>
       </section>
 
-      {/* Impact Metrics */}
+      {/* Impact Metrics - Connected to Backend */}
       <section className="py-16 bg-[#e6f4ff]">
         <div className="max-w-5xl mx-auto px-6 lg:px-10 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
           <div>
             <p className="text-5xl lg:text-6xl font-extrabold text-blue-500 tracking-tight mb-2">
-              <CountUp from={0} to={9453} separator="," direction="up" duration={1.5} className="count-up-text" />+
+              {projectsLoading ? (
+                <span className="animate-pulse">...</span>
+              ) : (
+                <CountUp 
+                  from={0} 
+                  to={statistics.livesImpacted} 
+                  separator="," 
+                  direction="up" 
+                  duration={1.5} 
+                  className="count-up-text" 
+                />
+              )}
+              +
             </p>
             <p className="text-gray-500 text-lg font-medium">Lives Impacted</p>
           </div>
           <div>
             <p className="text-5xl lg:text-6xl font-extrabold text-blue-500 tracking-tight mb-2">
-              <CountUp from={0} to={189} separator="," direction="up" duration={1.5} className="count-up-text" />+
+              {projectsLoading ? (
+                <span className="animate-pulse">...</span>
+              ) : (
+                <CountUp 
+                  from={0} 
+                  to={statistics.activeProjects} 
+                  separator="," 
+                  direction="up" 
+                  duration={1.5} 
+                  className="count-up-text" 
+                />
+              )}
+              +
             </p>
             <p className="text-gray-500 text-lg font-medium">Active Projects</p>
           </div>
           <div>
             <p className="text-5xl lg:text-6xl font-extrabold text-blue-500 tracking-tight mb-2">
-              <CountUp from={0} to={47} separator="," direction="up" duration={1.5} className="count-up-text" />+
+              {projectsLoading ? (
+                <span className="animate-pulse">...</span>
+              ) : (
+                <CountUp 
+                  from={0} 
+                  to={statistics.countries} 
+                  separator="," 
+                  direction="up" 
+                  duration={1.5} 
+                  className="count-up-text" 
+                />
+              )}
+              +
             </p>
             <p className="text-gray-500 text-lg font-medium">Countries</p>
           </div>
@@ -312,8 +371,8 @@ const Hero = () => {
                   {/* Use MapPin icon for marker */}
                   <MapPin 
                     className="w-10 h-10 drop-shadow-lg group-hover:scale-125 transition-transform duration-200"
-                    color="white" // Tailwind base-blue-600
-                    fill="#2563eb" // Fill the inside with blue
+                    color="white"
+                    fill="#2563eb"
                     strokeWidth={1}
                   />
                   {/* Hover highlight ring */}
@@ -331,8 +390,6 @@ const Hero = () => {
 
             </div>
           </div>
-
-          {/* Office Details Cards are hidden for now */}
         </div>
       </section>
 
@@ -354,7 +411,7 @@ const Hero = () => {
                     <X className="w-4 h-4 text-gray-600" />
                   </button>
 
-                  {/* Image Header (no overlay) */}
+                  {/* Image Header */}
                   <div className="relative h-32 overflow-hidden">
                     <img
                       src={location.image}
@@ -363,7 +420,7 @@ const Hero = () => {
                     />
                   </div>
                   
-                  {/* Minimal Content */}
+                  {/* Content */}
                   <div className="p-4">
                     <h3 className="font-bold text-lg text-gray-900 mb-2">{location.name}</h3>
                     <p className="text-gray-600 text-sm mb-0">{location.description}</p>

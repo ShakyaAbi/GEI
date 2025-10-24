@@ -19,6 +19,9 @@ FROM node:18-alpine AS backend-builder
 
 WORKDIR /app
 
+# Install PostgreSQL client for pg_isready
+RUN apk add --no-cache postgresql-client
+
 # Install dependencies
 COPY package.json package-lock.json ./
 RUN npm install
@@ -44,8 +47,7 @@ COPY scripts/ ./scripts/
 
 EXPOSE 5000
 
-WORKDIR /app/backend
+WORKDIR /app
 
-# Run migrations and start the server
-CMD ["sh", "-c", "npx prisma migrate deploy --schema=../prisma/schema.prisma && node server.js"]
-ENTRYPOINT ["sh", "./entrypoint.sh"]
+# Use entrypoint script
+ENTRYPOINT ["./entrypoint.sh"]
