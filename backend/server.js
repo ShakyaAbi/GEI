@@ -129,6 +129,12 @@ app.get('/api/health', (req, res) => {
 const frontendPath = join(__dirname, 'dist');
 app.use(express.static(frontendPath));
 
+// Serve favicon for legacy browsers requesting /favicon.ico
+app.get('/favicon.ico', (req, res) => {
+  res.type('image/png');
+  res.sendFile(join(frontendPath, 'GEI_Envirohealth_Icon[1].png'));
+});
+
 // Only serve index.html for non-API, non-static requests
 app.get('*', (req, res, next) => {
   if (
