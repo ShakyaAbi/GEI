@@ -1,13 +1,6 @@
 #!/bin/sh
 set -e
 
-# Run Prisma migrations
-npx prisma migrate deploy
-
-# Start the server
-exec node server.js #!/bin/sh
-set -e
-
 echo "Starting GEI application..."
 
 # Wait for database to be ready
@@ -31,5 +24,4 @@ npx prisma generate
 # npx prisma db seed
 
 echo "Starting server..."
-# Start the server
-exec node server.js
+exec node backend/server.js

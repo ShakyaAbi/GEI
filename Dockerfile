@@ -44,7 +44,9 @@ COPY --from=frontend-builder /app/dist ./backend/dist
 # Copy uploads and scripts
 COPY uploads/ ./uploads/
 # COPY scripts/ ./scripts/
+COPY scripts/ ./scripts/
 
+# ----------- FINAL STAGE -----------
 EXPOSE 5000
 
 WORKDIR /app
