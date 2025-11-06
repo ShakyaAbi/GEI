@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Goal, Users, MapPin, Calendar, TrendingUp, Award, ExternalLink, Search, Filter, Eye, Loader2, AlertCircle, Plus, SortAsc, SortDesc } from 'lucide-react';
+import { Goal, Users, MapPin, Calendar, TrendingUp, Award, ExternalLink, Search, Filter, Loader2, AlertCircle, SortAsc, SortDesc } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import ImageGalleryCarousel from '../components/ImageGalleryCarousel';
@@ -42,8 +42,6 @@ const OurWorkPage = () => {
   const navigate = useNavigate();
   const [sortBy, setSortBy] = useState<'name' | 'created_at' | 'order_index'>('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [showAllProjects, setShowAllProjects] = useState(false);
-  const [visibleProjects, setVisibleProjects] = useState(6); // Show 6 initially
   
   const { programAreas, loading, error } = useProgramAreas();
   const { projects, loading: projectsLoading, error: projectsError } = useProjects();
@@ -112,14 +110,8 @@ const OurWorkPage = () => {
     });
   }, [programAreas, sortBy, sortOrder]);
 
-  // Paginate projects for better performance
-  const displayedProjects = useMemo(() => {
-    return showAllProjects ? projects : projects.slice(0, visibleProjects);
-  }, [projects, showAllProjects, visibleProjects]);
-
-  const loadMoreProjects = () => {
-    setVisibleProjects(prev => Math.min(prev + 6, projects.length));
-  };
+  // Display all projects once loaded
+  const displayedProjects = useMemo(() => projects, [projects]);
 
   const viewProgramArea = (programArea: any) => {
     navigate(`/areas/${programArea.slug}`);
@@ -496,34 +488,6 @@ const OurWorkPage = () => {
                 ))}
               </div>
 
-              {/* Load More Button */}
-              {!showAllProjects && visibleProjects < projects.length && (
-                <div className="text-center mt-12">
-                  <button
-                    onClick={loadMoreProjects}
-                    className="inline-flex items-center px-8 py-4 text-green-600 hover:text-white hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 text-lg font-medium rounded-xl border-2 border-green-200 hover:border-transparent transition-all duration-300 group shadow-lg hover:shadow-xl"
-                  >
-                    Load More Projects
-                    <Plus className="w-5 h-5 ml-2 group-hover:rotate-90 transition-transform" />
-                  </button>
-                  <p className="text-gray-600 mt-4">
-                    Showing {visibleProjects} of {projects.length} projects
-                  </p>
-                </div>
-              )}
-
-              {/* Show All Button */}
-              {visibleProjects >= projects.length && !showAllProjects && (
-                <div className="text-center mt-12">
-                  <button
-                    onClick={() => setShowAllProjects(true)}
-                    className="inline-flex items-center px-8 py-4 text-blue-600 hover:text-white hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-600 text-lg font-medium rounded-xl border-2 border-blue-200 hover:border-transparent transition-all duration-300 group shadow-lg hover:shadow-xl"
-                  >
-                    Viewing All {projects.length} Projects
-                    <Eye className="w-5 h-5 ml-2" />
-                  </button>
-                </div>
-              )}
             </>
           )}
         </div>

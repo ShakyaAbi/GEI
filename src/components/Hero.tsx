@@ -259,7 +259,7 @@ const Hero = () => {
                     <img
                       src={logo.src}
                       alt={logo.name}
-                      className="h-12 w-auto object-contain"
+                      className="h-16 w-auto object-contain"
                       loading="lazy"
                     />
                   </div>

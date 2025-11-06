@@ -1,9 +1,11 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-// Ensure API URL is provided
-const apiUrl = import.meta.env.VITE_API_URL;
-if (!apiUrl && import.meta.env.PROD) {
+// Prefer explicit API URL, but fall back to Vite proxy in development
+const envApiUrl = import.meta.env.VITE_API_URL?.trim();
+const apiUrl = envApiUrl || (!import.meta.env.PROD ? '/api' : undefined);
+
+if (!apiUrl) {
   throw new Error('API URL is not configured. Please set VITE_API_URL in your environment.');
 }
 

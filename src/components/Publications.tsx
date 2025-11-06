@@ -1,24 +1,42 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { BookOpen, ExternalLink, Calendar, Users, Filter, Loader2, AlertCircle, Download, Eye, ChevronDown } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
-import { usePublications } from '../hooks/usePublications';
-import { useCategories } from '../hooks/useCategories';
-import type { Publication, PublicationAuthor } from '../types/prisma';
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  BookOpen,
+  ExternalLink,
+  Calendar,
+  Users,
+  Filter,
+  Loader2,
+  AlertCircle,
+  Download,
+  Eye,
+  ChevronDown,
+} from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { usePublications } from "../hooks/usePublications";
+import { useCategories } from "../hooks/useCategories";
+import type { Publication, PublicationAuthor } from "../types/prisma";
 
 const Publications = ({ limit }: { limit?: number }) => {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedPublicationType, setSelectedPublicationType] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedPublicationType, setSelectedPublicationType] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
   const [visibleCount, setVisibleCount] = useState(6);
-  
-  const { publications = [], loading: publicationsLoading, error: publicationsError, refetch } = usePublications({
-    category: selectedCategory
+
+  const {
+    publications = [],
+    loading: publicationsLoading,
+    error: publicationsError,
+    refetch,
+  } = usePublications({
+    category: selectedCategory,
   });
-  
+
   const { categories, loading: categoriesLoading } = useCategories();
   const publicationTypes = publications.length
-    ? Array.from(new Set(publications.map(pub => pub.publicationType).filter(Boolean))).sort()
+    ? Array.from(
+        new Set(publications.map((pub) => pub.publicationType).filter(Boolean))
+      ).sort()
     : [];
 
   useEffect(() => {
@@ -26,7 +44,7 @@ const Publications = ({ limit }: { limit?: number }) => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
+            entry.target.classList.add("revealed");
             observer.unobserve(entry.target);
           }
         });
@@ -34,7 +52,7 @@ const Publications = ({ limit }: { limit?: number }) => {
       { threshold: 0.2 }
     );
 
-    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 
     return () => observer.disconnect();
   }, [publications]);
@@ -45,24 +63,25 @@ const Publications = ({ limit }: { limit?: number }) => {
 
   // Refetch publications when publication type changes
   useEffect(() => {
-    setSelectedCategory('all'); // Reset category to avoid filter mismatch
+    setSelectedCategory("all"); // Reset category to avoid filter mismatch
     if (refetch) refetch();
   }, [selectedPublicationType]);
 
   const formatDate = (year: number | null | undefined) => {
-    return year ? year.toString() : 'N/A';
+    return year ? year.toString() : "N/A";
   };
 
   const getCategoryColor = (categoryName: string) => {
     const colors: { [key: string]: string } = {
-      'Artificial Intelligence': 'bg-blue-100 text-blue-800 border-blue-200',
-      'Quantum Computing': 'bg-base-blue/10 text-base-blue border-base-blue/20',
-      'Climate Science': 'bg-analogous-teal/10 text-analogous-teal border-analogous-teal/20',
-      'Robotics': 'bg-amber/10 text-amber border-amber/20',
-      'Biotechnology': 'bg-light-blue/10 text-muted-blue border-light-blue/20',
-      'Energy Systems': 'bg-amber/10 text-amber border-amber/20'
+      "Artificial Intelligence": "bg-blue-100 text-blue-800 border-blue-200",
+      "Quantum Computing": "bg-base-blue/10 text-base-blue border-base-blue/20",
+      "Climate Science":
+        "bg-analogous-teal/10 text-analogous-teal border-analogous-teal/20",
+      Robotics: "bg-amber/10 text-amber border-amber/20",
+      Biotechnology: "bg-light-blue/10 text-muted-blue border-light-blue/20",
+      "Energy Systems": "bg-amber/10 text-amber border-amber/20",
     };
-    return colors[categoryName] || 'bg-gray-100 text-gray-800 border-gray-200';
+    return colors[categoryName] || "bg-gray-100 text-gray-800 border-gray-200";
   };
 
   const viewPublication = (publicationId: string) => {
@@ -72,27 +91,49 @@ const Publications = ({ limit }: { limit?: number }) => {
   // Memoized and defensive filteredPublications
   const filteredPublications = React.useMemo(() => {
     return (publications || []).filter((pub) => {
-      const matchesCategory = selectedCategory === 'all' || pub.category?.slug === selectedCategory;
-      const matchesPublicationType = selectedPublicationType === 'all' || (pub.publicationType && pub.publicationType === selectedPublicationType);
+      const matchesCategory =
+        selectedCategory === "all" || pub.category?.slug === selectedCategory;
+      const matchesPublicationType =
+        selectedPublicationType === "all" ||
+        (pub.publicationType &&
+          pub.publicationType === selectedPublicationType);
       return matchesCategory && matchesPublicationType;
     });
   }, [publications, selectedCategory, selectedPublicationType]);
 
   if (publicationsError) {
     return (
-      <section id="publications" className="py-24 bg-gradient-to-b from-neutral-100 to-white">
+      <section
+        id="publications"
+        className="py-24 bg-gradient-to-b from-neutral-100 to-white"
+      >
         <div className="max-w-4xl mx-auto px-6 lg:px-10 text-center">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Unable to Load Publications</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Unable to Load Publications
+          </h2>
           <p className="text-gray-600 mb-8">
-            We're having trouble connecting to our database. Please make sure your PostgreSQL server is running and your connection settings are correct.
+            We're having trouble connecting to our database. Please make sure
+            your PostgreSQL server is running and your connection settings are
+            correct.
           </p>
           <div className="bg-neutral-100 rounded-lg p-6 text-left">
-            <h3 className="font-semibold text-gray-900 mb-2">Troubleshooting:</h3>
+            <h3 className="font-semibold text-gray-900 mb-2">
+              Troubleshooting:
+            </h3>
             <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600">
-              <li>Check your PostgreSQL server status and credentials in the <code>.env</code> file.</li>
-              <li>Ensure the database tables are created (see migration SQL files).</li>
-              <li>Restart the development server after updating environment variables.</li>
+              <li>
+                Check your PostgreSQL server status and credentials in the{" "}
+                <code>.env</code> file.
+              </li>
+              <li>
+                Ensure the database tables are created (see migration SQL
+                files).
+              </li>
+              <li>
+                Restart the development server after updating environment
+                variables.
+              </li>
               <li>Check the server logs for detailed error messages.</li>
             </ol>
           </div>
@@ -102,7 +143,10 @@ const Publications = ({ limit }: { limit?: number }) => {
   }
 
   return (
-    <section id="publications" className="py-16 bg-gradient-to-b from-neutral-100 to-white">
+    <section
+      id="publications"
+      className="py-16 bg-gradient-to-b from-neutral-100 to-white"
+    >
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         {/* Section Header */}
         <div className="text-center mb-8 reveal">
@@ -110,8 +154,9 @@ const Publications = ({ limit }: { limit?: number }) => {
             Research & Reports
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Explore our latest publications, whitepapers and policy briefs that drive 
-            the conversation on global sustainability and planetary health.
+            Explore our latest publications, whitepapers and policy briefs that
+            drive the conversation on global sustainability and planetary
+            health.
           </p>
         </div>
 
@@ -120,12 +165,18 @@ const Publications = ({ limit }: { limit?: number }) => {
           <div className="flex items-center">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-base font-medium border border-gray-200 shadow-sm bg-white hover:bg-blue-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-200 ${showFilters ? 'ring-2 ring-blue-200' : ''}`}
-              style={{ minWidth: 'fit-content' }}
+              className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-base font-medium border border-gray-200 shadow-sm bg-white hover:bg-blue-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-200 ${
+                showFilters ? "ring-2 ring-blue-200" : ""
+              }`}
+              style={{ minWidth: "fit-content" }}
             >
               <Filter className="w-5 h-5 text-base-blue" />
-              <span>{showFilters ? 'Hide Filters' : 'Show Filters'}</span>
-              <ChevronDown className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+              <span>{showFilters ? "Hide Filters" : "Show Filters"}</span>
+              <ChevronDown
+                className={`w-4 h-4 transition-transform ${
+                  showFilters ? "rotate-180" : ""
+                }`}
+              />
             </button>
           </div>
 
@@ -139,16 +190,16 @@ const Publications = ({ limit }: { limit?: number }) => {
                 <div className="flex flex-wrap gap-3">
                   <button
                     onClick={() => {
-                      if (selectedPublicationType === 'all') {
+                      if (selectedPublicationType === "all") {
                         window.location.reload();
                       } else {
-                        setSelectedPublicationType('all');
+                        setSelectedPublicationType("all");
                       }
                     }}
                     className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                      selectedPublicationType === 'all'
-                        ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg transform scale-105'
-                        : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-green-300'
+                      selectedPublicationType === "all"
+                        ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg transform scale-105"
+                        : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-green-300"
                     }`}
                   >
                     All Types
@@ -165,8 +216,8 @@ const Publications = ({ limit }: { limit?: number }) => {
                       }}
                       className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                         selectedPublicationType === type
-                          ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg transform scale-105'
-                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-green-300'
+                          ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg transform scale-105"
+                          : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200 hover:border-green-300"
                       }`}
                     >
                       {type}
@@ -183,20 +234,26 @@ const Publications = ({ limit }: { limit?: number }) => {
                 <div className="flex flex-wrap gap-3">
                   <button
                     onClick={() => {
-                      if (selectedCategory === 'all') {
+                      if (selectedCategory === "all") {
                         window.location.reload();
                       } else {
-                        setSelectedCategory('all');
+                        setSelectedCategory("all");
                       }
                     }}
-                    className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 ${selectedCategory === 'all' ? 'bg-blue-600 text-white shadow-lg border border-blue-600' : 'bg-white text-blue-600 border border-blue-600 hover:bg-blue-50'}`}
+                    className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 ${
+                      selectedCategory === "all"
+                        ? "bg-blue-600 text-white shadow-lg border border-blue-600"
+                        : "bg-white text-blue-600 border border-blue-600 hover:bg-blue-50"
+                    }`}
                   >
                     All Areas
                   </button>
                   {categoriesLoading ? (
                     <div className="flex items-center gap-2 px-6 py-2">
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span className="text-sm text-gray-500">Loading categories...</span>
+                      <span className="text-sm text-gray-500">
+                        Loading categories...
+                      </span>
                     </div>
                   ) : (
                     categories.map((category) => (
@@ -209,7 +266,11 @@ const Publications = ({ limit }: { limit?: number }) => {
                             setSelectedCategory(category.slug);
                           }
                         }}
-                        className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 ${selectedCategory === category.slug ? 'bg-blue-600 text-white shadow-lg border border-blue-600' : 'bg-white text-blue-600 border border-blue-600 hover:bg-blue-50'}`}
+                        className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-200 ${
+                          selectedCategory === category.slug
+                            ? "bg-blue-600 text-white shadow-lg border border-blue-600"
+                            : "bg-white text-blue-600 border border-blue-600 hover:bg-blue-50"
+                        }`}
                       >
                         {category.name}
                       </button>
@@ -219,26 +280,30 @@ const Publications = ({ limit }: { limit?: number }) => {
               </div>
 
               {/* Active Filters Summary */}
-              {(selectedCategory !== 'all' || selectedPublicationType !== 'all') && (
+              {(selectedCategory !== "all" ||
+                selectedPublicationType !== "all") && (
                 <div className="flex items-center gap-4 pt-3 border-t border-gray-200">
-                  <span className="text-sm font-medium text-gray-700">Active Filters:</span>
+                  <span className="text-sm font-medium text-gray-700">
+                    Active Filters:
+                  </span>
                   <div className="flex flex-wrap gap-2">
-                    {selectedCategory !== 'all' && (
+                    {selectedCategory !== "all" && (
                       <span className="inline-flex items-center px-3 py-1 bg-base-blue/10 text-base-blue text-xs font-medium rounded-full border border-base-blue/20">
-                        {categories.find(cat => cat.slug === selectedCategory)?.name || selectedCategory}
+                        {categories.find((cat) => cat.slug === selectedCategory)
+                          ?.name || selectedCategory}
                         <button
-                          onClick={() => setSelectedCategory('all')}
+                          onClick={() => setSelectedCategory("all")}
                           className="ml-2 text-base-blue hover:text-dark-blue"
                         >
                           ×
                         </button>
                       </span>
                     )}
-                    {selectedPublicationType !== 'all' && (
+                    {selectedPublicationType !== "all" && (
                       <span className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full border border-green-200">
                         {selectedPublicationType}
                         <button
-                          onClick={() => setSelectedPublicationType('all')}
+                          onClick={() => setSelectedPublicationType("all")}
                           className="ml-2 text-green-700 hover:text-green-800"
                         >
                           ×
@@ -248,8 +313,8 @@ const Publications = ({ limit }: { limit?: number }) => {
                   </div>
                   <button
                     onClick={() => {
-                      setSelectedCategory('all');
-                      setSelectedPublicationType('all');
+                      setSelectedCategory("all");
+                      setSelectedPublicationType("all");
                     }}
                     className="text-sm text-gray-500 hover:text-gray-700 underline"
                   >
@@ -265,9 +330,16 @@ const Publications = ({ limit }: { limit?: number }) => {
         {!publicationsLoading && filteredPublications.length > 0 && (
           <div className="mb-2 reveal">
             <p className="text-gray-600 text-sm">
-              Showing <span className="font-semibold text-gray-900">{filteredPublications.length}</span> 
-              {filteredPublications.length === 1 ? ' publication' : ' publications'}
-              {selectedCategory !== 'all' || selectedPublicationType !== 'all' ? ' matching your filters' : ''}
+              Showing{" "}
+              <span className="font-semibold text-gray-900">
+                {filteredPublications.length}
+              </span>
+              {filteredPublications.length === 1
+                ? " publication"
+                : " publications"}
+              {selectedCategory !== "all" || selectedPublicationType !== "all"
+                ? " matching your filters"
+                : ""}
             </p>
           </div>
         )}
@@ -283,17 +355,18 @@ const Publications = ({ limit }: { limit?: number }) => {
         ) : filteredPublications.length === 0 ? (
           <div className="text-center py-20">
             <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Publications Found</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              No Publications Found
+            </h3>
             <p className="text-gray-600 mb-8">
-              {selectedCategory === 'all' && selectedPublicationType === 'all'
-                ? 'No publications have been added yet.'
-                : `No publications found in the selected category and publication type.`
-              }
+              {selectedCategory === "all" && selectedPublicationType === "all"
+                ? "No publications have been added yet."
+                : `No publications found in the selected category and publication type.`}
             </p>
-            <button 
+            <button
               onClick={() => {
-                setSelectedCategory('all');
-                setSelectedPublicationType('all');
+                setSelectedCategory("all");
+                setSelectedPublicationType("all");
               }}
               className="text-base-blue hover:text-dark-blue font-medium"
             >
@@ -303,7 +376,10 @@ const Publications = ({ limit }: { limit?: number }) => {
         ) : (
           <>
             <div className="space-y-8">
-              {(limit ? filteredPublications.slice(0, limit) : filteredPublications).map((publication, index) => (
+              {(limit
+                ? filteredPublications.slice(0, limit)
+                : filteredPublications
+              ).map((publication, index) => (
                 <div
                   key={publication.id}
                   className="bg-white border border-gray-200 rounded-2xl p-8 hover-lift group reveal"
@@ -322,7 +398,11 @@ const Publications = ({ limit }: { limit?: number }) => {
                           {formatDate(publication.publicationYear)}
                         </span>
                         {publication.category && (
-                          <span className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full border ${getCategoryColor(publication.category.name)} whitespace-normal break-words max-w-xs text-center`}>
+                          <span
+                            className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full border ${getCategoryColor(
+                              publication.category.name
+                            )} whitespace-normal break-words max-w-xs text-center`}
+                          >
                             {publication.category.name}
                           </span>
                         )}
@@ -334,23 +414,31 @@ const Publications = ({ limit }: { limit?: number }) => {
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4 group-hover:text-base-blue transition-colors leading-tight cursor-pointer"
-                          onClick={() => viewPublication(publication.id)}>
+                      <h3
+                        className="text-xl lg:text-2xl font-bold text-gray-900 mb-4 group-hover:text-base-blue transition-colors leading-tight cursor-pointer"
+                        onClick={() => viewPublication(publication.id)}
+                      >
                         {publication.title}
                       </h3>
 
                       {/* Authors */}
-                      {publication.publicationAuthors && publication.publicationAuthors.length > 0 && (
-                        <div className="flex items-center gap-2 mb-4">
-                          <Users className="w-4 h-4 text-gray-500" />
-                          <p className="text-gray-600 text-sm">
-                            {publication.publicationAuthors
-                              .sort((a: PublicationAuthor, b: PublicationAuthor) => a.authorOrder - b.authorOrder)
-                              .map((pa: PublicationAuthor) => pa.author?.name)
-                              .join(', ')}
-                          </p>
-                        </div>
-                      )}
+                      {publication.publicationAuthors &&
+                        publication.publicationAuthors.length > 0 && (
+                          <div className="flex items-center gap-2 mb-4">
+                            <Users className="w-4 h-4 text-gray-500" />
+                            <p className="text-gray-600 text-sm">
+                              {publication.publicationAuthors
+                                .sort(
+                                  (
+                                    a: PublicationAuthor,
+                                    b: PublicationAuthor
+                                  ) => a.authorOrder - b.authorOrder
+                                )
+                                .map((pa: PublicationAuthor) => pa.author?.name)
+                                .join(", ")}
+                            </p>
+                          </div>
+                        )}
 
                       {/* Journal */}
                       {publication.journal && (
@@ -385,7 +473,7 @@ const Publications = ({ limit }: { limit?: number }) => {
                           View Details
                           <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                         </button>
-                        
+
                         {publication.pdfUrl && (
                           <a
                             href={publication.pdfUrl}
@@ -406,14 +494,16 @@ const Publications = ({ limit }: { limit?: number }) => {
             </div>
             {limit && filteredPublications.length > limit && (
               <div className="flex justify-center mt-8">
-                <Link to="/publications" className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-300">
+                <Link
+                  to="/research-publications"
+                  className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-300"
+                >
                   Show More
                 </Link>
               </div>
             )}
           </>
         )}
-
       </div>
     </section>
   );

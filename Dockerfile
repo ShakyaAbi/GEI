@@ -43,7 +43,7 @@ COPY --from=frontend-builder /app/dist ./backend/dist
 
 # Copy uploads and scripts
 COPY uploads/ ./uploads/
-COPY scripts/ ./scripts/
+# COPY scripts/ ./scripts/
 
 EXPOSE 5000
 

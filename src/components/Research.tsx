@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Brain, Atom, Globe, Cpu, Dna, Zap, ArrowRight } from 'lucide-react';
+import { Brain, Atom, Globe, Cpu, Dna, Zap, ArrowRight, ExternalLink } from 'lucide-react';
 
 const Research = () => {
   useEffect(() => {
@@ -72,24 +72,46 @@ const Research = () => {
             return (
               <div
                 key={index}
-                className="group bg-white rounded-2xl p-6 shadow-lg hover-lift border border-gray-100 reveal"
+                className="group relative overflow-hidden rounded-2xl reveal"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className={`w-16 h-16 bg-gradient-to-br ${area.bgColor} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  {area.icon === 'planet' ? (
-                    <img src="/planet-earth_7276001.svg" alt="Planet Earth" className="w-8 h-8 filter-blue-icon" />
-                  ) : area.icon === 'benefits' ? (
-                    <img src="/benefits_1481549.svg" alt="Community Health" className="w-8 h-8 filter-red-icon" />
-                  ) : area.icon === 'greentech' ? (
-                    <img src="/green-technology_8939660.svg" alt="Green Technology" className="w-8 h-8 filter-green-icon" />
-                  ) : null}
+                {/* Background gradient card */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${area.bgColor} opacity-0 group-hover:opacity-50 transition-opacity duration-500`}></div>
+                
+                {/* Main card content */}
+                <div className="relative bg-white rounded-2xl p-8 shadow-[0_8px_30px_rgba(0,0,0,0.12)] border-2 border-gray-200 group-hover:shadow-[0_25px_50px_rgba(59,130,246,0.25)] transition-all duration-500 h-full flex flex-col">
+                  
+                  {/* Icon container */}
+                  <div className="mb-8 inline-flex">
+                    <div className={`w-20 h-20 bg-gradient-to-br ${area.bgColor} rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:shadow-xl transition-all duration-500 relative`}>
+                      {area.icon === 'planet' ? (
+                        <img src="/planet-earth_7276001.svg" alt="Planet Earth" className="w-10 h-10 filter-blue-icon group-hover:scale-125 transition-transform duration-500" />
+                      ) : area.icon === 'benefits' ? (
+                        <img src="/benefits_1481549.svg" alt="Community Health" className="w-10 h-10 filter-red-icon group-hover:scale-125 transition-transform duration-500" />
+                      ) : area.icon === 'greentech' ? (
+                        <img src="/green-technology_8939660.svg" alt="Green Technology" className="w-10 h-10 filter-green-icon group-hover:scale-125 transition-transform duration-500" />
+                      ) : null}
+                      
+                      {/* Icon glow on hover */}
+                      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${area.color} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 -z-10`}></div>
+                    </div>
+                  </div>
+
+                  {/* Title with enhanced styling */}
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-700 group-hover:to-cyan-600 transition-all duration-500 leading-tight">
+                    {area.title}
+                  </h3>
+
+                  {/* Description with better typography */}
+                  <p className="text-gray-600 leading-relaxed flex-grow group-hover:text-gray-800 transition-colors duration-300">
+                    {area.description}
+                  </p>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-700 group-hover:to-cyan-600 transition-all duration-300">
-                  {area.title}
-                </h3>
-                <p className="text-gray-600 mb-4 leading-relaxed">
-                  {area.description}
-                </p>
+
+                {/* Shimmer effect on hover */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent group-hover:animate-pulse"></div>
+                </div>
               </div>
             );
           })}
