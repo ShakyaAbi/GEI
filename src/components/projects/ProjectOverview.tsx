@@ -1,7 +1,16 @@
-import React from 'react';
-import { Calendar, MapPin, DollarSign, Users, Goal, Award, TrendingUp, Clock } from 'lucide-react';
-import { ProjectStatusBadge } from './ProjectStatusBadge';
-import type { Project } from '../../types/project';
+import React from "react";
+import {
+  Calendar,
+  MapPin,
+  DollarSign,
+  Users,
+  Goal,
+  Award,
+  TrendingUp,
+  Clock,
+} from "lucide-react";
+import { ProjectStatusBadge } from "./ProjectStatusBadge";
+import type { Project } from "../../types/project";
 
 interface ProjectOverviewProps {
   project: Project;
@@ -10,10 +19,10 @@ interface ProjectOverviewProps {
 export function ProjectOverview({ project }: ProjectOverviewProps) {
   const formatDate = (dateString?: string) => {
     if (!dateString) return null;
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -22,9 +31,11 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div className="flex-1">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">{project.title}</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2 leading-tight">
+            {project.title}
+          </h2>
           <div className="flex items-center gap-3">
-            <ProjectStatusBadge status={project.status || 'active'} />
+            <ProjectStatusBadge status={project.status || "active"} />
             {project.program_areas?.name && (
               <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
                 {project.program_areas.name}
@@ -51,7 +62,9 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
 
       {/* Description */}
       {project.description && (
-        <p className="text-gray-600 mb-6 leading-relaxed">{project.description}</p>
+        <p className="text-gray-600 mb-6 leading-relaxed">
+          {project.description}
+        </p>
       )}
 
       {/* Key Details Grid */}
@@ -63,7 +76,9 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
             </div>
             <div>
               <p className="font-semibold text-gray-900 text-sm">Start Date</p>
-              <p className="text-gray-600 text-sm">{formatDate(project.start_date)}</p>
+              <p className="text-gray-600 text-sm">
+                {formatDate(project.start_date)}
+              </p>
             </div>
           </div>
         )}
@@ -75,7 +90,9 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
             </div>
             <div>
               <p className="font-semibold text-gray-900 text-sm">End Date</p>
-              <p className="text-gray-600 text-sm">{formatDate(project.end_date)}</p>
+              <p className="text-gray-600 text-sm">
+                {formatDate(project.end_date)}
+              </p>
             </div>
           </div>
         )}
@@ -113,8 +130,12 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
               <Users className="w-6 h-6 text-green-600" />
             </div>
             <div>
-              <p className="text-sm font-medium text-green-700">Direct Beneficiaries</p>
-              <p className="text-2xl font-bold text-green-800">{project.beneficiaries}</p>
+              <p className="text-sm font-medium text-green-700">
+                Direct Beneficiaries
+              </p>
+              <p className="text-2xl font-bold text-green-800">
+                {project.beneficiaries}
+              </p>
             </div>
           </div>
         </div>
@@ -129,9 +150,14 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
           </h3>
           <div className="space-y-2">
             {project.impact_metrics.slice(0, 3).map((metric, index) => (
-              <div key={index} className="flex items-start p-3 bg-white rounded-lg border border-gray-200 shadow-sm">
+              <div
+                key={index}
+                className="flex items-start p-3 bg-white rounded-lg border border-gray-200 shadow-sm"
+              >
                 <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
-                <span className="text-gray-700 text-sm leading-relaxed">{metric}</span>
+                <span className="text-gray-700 text-sm leading-relaxed">
+                  {metric}
+                </span>
               </div>
             ))}
             {project.impact_metrics.length > 3 && (
@@ -144,32 +170,40 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
       )}
 
       {/* Stakeholders */}
-      {project.project_stakeholders && project.project_stakeholders.length > 0 && (
-        <div className="border-t pt-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Award className="w-5 h-5 text-gray-600" />
-            <h3 className="font-semibold text-gray-900">Key Stakeholders</h3>
+      {project.project_stakeholders &&
+        project.project_stakeholders.length > 0 && (
+          <div className="border-t pt-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Award className="w-5 h-5 text-gray-600" />
+              <h3 className="font-semibold text-gray-900">Key Stakeholders</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {project.project_stakeholders.slice(0, 4).map((stakeholder) => (
+                <div
+                  key={stakeholder.id}
+                  className="p-3 bg-gray-50 rounded-lg border border-gray-200"
+                >
+                  <p className="font-medium text-gray-900 text-sm">
+                    {stakeholder.name}
+                  </p>
+                  <p className="text-gray-600 text-xs">{stakeholder.role}</p>
+                  {stakeholder.organization && (
+                    <p className="text-gray-500 text-xs mt-1">
+                      {stakeholder.organization}
+                    </p>
+                  )}
+                </div>
+              ))}
+              {project.project_stakeholders.length > 4 && (
+                <div className="p-3 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                  <p className="text-gray-600 text-sm">
+                    +{project.project_stakeholders.length - 4} more
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {project.project_stakeholders.slice(0, 4).map((stakeholder) => (
-              <div key={stakeholder.id} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                <p className="font-medium text-gray-900 text-sm">{stakeholder.name}</p>
-                <p className="text-gray-600 text-xs">{stakeholder.role}</p>
-                {stakeholder.organization && (
-                  <p className="text-gray-500 text-xs mt-1">{stakeholder.organization}</p>
-                )}
-              </div>
-            ))}
-            {project.project_stakeholders.length > 4 && (
-              <div className="p-3 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
-                <p className="text-gray-600 text-sm">
-                  +{project.project_stakeholders.length - 4} more
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }

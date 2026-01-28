@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Plus, Image as ImageIcon, X, Eye } from 'lucide-react';
-import ImageUpload from '../admin/ImageUpload';
-import { projectsApi } from '../../lib/projectsApi';
+import React, { useState } from "react";
+import { Plus, Image as ImageIcon, X, Eye } from "lucide-react";
+import ImageUpload from "../admin/ImageUpload";
+import { projectsApi } from "../../lib/projectsApi";
 
 interface ProjectMedia {
   id: string;
@@ -22,12 +22,12 @@ const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({
   projectId,
   media,
   isEditable = false,
-  onMediaUpdate
+  onMediaUpdate,
 }) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
   const [viewerOpen, setViewerOpen] = useState(false);
   const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
 
@@ -35,13 +35,13 @@ const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({
     try {
       setSelectedImage(file);
       setUploading(true);
-      setError('');
+      setError("");
 
       const formData = new FormData();
-      formData.append('file', file);
-      
+      formData.append("file", file);
+
       const response = await projectsApi.uploadProjectMedia(projectId, file);
-      
+
       if (response && onMediaUpdate) {
         // Add the new media to the existing list
         onMediaUpdate([...media, response]);
@@ -50,24 +50,24 @@ const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({
       setSelectedImage(null);
       setUploading(false);
     } catch (err) {
-      setError('Failed to upload image. Please try again.');
+      setError("Failed to upload image. Please try again.");
       setUploading(false);
     }
   };
 
   const handleImageRemove = () => {
     setSelectedImage(null);
-    setError('');
+    setError("");
   };
 
   const handleMediaDelete = async (mediaId: string) => {
     try {
       await projectsApi.deleteProjectMedia(projectId, mediaId);
       if (onMediaUpdate) {
-        onMediaUpdate(media.filter(m => m.id !== mediaId));
+        onMediaUpdate(media.filter((m) => m.id !== mediaId));
       }
     } catch (err) {
-      console.error('Failed to delete media:', err);
+      console.error("Failed to delete media:", err);
     }
   };
 
@@ -149,28 +149,36 @@ const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({
           >
             <X className="w-6 h-6" />
           </button>
-          
+
           {/* Navigation */}
           <div className="absolute inset-y-0 left-4 flex items-center">
             <button
-              onClick={() => setSelectedMediaIndex((prev) => (prev > 0 ? prev - 1 : media.length - 1))}
+              onClick={() =>
+                setSelectedMediaIndex((prev) =>
+                  prev > 0 ? prev - 1 : media.length - 1
+                )
+              }
               className="p-2 text-white hover:bg-white/10 rounded-full transition-colors"
               disabled={media.length <= 1}
             >
               ←
             </button>
           </div>
-          
+
           <div className="absolute inset-y-0 right-4 flex items-center">
             <button
-              onClick={() => setSelectedMediaIndex((prev) => (prev < media.length - 1 ? prev + 1 : 0))}
+              onClick={() =>
+                setSelectedMediaIndex((prev) =>
+                  prev < media.length - 1 ? prev + 1 : 0
+                )
+              }
               className="p-2 text-white hover:bg-white/10 rounded-full transition-colors"
               disabled={media.length <= 1}
             >
               →
             </button>
           </div>
-          
+
           {/* Main Image */}
           <div className="max-w-7xl mx-auto px-4 relative">
             <img
@@ -178,7 +186,7 @@ const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({
               alt={media[selectedMediaIndex].fileName}
               className="max-h-[85vh] max-w-full object-contain mx-auto"
             />
-            
+
             {/* Caption */}
             {media[selectedMediaIndex].caption && (
               <div className="absolute inset-x-0 bottom-0 p-4">
@@ -187,7 +195,7 @@ const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({
                 </p>
               </div>
             )}
-            
+
             {/* Image counter */}
             <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 px-4 py-2 rounded-full">
               <p className="text-white text-sm">
@@ -201,4 +209,4 @@ const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({
   );
 };
 
-export default ProjectMediaGallery; 
+export default ProjectMediaGallery;

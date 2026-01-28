@@ -32,10 +32,11 @@ export const normalizeImagePath = (path: string): string => {
   }
 
   // Get the API URL from environment or use current origin
-  const apiUrl = typeof window !== 'undefined' 
-    ? (import.meta.env.VITE_API_URL || window.location.origin)
-    : '';
-  const baseUrl = apiUrl.replace('/api', '');
+  const apiUrl =
+    typeof window !== "undefined"
+      ? import.meta.env.VITE_API_URL || window.location.origin
+      : "";
+  const baseUrl = apiUrl.replace("/api", "");
 
   // Already has leading slash - make it absolute if we have a base URL
   if (path.startsWith("/")) {
@@ -78,20 +79,22 @@ export const preloadImage = (src: string, retries = 3): Promise<void> => {
   return new Promise((resolve, reject) => {
     const attemptLoad = (attemptsLeft: number) => {
       const img = new Image();
-      
+
       img.onload = () => resolve();
-      
+
       img.onerror = () => {
         if (attemptsLeft > 0) {
           setTimeout(() => attemptLoad(attemptsLeft - 1), 1000);
         } else {
-          reject(new Error(`Failed to load image after ${retries} attempts: ${src}`));
+          reject(
+            new Error(`Failed to load image after ${retries} attempts: ${src}`)
+          );
         }
       };
-      
+
       img.src = normalizeImagePath(src);
     };
-    
+
     attemptLoad(retries);
   });
 };
@@ -157,13 +160,15 @@ export const getOptimalQuality = (): number => {
 /**
  * Create a lazy-loading image component helper
  */
-export const createLazyImageObserver = (callback: (entry: IntersectionObserverEntry) => void) => {
-  if (typeof window === 'undefined') return null;
+export const createLazyImageObserver = (
+  callback: (entry: IntersectionObserverEntry) => void
+) => {
+  if (typeof window === "undefined") return null;
 
   const options = {
     root: null,
-    rootMargin: '50px',
-    threshold: 0.01
+    rootMargin: "50px",
+    threshold: 0.01,
   };
 
   return new IntersectionObserver((entries) => {

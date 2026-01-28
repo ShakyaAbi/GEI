@@ -1,7 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Calendar, MapPin, Users } from 'lucide-react';
-import { ProjectStatusBadge } from './ProjectStatusBadge';
-import type { Project } from '../../types/project';
+import React, { useEffect, useState } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+  MapPin,
+  Users,
+} from "lucide-react";
+import { ProjectStatusBadge } from "./ProjectStatusBadge";
+import type { Project } from "../../types/project";
 
 interface ProjectCarouselProps {
   projects: Project[];
@@ -9,14 +15,18 @@ interface ProjectCarouselProps {
   interval?: number;
 }
 
-export function ProjectCarousel({ projects, autoPlay = true, interval = 5000 }: ProjectCarouselProps) {
+export function ProjectCarousel({
+  projects,
+  autoPlay = true,
+  interval = 5000,
+}: ProjectCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     if (!autoPlay || projects.length <= 1) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => 
+      setCurrentIndex((prevIndex) =>
         prevIndex === projects.length - 1 ? 0 : prevIndex + 1
       );
     }, interval);
@@ -25,11 +35,15 @@ export function ProjectCarousel({ projects, autoPlay = true, interval = 5000 }: 
   }, [autoPlay, interval, projects.length]);
 
   const goToPrevious = () => {
-    setCurrentIndex(currentIndex === 0 ? projects.length - 1 : currentIndex - 1);
+    setCurrentIndex(
+      currentIndex === 0 ? projects.length - 1 : currentIndex - 1
+    );
   };
 
   const goToNext = () => {
-    setCurrentIndex(currentIndex === projects.length - 1 ? 0 : currentIndex + 1);
+    setCurrentIndex(
+      currentIndex === projects.length - 1 ? 0 : currentIndex + 1
+    );
   };
 
   if (!projects.length) {
@@ -46,7 +60,8 @@ export function ProjectCarousel({ projects, autoPlay = true, interval = 5000 }: 
     <div className="relative bg-white rounded-lg shadow-lg overflow-hidden">
       {/* Project Image */}
       <div className="relative h-64 md:h-80 bg-gradient-to-r from-blue-500 to-green-500">
-        {currentProject.project_media && currentProject.project_media.length > 0 ? (
+        {currentProject.project_media &&
+        currentProject.project_media.length > 0 ? (
           <img
             src={currentProject.project_media[0].file_url}
             alt={currentProject.title}
@@ -64,7 +79,7 @@ export function ProjectCarousel({ projects, autoPlay = true, interval = 5000 }: 
             </div>
           </div>
         )}
-        
+
         {/* Navigation Arrows */}
         {projects.length > 1 && (
           <>
@@ -96,7 +111,7 @@ export function ProjectCarousel({ projects, autoPlay = true, interval = 5000 }: 
         <h3 className="text-2xl font-bold text-gray-900 mb-3">
           {currentProject.title}
         </h3>
-        
+
         <p className="text-gray-600 mb-4 line-clamp-3">
           {currentProject.description}
         </p>
@@ -111,7 +126,7 @@ export function ProjectCarousel({ projects, autoPlay = true, interval = 5000 }: 
               )}
             </span>
           </div>
-          
+
           {currentProject.location && (
             <div className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
@@ -129,8 +144,8 @@ export function ProjectCarousel({ projects, autoPlay = true, interval = 5000 }: 
                 onClick={() => setCurrentIndex(index)}
                 className={`w-2 h-2 rounded-full transition-all duration-200 ${
                   index === currentIndex
-                    ? 'bg-blue-600 w-8'
-                    : 'bg-gray-300 hover:bg-gray-400'
+                    ? "bg-blue-600 w-8"
+                    : "bg-gray-300 hover:bg-gray-400"
                 }`}
                 aria-label={`Go to project ${index + 1}`}
               />

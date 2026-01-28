@@ -1,22 +1,38 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Goal, Users, MapPin, Calendar, TrendingUp, Award, ExternalLink, Search, Filter, Loader2, AlertCircle, SortAsc, SortDesc } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import Footer from '../components/Footer';
-import ImageGalleryCarousel from '../components/ImageGalleryCarousel';
-import { useProgramAreas } from '../hooks/useProgramAreas';
-import { useProjects } from '../hooks/useProjects';
-import { Link } from 'react-router-dom';
-import type { ProgramArea } from '../lib/programAreasApi';
-import type { Project } from '../types/project';
-import CountUp from '../components/CountUp';
-import * as LucideIcons from 'lucide-react';
+import React, { useEffect, useState, useMemo } from "react";
+import { useLocation } from "react-router-dom";
+import {
+  Goal,
+  Users,
+  MapPin,
+  Calendar,
+  TrendingUp,
+  Award,
+  ExternalLink,
+  Search,
+  Filter,
+  Loader2,
+  AlertCircle,
+  SortAsc,
+  SortDesc,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
+import ImageGalleryCarousel from "../components/ImageGalleryCarousel";
+import { useProgramAreas } from "../hooks/useProgramAreas";
+import { useProjects } from "../hooks/useProjects";
+import { Link } from "react-router-dom";
+import type { ProgramArea } from "../lib/programAreasApi";
+import type { Project } from "../types/project";
+import CountUp from "../components/CountUp";
+import * as LucideIcons from "lucide-react";
 
 // Helper to get Lucide icon component by name
 function getLucideIcon(iconName: string) {
   if (!iconName) return null;
   const IconComponent = (LucideIcons as any)[iconName];
-  return IconComponent ? <IconComponent className="w-4 h-4 mr-1 text-blue-500 inline-block align-middle" /> : null;
+  return IconComponent ? (
+    <IconComponent className="w-4 h-4 mr-1 text-blue-500 inline-block align-middle" />
+  ) : null;
 }
 
 function ProjectSkeletonCard() {
@@ -40,11 +56,17 @@ function ProjectSkeletonCard() {
 const OurWorkPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [sortBy, setSortBy] = useState<'name' | 'created_at' | 'order_index'>('created_at');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  
+  const [sortBy, setSortBy] = useState<"name" | "created_at" | "order_index">(
+    "created_at"
+  );
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
   const { programAreas, loading, error } = useProgramAreas();
-  const { projects, loading: projectsLoading, error: projectsError } = useProjects();
+  const {
+    projects,
+    loading: projectsLoading,
+    error: projectsError,
+  } = useProjects();
 
   useEffect(() => {
     // Handle hash-based scrolling
@@ -53,7 +75,7 @@ const OurWorkPage = () => {
       const element = document.getElementById(elementId);
       if (element) {
         setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth' });
+          element.scrollIntoView({ behavior: "smooth" });
         }, 100);
       }
     }
@@ -64,7 +86,7 @@ const OurWorkPage = () => {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
+            entry.target.classList.add("revealed");
             observer.unobserve(entry.target);
           }
         });
@@ -72,37 +94,60 @@ const OurWorkPage = () => {
       { threshold: 0.2 }
     );
 
-    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 
     return () => observer.disconnect();
   }, [programAreas, projects]);
 
   // Memoize expensive calculations
-  const activeProjectsCount = useMemo(() => 
-    projects.filter(p => p.status === 'active').length, 
+  const activeProjectsCount = useMemo(
+    () => projects.filter((p) => p.status === "active").length,
     [projects]
   );
-  
+
   const totalProjectsCount = useMemo(() => projects.length, [projects]);
-  
-  const impactStats = useMemo(() => [
-    { number: '100,000', label: 'Lives Impacted', icon: Users, color: 'from-blue-600 to-cyan-600' },
-    { number: totalProjectsCount.toString(), label: 'Total Projects', icon: Goal, color: 'from-blue-600 to-cyan-600' },
-    { number: activeProjectsCount.toString(), label: 'Active Projects', icon: TrendingUp, color: 'from-green-600 to-emerald-600' },
-    { number: '850+', label: 'Local Partners', icon: Award, color: 'from-blue-600 to-cyan-600' }
-  ], [activeProjectsCount, totalProjectsCount]);
+
+  const impactStats = useMemo(
+    () => [
+      {
+        number: "100,000",
+        label: "Lives Impacted",
+        icon: Users,
+        color: "from-blue-600 to-cyan-600",
+      },
+      {
+        number: totalProjectsCount.toString(),
+        label: "Total Projects",
+        icon: Goal,
+        color: "from-blue-600 to-cyan-600",
+      },
+      {
+        number: activeProjectsCount.toString(),
+        label: "Active Projects",
+        icon: TrendingUp,
+        color: "from-green-600 to-emerald-600",
+      },
+      {
+        number: "850+",
+        label: "Local Partners",
+        icon: Award,
+        color: "from-blue-600 to-cyan-600",
+      },
+    ],
+    [activeProjectsCount, totalProjectsCount]
+  );
 
   const sortedProgramAreas = useMemo(() => {
     return [...programAreas].sort((a: ProgramArea, b: ProgramArea) => {
       let aValue: any = a[sortBy];
       let bValue: any = b[sortBy];
-      
-      if (sortBy === 'created_at') {
+
+      if (sortBy === "created_at") {
         aValue = new Date(a.created_at || 0);
         bValue = new Date(b.created_at || 0);
       }
-      
-      if (sortOrder === 'asc') {
+
+      if (sortOrder === "asc") {
         return aValue > bValue ? 1 : -1;
       } else {
         return aValue < bValue ? 1 : -1;
@@ -122,28 +167,32 @@ const OurWorkPage = () => {
   };
 
   // Optimized gallery images with lazy loading
-  const workGalleryImages = useMemo(() => [
-    {
-      src: '/scenic-view-residential-buildings-against-sky-winter.jpg',
-      alt: 'Climate action project in rural community',
-      caption: 'Climate resilience programs protecting vulnerable communities'
-    },
-    {
-      src: '/image2.jpg',
-      alt: 'Water and sanitation infrastructure development',
-      caption: 'Clean water access transforming health outcomes'
-    },
-    {
-      src: '/137.jpg',
-      alt: 'Renewable energy installation in remote area',
-      caption: 'Solar energy bringing power to off-grid communities'
-    },
-    {
-      src: '/Story1.jpg',
-      alt: 'Forest conservation and restoration efforts',
-      caption: 'Reforestation initiatives protecting biodiversity'
-    },
-  ], []);
+  const workGalleryImages = useMemo(
+    () => [
+      {
+        src: "/scenic-view-residential-buildings-against-sky-winter.jpg",
+        alt: "Climate action project in rural community",
+        caption:
+          "Climate resilience programs protecting vulnerable communities",
+      },
+      {
+        src: "/image2.jpg",
+        alt: "Water and sanitation infrastructure development",
+        caption: "Clean water access transforming health outcomes",
+      },
+      {
+        src: "/137.jpg",
+        alt: "Renewable energy installation in remote area",
+        caption: "Solar energy bringing power to off-grid communities",
+      },
+      {
+        src: "/Story1.jpg",
+        alt: "Forest conservation and restoration efforts",
+        caption: "Reforestation initiatives protecting biodiversity",
+      },
+    ],
+    []
+  );
 
   if (error) {
     return (
@@ -151,9 +200,12 @@ const OurWorkPage = () => {
         <div className="pt-32 pb-20">
           <div className="max-w-4xl mx-auto px-6 lg:px-10 text-center">
             <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Unable to Load Program Areas</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Unable to Load Program Areas
+            </h2>
             <p className="text-gray-600 mb-8">
-              We're having trouble connecting to our database. Please check your connection and try again.
+              We're having trouble connecting to our database. Please check your
+              connection and try again.
             </p>
           </div>
         </div>
@@ -164,33 +216,41 @@ const OurWorkPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      
       {/* Hero Section */}
       <section className="pt-32 pb-20 bg-gradient-to-br from-blue-50 via-white to-cyan-50 relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/10 to-cyan-400/10 rounded-full blur-3xl"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-400/10 to-cyan-400/10 rounded-full blur-3xl"></div>
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-6 lg:px-10 relative">
           <div className="text-center reveal">
             <h1 className="text-4xl lg:text-6xl font-bold font-playfair text-gray-900 mb-6">
               Our <span className="gradient-text">Work</span>
             </h1>
             <p className="text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-8">
-              Creating sustainable solutions that transform communities and protect our planet 
-              through innovative programs and collaborative partnerships.
+              Creating sustainable solutions that transform communities and
+              protect our planet through innovative programs and collaborative
+              partnerships.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => document.getElementById('development')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() =>
+                  document
+                    .getElementById("development")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
                 className="inline-flex items-center px-8 py-4 text-blue-600 hover:text-white hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-600 text-lg font-medium rounded-xl border-2 border-blue-200 hover:border-transparent transition-all duration-300 group shadow-lg hover:shadow-xl"
               >
                 View Program Areas
                 <Goal className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </button>
               <button
-                onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() =>
+                  document
+                    .getElementById("projects")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
                 className="inline-flex items-center px-8 py-4 text-green-600 hover:text-white hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 text-lg font-medium rounded-xl border-2 border-green-200 hover:border-transparent transition-all duration-300 group shadow-lg hover:shadow-xl"
               >
                 View All Projects
@@ -208,16 +268,24 @@ const OurWorkPage = () => {
             {impactStats.map((stat, index) => {
               const IconComponent = stat.icon;
               return (
-                <div key={index} className="text-center reveal" style={{ animationDelay: `${index * 0.1}s` }}>
-                  <div className={`w-16 h-16 bg-gradient-to-r ${stat.color} rounded-2xl flex items-center justify-center mx-auto mb-4 motion-pulse shadow-lg`}>
+                <div
+                  key={index}
+                  className="text-center reveal"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div
+                    className={`w-16 h-16 bg-gradient-to-r ${stat.color} rounded-2xl flex items-center justify-center mx-auto mb-4 motion-pulse shadow-lg`}
+                  >
                     <IconComponent className="w-8 h-8 text-white" />
                   </div>
-                  <div className={`text-3xl lg:text-4xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-2`}>
+                  <div
+                    className={`text-3xl lg:text-4xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-2`}
+                  >
                     {index === 0 ? (
                       <CountUp
                         from={0}
-                        to={parseInt(stat.number.replace(/[^\d]/g, '')) || 0}
-                        separator="," 
+                        to={parseInt(stat.number.replace(/[^\d]/g, "")) || 0}
+                        separator=","
                         direction="up"
                         duration={1.5}
                         className="count-up-text"
@@ -225,13 +293,15 @@ const OurWorkPage = () => {
                     ) : (
                       <CountUp
                         from={0}
-                        to={parseInt(stat.number.replace(/[^\d]/g, '')) || 0}
+                        to={parseInt(stat.number.replace(/[^\d]/g, "")) || 0}
                         direction="up"
                         duration={1.5}
                         className="count-up-text"
                       />
                     )}
-                    {stat.number.match(/\D+$/) ? <span>{stat.number.match(/\D+$/)?.[0]}</span> : null}
+                    {stat.number.match(/\D+$/) ? (
+                      <span>{stat.number.match(/\D+$/)?.[0]}</span>
+                    ) : null}
                   </div>
                   <div className="text-gray-600 font-medium">{stat.label}</div>
                 </div>
@@ -250,12 +320,18 @@ const OurWorkPage = () => {
       />
 
       {/* All Program Areas Grid */}
-      <section id="development" className="py-20 bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-100">
+      <section
+        id="development"
+        className="py-20 bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-100"
+      >
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <div className="text-center mb-16 reveal">
-            <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">Program Areas</h2>
+            <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">
+              Program Areas
+            </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Discover our comprehensive portfolio of environmental and sustainability program areas.
+              Discover our comprehensive portfolio of environmental and
+              sustainability program areas.
             </p>
           </div>
 
@@ -269,11 +345,13 @@ const OurWorkPage = () => {
           ) : sortedProgramAreas.length === 0 ? (
             <div className="text-center py-20">
               <Goal className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Program Areas Found</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                No Program Areas Found
+              </h3>
               <p className="text-gray-600 mb-8">
                 No program areas match your current search criteria.
               </p>
-              <button 
+              <button
                 onClick={() => window.location.reload()}
                 className="text-base-blue hover:text-dark-blue font-medium"
               >
@@ -315,16 +393,22 @@ const OurWorkPage = () => {
                     </div>
                   </div>
                   */}
-                  
+
                   <div className="p-6 bg-gradient-to-br from-white via-blue-50/50 to-cyan-50/30">
                     <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 font-playfair group-hover:text-blue-600 transition-colors flex items-center">
-                      {programArea.icon_url
-                        ? <img src={programArea.icon_url} alt="icon" className="inline w-5 h-5 mr-2 align-middle" loading="lazy" />
-                        : programArea.icon && getLucideIcon(programArea.icon)
-                      }
+                      {programArea.icon_url ? (
+                        <img
+                          src={programArea.icon_url}
+                          alt="icon"
+                          className="inline w-5 h-5 mr-2 align-middle"
+                          loading="lazy"
+                        />
+                      ) : (
+                        programArea.icon && getLucideIcon(programArea.icon)
+                      )}
                       {programArea.name}
                     </h3>
-                    
+
                     <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
                       {programArea.description}
                     </p>
@@ -332,17 +416,24 @@ const OurWorkPage = () => {
                     <div className="mb-4 flex items-center justify-between">
                       <div className="flex items-center text-sm text-gray-600">
                         <Goal className="w-4 h-4 mr-2 text-cyan-500" />
-                        <span className="font-medium">{(programArea.projectCount ?? 0)} Active Projects</span>
+                        <span className="font-medium">
+                          {programArea.projectCount ?? 0} Active Projects
+                        </span>
                       </div>
-                      
+
                       <div className="w-12 h-1 bg-gradient-to-r from-blue-200 to-cyan-200 rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-gradient-to-r from-blue-500 via-blue-600 to-cyan-600 rounded-full transition-all duration-700 group-hover:from-blue-600 group-hover:to-cyan-700 shadow-sm"
-                          style={{ width: `${Math.min(((programArea.projectCount ?? 0) / 10) * 100, 100)}%` }}
+                          style={{
+                            width: `${Math.min(
+                              ((programArea.projectCount ?? 0) / 10) * 100,
+                              100
+                            )}%`,
+                          }}
                         ></div>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                       <button
                         onClick={() => viewProgramArea(programArea)}
@@ -364,24 +455,32 @@ const OurWorkPage = () => {
       <section id="projects" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <div className="text-center mb-16 reveal">
-            <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">All Projects</h2>
+            <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">
+              All Projects
+            </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Explore our comprehensive portfolio of projects across all program areas, creating lasting impact worldwide.
+              Explore our comprehensive portfolio of projects across all program
+              areas, creating lasting impact worldwide.
             </p>
           </div>
 
           {projectsLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {Array.from({ length: 6 }).map((_, i) => <ProjectSkeletonCard key={i} />)}
+              {Array.from({ length: 6 }).map((_, i) => (
+                <ProjectSkeletonCard key={i} />
+              ))}
             </div>
           ) : projectsError ? (
             <div className="text-center py-20">
               <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Unable to Load Projects</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                Unable to Load Projects
+              </h3>
               <p className="text-gray-600 mb-8">
-                We're having trouble loading the projects. Please try again later.
+                We're having trouble loading the projects. Please try again
+                later.
               </p>
-              <button 
+              <button
                 onClick={() => window.location.reload()}
                 className="text-blue-600 hover:text-blue-700 font-medium"
               >
@@ -391,7 +490,9 @@ const OurWorkPage = () => {
           ) : projects.length === 0 ? (
             <div className="text-center py-20">
               <Goal className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Projects Found</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                No Projects Found
+              </h3>
               <p className="text-gray-600 mb-8">
                 No projects are currently available.
               </p>
@@ -423,35 +524,46 @@ const OurWorkPage = () => {
                           <Goal className="w-16 h-16 text-white/80 relative z-10" />
                         </div>
                       )}
-                      
+
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      
+
                       <div className="absolute top-4 left-4">
-                        <div className={`px-3 py-1 text-xs font-medium rounded-full border backdrop-blur-sm ${
-                          project.status === 'active' ? 'bg-green-100/90 text-green-800 border-green-200' :
-                          project.status === 'completed' ? 'bg-blue-100/90 text-blue-800 border-blue-200' :
-                          project.status === 'on_hold' ? 'bg-yellow-100/90 text-yellow-800 border-yellow-200' :
-                          'bg-red-100/90 text-red-800 border-red-200'
-                        }`}>
-                          {project.status ? project.status.charAt(0).toUpperCase() + project.status.slice(1) : 'Unknown'}
+                        <div
+                          className={`px-3 py-1 text-xs font-medium rounded-full border backdrop-blur-sm ${
+                            project.status === "active"
+                              ? "bg-green-100/90 text-green-800 border-green-200"
+                              : project.status === "completed"
+                              ? "bg-blue-100/90 text-blue-800 border-blue-200"
+                              : project.status === "on_hold"
+                              ? "bg-yellow-100/90 text-yellow-800 border-yellow-200"
+                              : "bg-red-100/90 text-red-800 border-red-200"
+                          }`}
+                        >
+                          {project.status
+                            ? project.status.charAt(0).toUpperCase() +
+                              project.status.slice(1)
+                            : "Unknown"}
                         </div>
                       </div>
-                      
+
                       {project.program_areas && (
                         <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           <div className="px-3 py-1 bg-gradient-to-r from-white/90 to-blue-100/90 backdrop-blur-sm text-blue-800 text-xs font-medium rounded-full border border-white/50 shadow-lg flex items-center max-w-[260px] whitespace-nowrap overflow-hidden text-ellipsis">
-                            {project.program_areas.icon && getLucideIcon(project.program_areas.icon)}
-                            <span className="overflow-hidden text-ellipsis whitespace-nowrap">{project.program_areas.name}</span>
+                            {project.program_areas.icon &&
+                              getLucideIcon(project.program_areas.icon)}
+                            <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                              {project.program_areas.name}
+                            </span>
                           </div>
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="p-6 bg-gradient-to-br from-white via-green-50/50 to-emerald-50/30">
                       <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 font-playfair group-hover:text-green-600 transition-colors">
                         {project.title}
                       </h3>
-                      
+
                       <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
                         {project.description}
                       </p>
@@ -476,7 +588,7 @@ const OurWorkPage = () => {
                           </div>
                         )}
                       </div>
-                      
+
                       <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                         <button
                           onClick={() => viewProject(project)}
@@ -490,7 +602,6 @@ const OurWorkPage = () => {
                   </div>
                 ))}
               </div>
-
             </>
           )}
         </div>

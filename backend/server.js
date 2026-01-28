@@ -1,128 +1,145 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import fs from 'fs';
-import nodemailer from 'nodemailer';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+import fs from "fs";
+import nodemailer from "nodemailer";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 
 // Import routes
-import authRoutes from './routes/auth.js';
-import publicationsRoutes from './routes/publications.js';
-import programAreasRoutes from './routes/programAreas.js';
-import projectsRoutes from './routes/projects.js';
-import uploadsRoutes from './routes/uploads.js';
-import storiesRoutes from './routes/stories.js';
-import facultyRoutes from './routes/faculty.js';
+import authRoutes from "./routes/auth.js";
+import publicationsRoutes from "./routes/publications.js";
+import programAreasRoutes from "./routes/programAreas.js";
+import projectsRoutes from "./routes/projects.js";
+import uploadsRoutes from "./routes/uploads.js";
+import storiesRoutes from "./routes/stories.js";
+import facultyRoutes from "./routes/faculty.js";
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const HOST = '0.0.0.0';
+const HOST = "0.0.0.0";
 
 // IMPORTANT: Trust proxy (fixes the X-Forwarded-For error)
-app.set('trust proxy', true);
+app.set("trust proxy", true);
 
 // Get current directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Create uploads directory if it doesn't exist
-const uploadsDir = process.env.UPLOAD_DIR || join(__dirname, 'uploads');
+const uploadsDir = process.env.UPLOAD_DIR || join(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
 // CORS: Allow your domain and development
-app.use(cors({
-  origin: [
-    'https://geiglobal.org',
-    'https://www.geiglobal.org',
-    'http://localhost:3000',
-    'http://localhost:5173'
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
+app.use(
+  cors({
+    origin: [
+      "https://geiglobal.org",
+      "https://www.geiglobal.org",
+      "http://localhost:3000",
+      "http://localhost:5173",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  })
+);
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Security headers (more permissive for production)
-app.use(helmet({
-  contentSecurityPolicy: false, // Disable CSP temporarily
-  crossOriginEmbedderPolicy: false
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: false, // Disable CSP temporarily
+    crossOriginEmbedderPolicy: false,
+  })
+);
 
 // API rate limiting - Fix the proxy issue
-const limiter = rateLimit({ 
-  windowMs: 15 * 60 * 1000, 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
   max: 1000,
   standardHeaders: true,
   legacyHeaders: false,
   // Skip trust proxy check if behind nginx
   skip: (req) => {
-    const forwarded = req.headers['x-forwarded-for'];
+    const forwarded = req.headers["x-forwarded-for"];
     return !forwarded; // Skip if no proxy headers
-  }
+  },
 });
 
-app.use('/api/', limiter);
+app.use("/api/", limiter);
 
 // Serve static files from uploads directory with better error handling
-app.use('/uploads', express.static(uploadsDir, {
-  maxAge: '1d', // Cache for 1 day
-  etag: true,
-  lastModified: true,
-  setHeaders: (res, path) => {
-    // Set proper CORS headers for images
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-    
-    // Set cache headers based on file type
-    if (path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png') || path.endsWith('.webp')) {
-      res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day
-    }
-  }
-}));
+app.use(
+  "/uploads",
+  express.static(uploadsDir, {
+    maxAge: "1d", // Cache for 1 day
+    etag: true,
+    lastModified: true,
+    setHeaders: (res, path) => {
+      // Set proper CORS headers for images
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+
+      // Set cache headers based on file type
+      if (
+        path.endsWith(".jpg") ||
+        path.endsWith(".jpeg") ||
+        path.endsWith(".png") ||
+        path.endsWith(".webp")
+      ) {
+        res.setHeader("Cache-Control", "public, max-age=86400"); // 1 day
+      }
+    },
+  })
+);
 
 // Serve static files from public directory
-const publicDir = join(__dirname, '../public');
-app.use(express.static(publicDir, {
-  maxAge: '1d',
-  setHeaders: (res, path) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  }
-}));
+const publicDir = join(__dirname, "../public");
+app.use(
+  express.static(publicDir, {
+    maxAge: "1d",
+    setHeaders: (res, path) => {
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+    },
+  })
+);
 
 // API Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/publications', publicationsRoutes);
-app.use('/api/program-areas', programAreasRoutes);
-app.use('/api/projects', projectsRoutes);
-app.use('/api/uploads', uploadsRoutes);
-app.use('/api/stories', storiesRoutes);
-app.use('/api/faculty', facultyRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/publications", publicationsRoutes);
+app.use("/api/program-areas", programAreasRoutes);
+app.use("/api/projects", projectsRoutes);
+app.use("/api/uploads", uploadsRoutes);
+app.use("/api/stories", storiesRoutes);
+app.use("/api/faculty", facultyRoutes);
 
 // Contact form endpoint
-app.post('/api/contact', async (req, res) => {
-  const { firstName, lastName, email, organization, subject, message } = req.body;
+app.post("/api/contact", async (req, res) => {
+  const { firstName, lastName, email, organization, subject, message } =
+    req.body;
   if (!firstName || !lastName || !email || !subject || !message) {
-    return res.status(400).json({ error: true, message: 'Missing required fields.' });
+    return res
+      .status(400)
+      .json({ error: true, message: "Missing required fields." });
   }
 
   try {
     const transporter = nodemailer.createTransporter({
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
-      secure: process.env.SMTP_SECURE === 'true',
+      secure: process.env.SMTP_SECURE === "true",
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
@@ -134,51 +151,60 @@ app.post('/api/contact', async (req, res) => {
       to: process.env.CONTACT_RECEIVER || process.env.SMTP_USER,
       subject: `Contact Form: ${subject}`,
       replyTo: email,
-      text: `Name: ${firstName} ${lastName}\nEmail: ${email}\nOrganization: ${organization || ''}\nSubject: ${subject}\nMessage:\n${message}`,
-      html: `<p><strong>Name:</strong> ${firstName} ${lastName}</p><p><strong>Email:</strong> ${email}</p><p><strong>Organization:</strong> ${organization || ''}</p><p><strong>Subject:</strong> ${subject}</p><p><strong>Message:</strong><br/>${message.replace(/\n/g, '<br/>')}</p>`
+      text: `Name: ${firstName} ${lastName}\nEmail: ${email}\nOrganization: ${
+        organization || ""
+      }\nSubject: ${subject}\nMessage:\n${message}`,
+      html: `<p><strong>Name:</strong> ${firstName} ${lastName}</p><p><strong>Email:</strong> ${email}</p><p><strong>Organization:</strong> ${
+        organization || ""
+      }</p><p><strong>Subject:</strong> ${subject}</p><p><strong>Message:</strong><br/>${message.replace(
+        /\n/g,
+        "<br/>"
+      )}</p>`,
     };
 
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ success: true, message: 'Message sent successfully.' });
+    res
+      .status(200)
+      .json({ success: true, message: "Message sent successfully." });
   } catch (err) {
-    console.error('Error sending contact email:', err);
-    res.status(500).json({ error: true, message: 'Failed to send message.' });
+    console.error("Error sending contact email:", err);
+    res.status(500).json({ error: true, message: "Failed to send message." });
   }
 });
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'Server is running' });
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok", message: "Server is running" });
 });
 
 // Serve frontend static files
-const frontendPath = join(__dirname, 'dist');
+const frontendPath = join(__dirname, "dist");
 app.use(express.static(frontendPath));
 
 // Serve favicon for legacy browsers requesting /favicon.ico
-app.get('/favicon.ico', (req, res) => {
-  res.type('image/svg+xml');
-  res.sendFile(join(__dirname, '../public/gei-logo.svg'));
+app.get("/favicon.ico", (req, res) => {
+  res.type("image/svg+xml");
+  res.sendFile(join(__dirname, "../public/gei-logo.svg"));
 });
 
 // Also serve SVG directly for modern browsers
-app.get('/gei-logo.svg', (req, res) => {
-  res.type('image/svg+xml');
-  res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
-  res.sendFile(join(__dirname, '../public/gei-logo.svg'));
+app.get("/gei-logo.svg", (req, res) => {
+  res.type("image/svg+xml");
+  res.setHeader("Cache-Control", "public, max-age=31536000"); // Cache for 1 year
+  res.sendFile(join(__dirname, "../public/gei-logo.svg"));
 });
 
 // Only serve index.html for non-API, non-static requests
-app.get('*', (req, res, next) => {
+app.get("*", (req, res, next) => {
   if (
-    req.path.startsWith('/api') ||
-    req.path.startsWith('/uploads') ||
-    req.path.startsWith('/assets') ||
+    req.path.startsWith("/api") ||
+    req.path.startsWith("/uploads") ||
+    req.path.startsWith("/assets") ||
     req.path.match(/\.[a-zA-Z0-9]+$/)
   ) {
     return next();
   }
-  res.sendFile(join(frontendPath, 'index.html'));
+  res.sendFile(join(frontendPath, "index.html"));
 });
 
 // Error handling middleware
@@ -187,7 +213,10 @@ app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   res.status(statusCode).json({
     error: true,
-    message: process.env.NODE_ENV === 'production' ? 'Something went wrong on the server' : err.message
+    message:
+      process.env.NODE_ENV === "production"
+        ? "Something went wrong on the server"
+        : err.message,
   });
 });
 

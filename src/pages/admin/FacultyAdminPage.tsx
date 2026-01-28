@@ -1,9 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Edit, Trash2, Save, X, Loader2, AlertCircle, Upload, Image as ImageIcon } from 'lucide-react';
-import { useFaculty } from '../../hooks/useFaculty';
-import type { FacultyMember } from '../../types/faculty';
-import ImageUpload from '../../components/admin/ImageUpload';
-import { imageUploadService } from '../../lib/imageUpload';
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  X,
+  Loader2,
+  AlertCircle,
+  Upload,
+  Image as ImageIcon,
+} from "lucide-react";
+import { useFaculty } from "../../hooks/useFaculty";
+import type { FacultyMember } from "../../types/faculty";
+import ImageUpload from "../../components/admin/ImageUpload";
+import { imageUploadService } from "../../lib/imageUpload";
 
 interface FacultyFormState {
   name: string;
@@ -15,16 +25,26 @@ interface FacultyFormState {
 }
 
 const FacultyAdminPage: React.FC = () => {
-  const { facultyMembers, loading, error: hookError, refreshFaculty, addFaculty, updateFaculty, deleteFaculty } = useFaculty();
+  const {
+    facultyMembers,
+    loading,
+    error: hookError,
+    refreshFaculty,
+    addFaculty,
+    updateFaculty,
+    deleteFaculty,
+  } = useFaculty();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentFaculty, setCurrentFaculty] = useState<FacultyMember | null>(null);
+  const [currentFaculty, setCurrentFaculty] = useState<FacultyMember | null>(
+    null
+  );
   const [formData, setFormData] = useState<FacultyFormState>({
-    name: '',
-    title: '',
+    name: "",
+    title: "",
     photoFile: null,
     photoUrl: undefined,
-    linkedin: '',
+    linkedin: "",
     orderIndex: 0,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,16 +59,16 @@ const FacultyAdminPage: React.FC = () => {
         title: currentFaculty.title,
         photoFile: null,
         photoUrl: currentFaculty.photo,
-        linkedin: currentFaculty.linkedin || '',
+        linkedin: currentFaculty.linkedin || "",
         orderIndex: currentFaculty.orderIndex ?? 0,
       });
     } else {
       setFormData({
-        name: '',
-        title: '',
+        name: "",
+        title: "",
         photoFile: null,
         photoUrl: undefined,
-        linkedin: '',
+        linkedin: "",
         orderIndex: 0,
       });
     }
@@ -63,18 +83,21 @@ const FacultyAdminPage: React.FC = () => {
         title: member.title,
         photoFile: null,
         photoUrl: member.photo || undefined,
-        linkedin: member.linkedin || '',
+        linkedin: member.linkedin || "",
         orderIndex: member.orderIndex ?? 0,
       });
     } else {
-      const maxOrder = facultyMembers.length > 0 ? Math.max(...facultyMembers.map(f => f.orderIndex ?? 0)) : 0;
+      const maxOrder =
+        facultyMembers.length > 0
+          ? Math.max(...facultyMembers.map((f) => f.orderIndex ?? 0))
+          : 0;
       setCurrentFaculty(null);
       setFormData({
-        name: '',
-        title: '',
+        name: "",
+        title: "",
         photoFile: null,
         photoUrl: undefined,
-        linkedin: '',
+        linkedin: "",
         orderIndex: maxOrder + 1,
       });
     }
@@ -88,31 +111,40 @@ const FacultyAdminPage: React.FC = () => {
     setIsModalOpen(false);
     setCurrentFaculty(null);
     setFormData({
-      name: '',
-      title: '',
+      name: "",
+      title: "",
       photoFile: null,
       photoUrl: undefined,
-      linkedin: '',
+      linkedin: "",
       orderIndex: 0,
     });
     setLocalError(null);
   };
 
   const handleImageSelect = (file: File) => {
-    setFormData(prev => ({ ...prev, photoFile: file, photoUrl: URL.createObjectURL(file) }));
+    setFormData((prev) => ({
+      ...prev,
+      photoFile: file,
+      photoUrl: URL.createObjectURL(file),
+    }));
     setUploading(false);
     setUploadProgress(0);
   };
 
   const handleImageRemove = () => {
-    setFormData(prev => ({ ...prev, photoFile: null, photoUrl: undefined }));
+    setFormData((prev) => ({ ...prev, photoFile: null, photoUrl: undefined }));
     setUploading(false);
     setUploadProgress(0);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: name === 'orderIndex' ? Number(value) : value });
+    setFormData({
+      ...formData,
+      [name]: name === "orderIndex" ? Number(value) : value,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -128,7 +160,7 @@ const FacultyAdminPage: React.FC = () => {
         setUploading(true);
         const uploadResult = await imageUploadService.uploadImage(
           formData.photoFile,
-          'faculty',
+          "faculty",
           (progress: number) => {
             setUploadProgress(progress);
           }
@@ -139,22 +171,22 @@ const FacultyAdminPage: React.FC = () => {
 
       // If editing and photo was removed (no new upload and no existing URL)
       if (currentFaculty && !formData.photoFile && !formData.photoUrl) {
-        finalPhotoUrl = '/faculty/placeholder.jpg';
+        finalPhotoUrl = "/faculty/placeholder.jpg";
       }
       // If adding new faculty and no photo provided
       else if (!currentFaculty && !formData.photoFile && !formData.photoUrl) {
-        finalPhotoUrl = '/faculty/placeholder.jpg';
+        finalPhotoUrl = "/faculty/placeholder.jpg";
       }
       // If editing and keeping existing photo
       else if (currentFaculty && !formData.photoFile) {
-        finalPhotoUrl = formData.photoUrl || '/faculty/placeholder.jpg';
+        finalPhotoUrl = formData.photoUrl || "/faculty/placeholder.jpg";
       }
 
       const facultyData = {
         name: formData.name,
         title: formData.title,
-        photo: finalPhotoUrl || '/faculty/placeholder.jpg',  // Ensure photo is always a string
-        linkedin: formData.linkedin || undefined,  // Use undefined instead of null
+        photo: finalPhotoUrl || "/faculty/placeholder.jpg", // Ensure photo is always a string
+        linkedin: formData.linkedin || undefined, // Use undefined instead of null
         orderIndex: formData.orderIndex ?? 0,
       };
 
@@ -167,7 +199,9 @@ const FacultyAdminPage: React.FC = () => {
       closeModal();
       refreshFaculty();
     } catch (err) {
-      setLocalError(err instanceof Error ? err.message : 'An unexpected error occurred');
+      setLocalError(
+        err instanceof Error ? err.message : "An unexpected error occurred"
+      );
       setUploading(false);
     } finally {
       setIsSubmitting(false);
@@ -176,13 +210,17 @@ const FacultyAdminPage: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this faculty member?')) {
+    if (
+      window.confirm("Are you sure you want to delete this faculty member?")
+    ) {
       setLocalError(null);
       try {
         await deleteFaculty(id);
         refreshFaculty();
       } catch (err) {
-        setLocalError(err instanceof Error ? err.message : 'Failed to delete faculty member');
+        setLocalError(
+          err instanceof Error ? err.message : "Failed to delete faculty member"
+        );
       }
     }
   };
@@ -209,7 +247,9 @@ const FacultyAdminPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Manage Faculty Members</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">
+        Manage Faculty Members
+      </h1>
 
       <button
         onClick={() => openModal()}
@@ -231,44 +271,70 @@ const FacultyAdminPage: React.FC = () => {
             </tr>
           </thead>
           <tbody className="text-gray-700 text-sm font-light">
-            {[...facultyMembers].sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0)).map((member) => (
-              <tr key={member.id} className="border-b border-gray-200 hover:bg-gray-100">
-                <td className="py-3 px-6 text-left">
-                  <img src={member.photo} alt={member.name} className="w-12 h-12 rounded-full object-cover" />
-                </td>
-                <td className="py-3 px-6 text-left whitespace-nowrap">{member.name}</td>
-                <td className="py-3 px-6 text-left">{member.title}</td>
-                <td className="py-3 px-6 text-left">
-                  {member.linkedin ? (
-                    <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm15.5 11.268h-3v-5.604c0-1.337-.026-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.841-1.563 3.041 0 3.603 2.003 3.603 4.605v5.591z"/></svg>
-                      LinkedIn
-                    </a>
-                  ) : (
-                    <span className="text-gray-400">—</span>
-                  )}
-                </td>
-                <td className="py-3 px-6 text-left">{member.orderIndex ?? 0}</td>
-                <td className="py-3 px-6 text-center">
-                  <div className="flex item-center justify-center">
-                    <button
-                      onClick={() => openModal(member)}
-                      className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors mr-2"
-                      title="Edit"
-                    >
-                      <Edit className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(member.id)}
-                      className="w-8 h-8 bg-red-100 text-red-600 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors"
-                      title="Delete"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+            {[...facultyMembers]
+              .sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0))
+              .map((member) => (
+                <tr
+                  key={member.id}
+                  className="border-b border-gray-200 hover:bg-gray-100"
+                >
+                  <td className="py-3 px-6 text-left">
+                    <img
+                      src={member.photo}
+                      alt={member.name}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                  </td>
+                  <td className="py-3 px-6 text-left whitespace-nowrap">
+                    {member.name}
+                  </td>
+                  <td className="py-3 px-6 text-left">{member.title}</td>
+                  <td className="py-3 px-6 text-left">
+                    {member.linkedin ? (
+                      <a
+                        href={member.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline flex items-center gap-1"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.761 0 5-2.239 5-5v-14c0-2.761-2.239-5-5-5zm-11 19h-3v-10h3v10zm-1.5-11.268c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm15.5 11.268h-3v-5.604c0-1.337-.026-3.063-1.868-3.063-1.868 0-2.154 1.459-2.154 2.967v5.7h-3v-10h2.881v1.367h.041c.401-.761 1.379-1.563 2.841-1.563 3.041 0 3.603 2.003 3.603 4.605v5.591z" />
+                        </svg>
+                        LinkedIn
+                      </a>
+                    ) : (
+                      <span className="text-gray-400">—</span>
+                    )}
+                  </td>
+                  <td className="py-3 px-6 text-left">
+                    {member.orderIndex ?? 0}
+                  </td>
+                  <td className="py-3 px-6 text-center">
+                    <div className="flex item-center justify-center">
+                      <button
+                        onClick={() => openModal(member)}
+                        className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors mr-2"
+                        title="Edit"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(member.id)}
+                        className="w-8 h-8 bg-red-100 text-red-600 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
@@ -277,11 +343,18 @@ const FacultyAdminPage: React.FC = () => {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              {currentFaculty ? 'Edit Faculty Member' : 'Add New Faculty Member'}
+              {currentFaculty
+                ? "Edit Faculty Member"
+                : "Add New Faculty Member"}
             </h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name:</label>
+                <label
+                  htmlFor="name"
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                >
+                  Name:
+                </label>
                 <input
                   type="text"
                   id="name"
@@ -293,7 +366,12 @@ const FacultyAdminPage: React.FC = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="title" className="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+                <label
+                  htmlFor="title"
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                >
+                  Title:
+                </label>
                 <input
                   type="text"
                   id="title"
@@ -305,7 +383,12 @@ const FacultyAdminPage: React.FC = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="linkedin" className="block text-gray-700 text-sm font-bold mb-2">LinkedIn URL:</label>
+                <label
+                  htmlFor="linkedin"
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                >
+                  LinkedIn URL:
+                </label>
                 <input
                   type="url"
                   id="linkedin"
@@ -317,7 +400,9 @@ const FacultyAdminPage: React.FC = () => {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 font-medium mb-2">Order</label>
+                <label className="block text-gray-700 font-medium mb-2">
+                  Order
+                </label>
                 <input
                   type="number"
                   name="orderIndex"
@@ -328,7 +413,9 @@ const FacultyAdminPage: React.FC = () => {
                 />
               </div>
               <div className="mb-6">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Photo:</label>
+                <label className="block text-gray-700 text-sm font-bold mb-2">
+                  Photo:
+                </label>
                 <ImageUpload
                   onImageSelect={handleImageSelect}
                   onImageRemove={handleImageRemove}
@@ -338,10 +425,12 @@ const FacultyAdminPage: React.FC = () => {
                   uploading={uploading}
                 />
                 {formData.photoUrl && !formData.photoFile && (
-                  <div className="mt-2 text-sm text-gray-500">Current photo will be used unless a new one is uploaded.</div>
+                  <div className="mt-2 text-sm text-gray-500">
+                    Current photo will be used unless a new one is uploaded.
+                  </div>
                 )}
               </div>
-              
+
               <div className="flex justify-end">
                 <button
                   type="button"
@@ -360,7 +449,7 @@ const FacultyAdminPage: React.FC = () => {
                   ) : (
                     <Save className="w-5 h-5 mr-2" />
                   )}
-                  {currentFaculty ? 'Update' : 'Add'} Faculty
+                  {currentFaculty ? "Update" : "Add"} Faculty
                 </button>
               </div>
               {displayError && (
@@ -376,4 +465,4 @@ const FacultyAdminPage: React.FC = () => {
   );
 };
 
-export default FacultyAdminPage; 
+export default FacultyAdminPage;
