@@ -15,6 +15,11 @@ function mapProjectFields(project) {
     hero_image: heroImage,
     program_area_id: programAreaId,
     impact_metrics: impactMetrics,
+    order_index: obj.orderIndex ?? rest.orderIndex ?? 0,
+    created_at: obj.createdAt ?? rest.createdAt,
+    updated_at: obj.updatedAt ?? rest.updatedAt,
+    start_date: obj.startDate ?? rest.startDate,
+    end_date: obj.endDate ?? rest.endDate,
   };
 }
 
@@ -26,6 +31,12 @@ function mapHeroImageField(programArea) {
   return {
     ...rest,
     hero_image: heroImage,
+    order_index: obj.orderIndex ?? rest.orderIndex ?? 0,
+    created_at: obj.createdAt ?? rest.createdAt,
+    updated_at: obj.updatedAt ?? rest.updatedAt,
+    seo_title: obj.seoTitle ?? rest.seoTitle,
+    seo_description: obj.seoDescription ?? rest.seoDescription,
+    icon_url: obj.iconUrl ?? rest.iconUrl,
     ...(projects ? { projects: projects.map(mapProjectFields) } : {}),
   };
 }

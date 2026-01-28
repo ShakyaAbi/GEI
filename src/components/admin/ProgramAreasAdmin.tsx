@@ -16,6 +16,9 @@ function getLucideIcon(iconName: string) {
   return IconComponent ? <IconComponent className="w-5 h-5 mr-2 text-blue-500 inline-block align-middle" /> : null;
 }
 
+const getOrderIndex = (area: Partial<ProgramArea> | null | undefined) =>
+  (area as any)?.order_index ?? (area as any)?.orderIndex ?? 0;
+
 const ProgramAreasAdmin = () => {
   const { programAreas, loading, refetch } = useProgramAreas();
   const [activeTab, setActiveTab] = useState<'program-areas' | 'projects'>('program-areas');
@@ -77,8 +80,8 @@ const ProgramAreasAdmin = () => {
   );
 
   const sortedAreas = [...filteredAreas].sort((a, b) => {
-    let aValue: any = a[sortBy];
-    let bValue: any = b[sortBy];
+    let aValue: any = sortBy === 'order_index' ? getOrderIndex(a) : (a as any)[sortBy];
+    let bValue: any = sortBy === 'order_index' ? getOrderIndex(b) : (b as any)[sortBy];
     
     if (sortBy === 'created_at') {
       aValue = new Date(a.created_at || 0);
@@ -94,7 +97,7 @@ const ProgramAreasAdmin = () => {
 
   useEffect(() => {
     if (reorderMode) {
-      const ordered = [...programAreas].sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
+      const ordered = [...programAreas].sort((a, b) => getOrderIndex(a) - getOrderIndex(b));
       setReorderAreas(ordered);
     }
   }, [reorderMode, programAreas]);
@@ -118,7 +121,7 @@ const ProgramAreasAdmin = () => {
         hero_image: programArea.hero_image || '',
         seo_title: programArea.seo_title || '',
         seo_description: programArea.seo_description || '',
-        order_index: programArea.order_index ?? 0,
+        order_index: getOrderIndex(programArea),
         icon: programArea.icon || '',
         icon_url: programArea.icon_url || ''
       });
@@ -545,7 +548,7 @@ const ProgramAreasAdmin = () => {
                       }
                       <div>
                         <div className="font-medium text-gray-900">{programArea.name}</div>
-                        <div className="text-xs text-gray-500">Order: {programArea.order_index}</div>
+                        <div className="text-xs text-gray-500">Order: {getOrderIndex(programArea)}</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -597,7 +600,7 @@ const ProgramAreasAdmin = () => {
                               {programArea.name}
                             </h3>
                             <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                              Order: {programArea.order_index}
+                              Order: {getOrderIndex(programArea)}
                             </span>
                           </div>
                           

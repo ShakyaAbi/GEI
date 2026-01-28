@@ -73,6 +73,9 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
   // Add state for drag-and-drop
   const [draggedMediaIndex, setDraggedMediaIndex] = useState<number | null>(null);
 
+  const getOrderIndex = (project: Partial<Project> | null | undefined) =>
+    (project as any)?.order_index ?? (project as any)?.orderIndex ?? 0;
+
   const generateSlug = (title: string) => {
     return title
       .toLowerCase()
@@ -92,7 +95,7 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
 
   useEffect(() => {
     if (!reorderMode) return;
-    const ordered = [...projects].sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
+    const ordered = [...projects].sort((a, b) => getOrderIndex(a) - getOrderIndex(b));
     setReorderProjects(ordered);
   }, [reorderMode, projects]);
 
@@ -110,7 +113,7 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
         beneficiaries: project.beneficiaries || '',
         impact_metrics: project.impact_metrics || [],
         program_area_id: project.program_area_id || programAreaId || '',
-        order_index: project.order_index || 0,
+        order_index: getOrderIndex(project),
         start_date: project.start_date || '',
         end_date: project.end_date || '',
         slug: project.slug || '',
@@ -530,7 +533,7 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
                     <span className="text-sm text-gray-500 w-6">{index + 1}</span>
                     <div>
                       <div className="font-medium text-gray-900">{project.title}</div>
-                      <div className="text-xs text-gray-500">Order: {project.order_index ?? 0}</div>
+                      <div className="text-xs text-gray-500">Order: {getOrderIndex(project)}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
