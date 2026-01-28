@@ -22,11 +22,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables
 .env
-ssl/cert.pem
-ssl/key.pem
-ssl/cert.pem
-ssl/key.pem
-ssl/cert.pem
-ssl/key.pem
+.env.local
+.env.production
+
+# SSL certificates
 ssl/
+
+# Windows metadata files
+*:Zone.Identifier
+
+# Database backups
+backup.sql
+*.sql.backup
