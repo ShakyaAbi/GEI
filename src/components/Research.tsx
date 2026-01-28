@@ -85,11 +85,11 @@ const Research = () => {
                   <div className="mb-8 inline-flex">
                     <div className={`w-20 h-20 bg-gradient-to-br ${area.bgColor} rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:shadow-xl transition-all duration-500 relative`}>
                       {area.icon === 'planet' ? (
-                        <img src="/planet-earth_7276001.svg" alt="Planet Earth" className="w-10 h-10 filter-blue-icon group-hover:scale-125 transition-transform duration-500" />
+                        <img src="/planet-earth_7276001.svg" alt="Planet Earth" className="w-12 h-12 filter-blue-icon group-hover:scale-125 transition-transform duration-500 object-contain" loading="eager" />
                       ) : area.icon === 'benefits' ? (
-                        <img src="/benefits_1481549.svg" alt="Community Health" className="w-10 h-10 filter-red-icon group-hover:scale-125 transition-transform duration-500" />
+                        <img src="/benefits_1481549.svg" alt="Community Health" className="w-12 h-12 filter-red-icon group-hover:scale-125 transition-transform duration-500 object-contain" loading="eager" />
                       ) : area.icon === 'greentech' ? (
-                        <img src="/green-technology_8939660.svg" alt="Green Technology" className="w-10 h-10 filter-green-icon group-hover:scale-125 transition-transform duration-500" />
+                        <img src="/green-technology_8939660.svg" alt="Green Technology" className="w-12 h-12 filter-green-icon group-hover:scale-125 transition-transform duration-500 object-contain" loading="eager" />
                       ) : null}
                       
                       {/* Icon glow on hover */}
@@ -98,7 +98,7 @@ const Research = () => {
                   </div>
 
                   {/* Title with enhanced styling */}
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-blue-700 group-hover:to-cyan-600 transition-all duration-500 leading-tight">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-blue-700 transition-all duration-500 leading-snug">
                     {area.title}
                   </h3>
 

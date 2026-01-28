@@ -1,0 +1,7 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="400" fill="#E5E7EB"/>
+  <text x="200" y="180" font-family="Arial" font-size="48" fill="#6B7280" text-anchor="middle" font-weight="bold">GEI</text>
+  <text x="200" y="230" font-family="Arial" font-size="24" fill="#9CA3AF" text-anchor="middle">Faculty Member</text>
+  <circle cx="200" cy="130" r="40" fill="#D1D5DB" stroke="#9CA3AF" stroke-width="2"/>
+  <path d="M 200 150 L 200 170 M 180 190 L 200 170 L 220 190" stroke="#9CA3AF" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

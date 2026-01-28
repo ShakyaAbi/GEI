@@ -396,18 +396,20 @@ const AboutPage = () => {
                   return a.orderIndex - b.orderIndex;
                 })
                 .map((member) => (
-                  <div key={member.id} className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col items-center justify-center py-0">
-                    <div className="w-full aspect-[3/4] bg-gray-100 flex items-center justify-center overflow-hidden">
+                  <div key={member.id} className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col items-center justify-center py-0 group hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div className="relative overflow-hidden w-full h-64 sm:h-72 bg-gray-100">
                       <img
                         src={member.photo || '/faculty/placeholder.jpg'}
                         alt={member.name}
-                        className="w-full h-full object-cover object-center rounded-t-2xl"
-                        onError={(e) => { e.currentTarget.src = '/faculty/placeholder.jpg'; }}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
                       />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
-                    <div className="flex-1 flex flex-col items-center justify-center p-8">
-                      <h3 className="text-xl font-bold text-gray-900 mb-1 font-playfair text-center">{member.name}</h3>
-                      <p className="text-blue-600 font-semibold mb-3 text-center font-inter">{member.title}</p>
+                    <div className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8 w-full">
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1 font-playfair text-center">{member.name}</h3>
+                      <p className="text-blue-600 font-semibold mb-3 text-center text-sm sm:text-base font-inter">{member.title}</p>
                       <a
                         href={member.linkedin || '#'}
                         target="_blank"
@@ -417,7 +419,7 @@ const AboutPage = () => {
                         aria-disabled={!member.linkedin}
                         onClick={e => { if (!member.linkedin) e.preventDefault(); }}
                       >
-                        <Linkedin className="w-5 h-5" />
+                        <Linkedin className="w-4 sm:w-5 h-4 sm:h-5" />
                       </a>
                     </div>
                   </div>

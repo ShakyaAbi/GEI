@@ -15,12 +15,22 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  assetsInclude: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.webp'],
   optimizeDeps: {
     exclude: ['lucide-react', 'pg', 'events'],
   },
   build: {
+    assetsInlineLimit: 4096,
     rollupOptions: {
       external: ['pg', 'events'],
+      output: {
+        assetFileNames: (assetInfo) => {
+          if (/\.(gif|jpe?g|png|svg|webp)$/i.test(assetInfo.name)) {
+            return 'images/[name]-[hash][extname]';
+          }
+          return 'assets/[name]-[hash][extname]';
+        },
+      },
     },
   },
 });

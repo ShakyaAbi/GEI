@@ -61,20 +61,46 @@ app.use(helmet({
 }));
 
 // API rate limiting - Fix the proxy issue
-app.use('/api/', rateLimit({ 
+const limiter = rateLimit({ 
   windowMs: 15 * 60 * 1000, 
-  max: 1000, // Increased limit
+  max: 1000,
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true, // Important: trust proxy
-  keyGenerator: (req) => {
-    // Use X-Forwarded-For if available, otherwise req.ip
-    return req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.ip;
+  // Skip trust proxy check if behind nginx
+  skip: (req) => {
+    const forwarded = req.headers['x-forwarded-for'];
+    return !forwarded; // Skip if no proxy headers
+  }
+});
+
+app.use('/api/', limiter);
+
+// Serve static files from uploads directory with better error handling
+app.use('/uploads', express.static(uploadsDir, {
+  maxAge: '1d', // Cache for 1 day
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, path) => {
+    // Set proper CORS headers for images
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    
+    // Set cache headers based on file type
+    if (path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png') || path.endsWith('.webp')) {
+      res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day
+    }
   }
 }));
 
-// Serve static files from uploads directory
-app.use('/uploads', express.static(uploadsDir));
+// Serve static files from public directory
+const publicDir = join(__dirname, '../public');
+app.use(express.static(publicDir, {
+  maxAge: '1d',
+  setHeaders: (res, path) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  }
+}));
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -131,8 +157,15 @@ app.use(express.static(frontendPath));
 
 // Serve favicon for legacy browsers requesting /favicon.ico
 app.get('/favicon.ico', (req, res) => {
-  res.type('image/png');
-  res.sendFile(join(frontendPath, 'GEI_Envirohealth_Icon[1].png'));
+  res.type('image/svg+xml');
+  res.sendFile(join(__dirname, '../public/gei-logo.svg'));
+});
+
+// Also serve SVG directly for modern browsers
+app.get('/gei-logo.svg', (req, res) => {
+  res.type('image/svg+xml');
+  res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+  res.sendFile(join(__dirname, '../public/gei-logo.svg'));
 });
 
 // Only serve index.html for non-API, non-static requests

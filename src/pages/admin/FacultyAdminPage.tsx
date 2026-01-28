@@ -234,7 +234,7 @@ const FacultyAdminPage: React.FC = () => {
             {[...facultyMembers].sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0)).map((member) => (
               <tr key={member.id} className="border-b border-gray-200 hover:bg-gray-100">
                 <td className="py-3 px-6 text-left">
-                  <img src={member.photo} alt={member.name} className="w-12 h-12 rounded-full object-cover" onError={(e) => { e.currentTarget.src = '/faculty/placeholder.jpg'; }} />
+                  <img src={member.photo} alt={member.name} className="w-12 h-12 rounded-full object-cover" />
                 </td>
                 <td className="py-3 px-6 text-left whitespace-nowrap">{member.name}</td>
                 <td className="py-3 px-6 text-left">{member.title}</td>

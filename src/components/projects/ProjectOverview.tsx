@@ -40,6 +40,10 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
           <img
             src={project.hero_image}
             alt={project.title}
+            loading="lazy"
+            decoding="async"
+            width="600"
+            height="192"
             className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
           />
         </div>

@@ -229,11 +229,14 @@ const Hero = () => {
             </div>
           </div>
           {/* Right: Hero Image */}
-          <div className="w-full h-80 lg:h-[32rem] flex items-center justify-center cursor-pointer" onClick={() => navigate(stories[titleNumber].link)}>
-            <img
+          <div className="w-full h-80 lg:h-[32rem] flex items-center justify-center cursor-pointer relative overflow-hidden rounded-2xl" onClick={() => navigate(stories[titleNumber].link)}>
+            <motion.img
               src={stories[titleNumber].image}
               alt={stories[titleNumber].title}
-              className="w-full h-full object-cover rounded-2xl shadow-2xl transition-all duration-700"
+              className="w-full h-full object-cover shadow-2xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
             />
           </div>
         </div>
@@ -260,7 +263,8 @@ const Hero = () => {
                       src={logo.src}
                       alt={logo.name}
                       className="h-16 w-auto object-contain"
-                      loading="lazy"
+                      loading="eager"
+                      decoding="async"
                     />
                   </div>
                 ))

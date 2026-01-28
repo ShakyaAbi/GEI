@@ -50,6 +50,10 @@ export function ProjectCarousel({ projects, autoPlay = true, interval = 5000 }: 
           <img
             src={currentProject.project_media[0].file_url}
             alt={currentProject.title}
+            loading="lazy"
+            decoding="async"
+            width="600"
+            height="320"
             className="w-full h-full object-cover"
           />
         ) : (

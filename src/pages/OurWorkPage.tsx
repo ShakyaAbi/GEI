@@ -124,7 +124,7 @@ const OurWorkPage = () => {
   // Optimized gallery images with lazy loading
   const workGalleryImages = useMemo(() => [
     {
-      src: 'scenic-view-residential-buildings-against-sky-winter.jpg',
+      src: '/scenic-view-residential-buildings-against-sky-winter.jpg',
       alt: 'Climate action project in rural community',
       caption: 'Climate resilience programs protecting vulnerable communities'
     },
@@ -139,7 +139,7 @@ const OurWorkPage = () => {
       caption: 'Solar energy bringing power to off-grid communities'
     },
     {
-      src: 'Story1.jpg',
+      src: '/Story1.jpg',
       alt: 'Forest conservation and restoration efforts',
       caption: 'Reforestation initiatives protecting biodiversity'
     },
@@ -411,6 +411,9 @@ const OurWorkPage = () => {
                           src={project.hero_image}
                           alt={project.title}
                           loading="lazy"
+                          decoding="async"
+                          width="400"
+                          height="192"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         />
                       ) : (
