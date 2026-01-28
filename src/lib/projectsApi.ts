@@ -109,6 +109,15 @@ export class ProjectsAPI {
       throw error;
     }
   }
+
+  async reorderProjects(orderedIds: string[], programAreaId?: string): Promise<void> {
+    try {
+      await api.put('/projects/reorder', { orderedIds, programAreaId });
+    } catch (error) {
+      console.error('Error in reorderProjects:', error);
+      throw error;
+    }
+  }
 }
 
 export async function fetchProjects() {

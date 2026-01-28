@@ -128,6 +128,17 @@ export const programAreasApi = {
       console.error('Error deleting program area:', error);
       throw error;
     }
+  },
+
+  // Reorder program areas
+  async reorderProgramAreas(orderedIds: string[]) {
+    try {
+      await api.put('/program-areas/reorder', { orderedIds });
+      return true;
+    } catch (error) {
+      console.error('Error reordering program areas:', error);
+      throw error;
+    }
   }
 }
 

@@ -207,9 +207,9 @@ const AboutPage = () => {
       icon: Brain,
       title: "Diagnose",
       description:
-        "We start by understanding real community needs using our innovative data collection platform. Through household surveys, environmental assessments, and health system reviews, we identify the root causes of challenges — not just the symptoms.",
+        "We start by understanding real community needs using our innovative data collection platform. Through household surveys, environmental assessments, and health system reviews, we identify the root causes of challenges, not just the symptoms.",
       linkText: "Explore our assessment tools",
-      hoverExample: "1500 children lacked clean water – see our field data",
+      hoverExample: "1500 children lacked clean water. See our field data.",
       parallaxSpeed: 0.5,
     },
     {
@@ -217,7 +217,7 @@ const AboutPage = () => {
       icon: Compass,
       title: "Plan",
       description:
-        "GEI works hand-in-hand with communities, governments, and private partners to design targeted, scalable solutions. Whether upgrading rural clinics, planning clean water systems, or launching nutrition programs — we co-create every step to ensure relevance and sustainability.",
+        "GEI works hand-in-hand with communities, governments, and private partners to design targeted, scalable solutions. Whether upgrading rural clinics, planning clean water systems, or launching nutrition programs, we co-create every step to ensure relevance and sustainability.",
       linkText: "See our project planning in action",
       hoverExample: "Co-designed water plant with Dhulikhel engineers",
       parallaxSpeed: 0.3,
@@ -227,7 +227,7 @@ const AboutPage = () => {
       icon: Zap,
       title: "Empower",
       description:
-        "We implement locally led programs that generate green jobs, improve health, restore environments, and build resilience. Our approach centers communities as leaders — ensuring that change grows from within and lasts for generations.",
+        "We implement locally led programs that generate green jobs, improve health, restore environments, and build resilience. Our approach centers communities as leaders, ensuring that change grows from within and lasts for generations.",
       linkText: "View our community-led programs",
       hoverExample: "Plastic recycling co-op creates 20+ jobs",
       parallaxSpeed: 0.7,
@@ -247,24 +247,21 @@ const AboutPage = () => {
                 imageWidth="100%"
                 scaleOnHover={1.05}
                 rotateAmplitude={8}
-                showTooltip={true}
-                captionText={step.hoverExample}
+                showTooltip={false}
                 displayOverlayContent={true}
                 overlayContent={
-                  <div className="w-full h-full p-8 flex flex-col justify-between">
-                    <div className="mb-6">
+                  <div className="w-full h-full p-8 flex flex-col">
+                    <div className="flex items-center gap-4 mb-6">
                       <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
                         {React.createElement(step.icon, { size: 32 })}
                       </div>
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-2 font-playfair">
+                      <h3 className="text-2xl font-bold text-gray-900 font-playfair">
                         {step.title}
                       </h3>
-                      <p className="text-gray-600 mb-4 font-inter">
-                        {step.description}
-                      </p>
                     </div>
+                    <p className="text-gray-600 font-inter">
+                      {step.description}
+                    </p>
                   </div>
                 }
               />
@@ -363,21 +360,10 @@ const AboutPage = () => {
               Our Impact Model
             </h1>
             <p className="text-xl text-gray-600 font-medium font-inter">
-              From Data to Change
+              Turning data into community action
             </p>
           </div>
           <div className="relative max-w-7xl mx-auto">
-            {/* Animated Connection Lines */}
-            <div className="hidden lg:block absolute top-32 left-1/2 transform -translate-x-1/2 w-full max-w-4xl">
-              <div className="flex justify-center items-center px-8">
-                <div className="w-1/3 h-0.5 bg-gradient-to-r from-blue-300/60 to-blue-500/80 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer" />
-                </div>
-                <div className="w-1/3 h-0.5 bg-gradient-to-r from-blue-500/80 to-blue-700/60 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer delay-1000" />
-                </div>
-              </div>
-            </div>
             {/* Step Cards */}
             <ProcessSteps />
           </div>

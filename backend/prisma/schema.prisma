@@ -39,6 +39,7 @@ model Publication {
   publicationType    String              @default("Journal Article") @map("publication_type")
   doi                String?
   pdfUrl             String?             @map("pdf_url")
+  externalUrl        String?             @map("external_url")
   citations          Int                 @default(0)
   categoryId         String?             @map("category_id") @db.Uuid
   isFeatured         Boolean             @default(false) @map("is_featured")

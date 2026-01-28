@@ -449,9 +449,16 @@ const Publications = ({ limit }: { limit?: number }) => {
 
                       {/* Abstract */}
                       {publication.abstract && (
-                        <p className="text-gray-600 leading-relaxed mb-4 line-clamp-3">
-                          {publication.abstract}
-                        </p>
+                        /<[a-z][\s\S]*>/i.test(publication.abstract) ? (
+                          <div
+                            className="text-gray-600 leading-relaxed mb-4 line-clamp-3 prose max-w-none"
+                            dangerouslySetInnerHTML={{ __html: publication.abstract }}
+                          />
+                        ) : (
+                          <p className="text-gray-600 leading-relaxed mb-4 line-clamp-3">
+                            {publication.abstract}
+                          </p>
+                        )
                       )}
 
                       {/* DOI */}
@@ -474,15 +481,15 @@ const Publications = ({ limit }: { limit?: number }) => {
                           <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                         </button>
 
-                        {publication.pdfUrl && (
+                        {(publication.pdfUrl || publication.externalUrl) && (
                           <a
-                            href={publication.pdfUrl}
+                            href={publication.pdfUrl || publication.externalUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
                           >
                             <Download className="w-4 h-4 mr-2" />
-                            Download PDF
+                            {publication.pdfUrl ? 'Download PDF' : 'Open Publication'}
                             <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                           </a>
                         )}
@@ -495,7 +502,7 @@ const Publications = ({ limit }: { limit?: number }) => {
             {limit && filteredPublications.length > limit && (
               <div className="flex justify-center mt-8">
                 <Link
-                  to="/research-publications"
+                  to="/our-work/research-publications"
                   className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-300"
                 >
                   Show More

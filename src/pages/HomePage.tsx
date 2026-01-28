@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Hero from '../components/Hero';
 import About from '../components/About';
 import Research from '../components/Research';
+import ProjectsShowcase from '../components/ProjectsShowcase';
 import Publications from '../components/Publications';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
@@ -30,6 +31,8 @@ const HomePage = () => {
       <Hero />
       
       <Research />
+
+      <ProjectsShowcase />
      
       <Publications limit={5} />
       <Contact />

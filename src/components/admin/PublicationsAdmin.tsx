@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Plus, Edit, Trash2, Save, X, ExternalLink, Upload, Loader2, BookOpen, Eye, Users, Tag, FileIcon } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { Plus, Edit, Trash2, Save, X, ExternalLink, Upload, Loader2, BookOpen, Eye, Users, Tag, FileIcon, ArrowUp, ArrowDown, ListOrdered } from 'lucide-react';
 import { usePublications } from '../../hooks/usePublications';
-import { useCategories } from '../../hooks/useCategories';
 import FileUpload from './FileUpload';
 import { publicationsApi, authorsApi } from '../../lib/apiClient';
+import { useCategories } from '../../hooks/useCategories';
 import { fileUploadService } from '../../lib/fileUpload';
 import type { Publication, Author } from '../../types/prisma';
 
@@ -18,6 +18,16 @@ const PublicationsAdmin = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState<string>('');
+  const [isAuthorSubmitting, setIsAuthorSubmitting] = useState(false);
+  const [newAuthor, setNewAuthor] = useState({
+    name: '',
+    email: '',
+    affiliation: ''
+  });
+  const abstractRef = useRef<HTMLDivElement | null>(null);
+  const [reorderMode, setReorderMode] = useState(false);
+  const [reorderPublications, setReorderPublications] = useState<Publication[]>([]);
+  const [isReorderSaving, setIsReorderSaving] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     abstract: '',
@@ -26,6 +36,7 @@ const PublicationsAdmin = () => {
     publicationType: 'Journal Article',
     doi: '',
     pdfUrl: '',
+    externalUrl: '',
     categoryId: '',
     isFeatured: false,
     authorIds: [] as string[]
@@ -34,6 +45,13 @@ const PublicationsAdmin = () => {
   React.useEffect(() => {
     loadAuthors();
   }, []);
+
+  React.useEffect(() => {
+    if (!reorderMode) return;
+    const ordered = publications
+      .sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
+    setReorderPublications(ordered);
+  }, [reorderMode, publications]);
 
   const loadAuthors = async () => {
     try {
@@ -55,6 +73,7 @@ const PublicationsAdmin = () => {
         publicationType: publication.publicationType,
         doi: publication.doi || '',
         pdfUrl: publication.pdfUrl || '',
+        externalUrl: publication.externalUrl || '',
         categoryId: publication.categoryId || '',
         isFeatured: publication.isFeatured,
         authorIds: publication.publicationAuthors?.map(pa => pa.authorId) || []
@@ -69,6 +88,7 @@ const PublicationsAdmin = () => {
         publicationType: 'Journal Article',
         doi: '',
         pdfUrl: '',
+        externalUrl: '',
         categoryId: '',
         isFeatured: false,
         authorIds: []
@@ -84,6 +104,9 @@ const PublicationsAdmin = () => {
     setEditingPublication(null);
     setSelectedFile(null);
     setUploadError('');
+    if (abstractRef.current) {
+      abstractRef.current.innerHTML = '';
+    }
   };
 
   const handleFileSelect = (file: globalThis.File) => {
@@ -100,6 +123,25 @@ const PublicationsAdmin = () => {
   const handleFileRemove = () => {
     setSelectedFile(null);
     setUploadError('');
+  };
+
+  const sanitizeHtml = (html: string) => {
+    // Minimal sanitization for admin-authored content
+    return html
+      .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+      .replace(/\son\w+="[^"]*"/gi, '')
+      .replace(/\son\w+='[^']*'/gi, '');
+  };
+
+  const handleAbstractInput = (value: string) => {
+    setFormData(prev => ({ ...prev, abstract: sanitizeHtml(value) }));
+  };
+
+  const applyFormat = (command: string, value?: string) => {
+    if (!abstractRef.current) return;
+    abstractRef.current.focus();
+    document.execCommand(command, false, value);
+    handleAbstractInput(abstractRef.current.innerHTML);
   };
 
   const uploadFile = async (): Promise<string> => {
@@ -134,6 +176,7 @@ const PublicationsAdmin = () => {
         publicationType: formData.publicationType,
         doi: formData.doi || undefined,
         pdfUrl: pdfUrl || formData.pdfUrl || undefined,
+        externalUrl: formData.externalUrl || undefined,
         isFeatured: formData.isFeatured,
         categoryId: formData.categoryId || undefined,
         authorIds: formData.authorIds,
@@ -183,8 +226,86 @@ const PublicationsAdmin = () => {
     }));
   };
 
+  const handleAddAuthor = async () => {
+    if (!newAuthor.name.trim()) {
+      alert('Author name is required.');
+      return;
+    }
+
+    setIsAuthorSubmitting(true);
+    try {
+      const created = await authorsApi.createAuthor({
+        name: newAuthor.name.trim(),
+        email: newAuthor.email.trim() || undefined,
+        affiliation: newAuthor.affiliation.trim() || undefined,
+      });
+      setNewAuthor({ name: '', email: '', affiliation: '' });
+      await loadAuthors();
+      setFormData(prev => ({
+        ...prev,
+        authorIds: prev.authorIds.includes(created.id)
+          ? prev.authorIds
+          : [...prev.authorIds, created.id]
+      }));
+    } catch (error) {
+      console.error('Failed to create author:', error);
+      if (error && typeof error === 'object' && 'message' in error) {
+        alert(`Failed to create author: ${(error as any).message}`);
+      } else {
+        alert('Failed to create author. Please try again.');
+      }
+    } finally {
+      setIsAuthorSubmitting(false);
+    }
+  };
+
+  const handleDeleteAuthor = async (authorId: string, name: string) => {
+    if (!confirm(`Delete author "${name}"? This will remove them from publications.`)) return;
+
+    try {
+      await authorsApi.deleteAuthor(authorId);
+      await loadAuthors();
+      setFormData(prev => ({
+        ...prev,
+        authorIds: prev.authorIds.filter(id => id !== authorId)
+      }));
+    } catch (error) {
+      console.error('Failed to delete author:', error);
+      if (error && typeof error === 'object' && 'message' in error) {
+        alert(`Failed to delete author: ${(error as any).message}`);
+      } else {
+        alert('Failed to delete author. Please try again.');
+      }
+    }
+  };
+
   const viewPublication = (publication: Publication) => {
     window.open(`/publications/${publication.id}`, '_blank');
+  };
+
+  const movePublication = (index: number, direction: -1 | 1) => {
+    setReorderPublications((prev) => {
+      const nextIndex = index + direction;
+      if (nextIndex < 0 || nextIndex >= prev.length) return prev;
+      const updated = [...prev];
+      const [moved] = updated.splice(index, 1);
+      updated.splice(nextIndex, 0, moved);
+      return updated;
+    });
+  };
+
+  const saveReorder = async () => {
+    setIsReorderSaving(true);
+    try {
+      await publicationsApi.reorderPublications(reorderPublications.map((p) => p.id));
+      await refetch();
+      setReorderMode(false);
+    } catch (error) {
+      console.error('Failed to save publication order:', error);
+      alert('Failed to save publication order. Please try again.');
+    } finally {
+      setIsReorderSaving(false);
+    }
   };
 
   return (
@@ -198,13 +319,22 @@ const PublicationsAdmin = () => {
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Publications Admin</h1>
                 <p className="text-gray-600">Manage research publications, upload PDFs, and organize content</p>
               </div>
-              <button
-                onClick={() => openModal()}
-                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                Add Publication
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setReorderMode((prev) => !prev)}
+                  className="inline-flex items-center px-4 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <ListOrdered className="w-5 h-5 mr-2" />
+                  {reorderMode ? 'Exit Reorder' : 'Reorder'}
+                </button>
+                <button
+                  onClick={() => openModal()}
+                  className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  Add Publication
+                </button>
+              </div>
             </div>
           </div>
 
@@ -214,9 +344,69 @@ const PublicationsAdmin = () => {
               <h2 className="text-xl font-semibold text-gray-900">All Publications</h2>
             </div>
 
+            {reorderMode && (
+              <div className="p-4 bg-blue-50 border-b border-blue-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className="text-sm text-blue-700">Reordering all publications</div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setReorderMode(false)}
+                    className="px-3 py-2 text-sm font-medium text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={saveReorder}
+                    disabled={isReorderSaving}
+                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    {isReorderSaving ? 'Saving...' : 'Save Order'}
+                  </button>
+                </div>
+              </div>
+            )}
+
             {loading ? (
               <div className="flex items-center justify-center py-20">
                 <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+              </div>
+            ) : reorderMode ? (
+              <div className="divide-y divide-gray-200">
+                {reorderPublications.length === 0 ? (
+                  <div className="text-center py-10 text-gray-600">
+                    No publications available.
+                  </div>
+                ) : (
+                  reorderPublications.map((publication, index) => (
+                    <div key={publication.id} className="p-6 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm text-gray-500 w-6">{index + 1}</span>
+                        <div>
+                          <div className="font-medium text-gray-900">{publication.title}</div>
+                          <div className="text-xs text-gray-500">Order: {publication.orderIndex ?? 0}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => movePublication(index, -1)}
+                          disabled={index === 0}
+                          className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                          title="Move up"
+                        >
+                          <ArrowUp className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => movePublication(index, 1)}
+                          disabled={index === reorderPublications.length - 1}
+                          className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                          title="Move down"
+                        >
+                          <ArrowDown className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             ) : publications.length === 0 ? (
               <div className="text-center py-20">
@@ -358,13 +548,61 @@ const PublicationsAdmin = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Abstract
                   </label>
-                  <textarea
-                    rows={4}
-                    value={formData.abstract}
-                    onChange={(e) => setFormData(prev => ({ ...prev, abstract: e.target.value }))}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                    placeholder="Enter publication abstract"
-                  />
+                  <div className="border border-gray-300 rounded-lg">
+                    <div className="flex flex-wrap gap-2 p-2 border-b border-gray-200 bg-gray-50">
+                      <button
+                        type="button"
+                        onClick={() => applyFormat('bold')}
+                        className="px-2 py-1 text-sm font-semibold border border-gray-300 rounded hover:bg-white"
+                        title="Bold"
+                      >
+                        B
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyFormat('italic')}
+                        className="px-2 py-1 text-sm italic border border-gray-300 rounded hover:bg-white"
+                        title="Italic"
+                      >
+                        I
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyFormat('underline')}
+                        className="px-2 py-1 text-sm underline border border-gray-300 rounded hover:bg-white"
+                        title="Underline"
+                      >
+                        U
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const url = window.prompt('Enter link URL');
+                          if (url) applyFormat('createLink', url);
+                        }}
+                        className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-white"
+                        title="Link"
+                      >
+                        Link
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyFormat('insertUnorderedList')}
+                        className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-white"
+                        title="Bullet list"
+                      >
+                        • List
+                      </button>
+                    </div>
+                    <div
+                      ref={abstractRef}
+                      contentEditable
+                      onInput={(e) => handleAbstractInput((e.target as HTMLDivElement).innerHTML)}
+                      className="min-h-[140px] px-4 py-3 focus:outline-none"
+                      dangerouslySetInnerHTML={{ __html: formData.abstract || '' }}
+                      aria-label="Publication abstract"
+                    />
+                  </div>
                 </div>
 
                 <div className="md:col-span-2">
@@ -383,6 +621,13 @@ const PublicationsAdmin = () => {
                     <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                       <p className="text-sm text-blue-700">
                         Current PDF: <a href={formData.pdfUrl} target="_blank" rel="noopener noreferrer" className="underline">View existing document</a>
+                      </p>
+                    </div>
+                  )}
+                  {!formData.pdfUrl && formData.externalUrl && (
+                    <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-sm text-blue-700">
+                        External link: <a href={formData.externalUrl} target="_blank" rel="noopener noreferrer" className="underline">View publication</a>
                       </p>
                     </div>
                   )}
@@ -464,6 +709,19 @@ const PublicationsAdmin = () => {
                 </div>
 
                 <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    External Link (optional)
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.externalUrl}
+                    onChange={(e) => setFormData(prev => ({ ...prev, externalUrl: e.target.value }))}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="https://example.com/publication"
+                  />
+                </div>
+
+                <div>
                   <label className="flex items-center">
                     <input
                       type="checkbox"
@@ -479,17 +737,60 @@ const PublicationsAdmin = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Authors
                   </label>
+                  <div className="mb-3 grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <input
+                      type="text"
+                      value={newAuthor.name}
+                      onChange={(e) => setNewAuthor(prev => ({ ...prev, name: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Name *"
+                    />
+                    <input
+                      type="email"
+                      value={newAuthor.email}
+                      onChange={(e) => setNewAuthor(prev => ({ ...prev, email: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Email (optional)"
+                    />
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newAuthor.affiliation}
+                        onChange={(e) => setNewAuthor(prev => ({ ...prev, affiliation: e.target.value }))}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Affiliation (optional)"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddAuthor}
+                        disabled={isAuthorSubmitting}
+                        className="inline-flex items-center px-3 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                      >
+                        {isAuthorSubmitting ? 'Adding...' : 'Add'}
+                      </button>
+                    </div>
+                  </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-40 overflow-y-auto border border-gray-300 rounded-lg p-3">
                     {authors.map((author) => (
-                      <label key={author.id} className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={formData.authorIds.includes(author.id)}
-                          onChange={() => handleAuthorToggle(author.id)}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        <span className="ml-2 text-sm text-gray-700">{author.name}</span>
-                      </label>
+                      <div key={author.id} className="flex items-center justify-between gap-2">
+                        <label className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={formData.authorIds.includes(author.id)}
+                            onChange={() => handleAuthorToggle(author.id)}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className="ml-2 text-sm text-gray-700">{author.name}</span>
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteAuthor(author.id, author.name)}
+                          className="p-1 text-gray-400 hover:text-red-600"
+                          title={`Delete ${author.name}`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </div>

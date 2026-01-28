@@ -68,9 +68,10 @@ router.get('/', async (req, res) => {
         programArea: true,
         media: true
       },
-      orderBy: {
-        createdAt: 'desc'
-      },
+      orderBy: [
+        { orderIndex: 'asc' },
+        { createdAt: 'desc' }
+      ],
       skip: offset ? parseInt(offset) : undefined,
       take: limit ? parseInt(limit) : undefined
     });
@@ -141,6 +142,38 @@ router.get('/slug/:slug', async (req, res) => {
   } catch (error) {
     console.error('Get project by slug error:', error);
     res.status(500).json({ error: true, message: 'Server error: Failed to fetch project by slug.' });
+  }
+});
+
+// Reorder projects (authenticated)
+router.put('/reorder', authenticateToken, async (req, res) => {
+  try {
+    const { orderedIds, programAreaId } = req.body;
+    if (!Array.isArray(orderedIds) || orderedIds.length === 0) {
+      return res.status(400).json({ error: true, message: 'orderedIds must be a non-empty array of project IDs.' });
+    }
+
+    const where = { id: { in: orderedIds } };
+    if (programAreaId) where.programAreaId = programAreaId;
+
+    const count = await prisma.project.count({ where });
+    if (count !== orderedIds.length) {
+      return res.status(400).json({ error: true, message: 'One or more projects were not found in the specified scope.' });
+    }
+
+    await prisma.$transaction(
+      orderedIds.map((id, index) =>
+        prisma.project.update({
+          where: { id },
+          data: { orderIndex: index },
+        })
+      )
+    );
+
+    res.json({ error: false, message: 'Project order updated.' });
+  } catch (error) {
+    console.error('Reorder projects error:', error);
+    res.status(500).json({ error: true, message: 'Server error: Failed to reorder projects.' });
   }
 });
 

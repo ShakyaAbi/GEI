@@ -24,8 +24,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const HOST = "0.0.0.0";
 
-// IMPORTANT: Trust proxy (fixes the X-Forwarded-For error)
-app.set("trust proxy", true);
+// Trust proxy only in production (avoid permissive trust proxy in dev)
+app.set("trust proxy", process.env.NODE_ENV === "production" ? 1 : false);
 
 // Get current directory
 const __filename = fileURLToPath(import.meta.url);

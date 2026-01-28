@@ -210,15 +210,15 @@ const PublicationDetailPage = () => {
 
             {/* Actions */}
             <div className="flex flex-wrap items-center gap-4">
-              {publication.pdfUrl && (
+              {(publication.pdfUrl || publication.externalUrl) && (
                 <a
-                  href={publication.pdfUrl}
+                  href={publication.pdfUrl || publication.externalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group"
                 >
                   <Download className="w-5 h-5 mr-2" />
-                  Download PDF
+                  {publication.pdfUrl ? 'Download PDF' : 'Open Publication'}
                   <ExternalLink className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </a>
               )}
@@ -277,9 +277,16 @@ const PublicationDetailPage = () => {
                   <h2 className="text-2xl font-bold font-playfair text-gray-900 mb-6">Abstract</h2>
                   <div className="bg-gray-50 rounded-2xl p-8 border-l-4 border-base-blue">
                     <Quote className="w-8 h-8 text-base-blue mb-4" />
-                    <p className="text-gray-700 leading-relaxed text-lg">
-                      {publication.abstract}
-                    </p>
+                    {/<[a-z][\s\S]*>/i.test(publication.abstract) ? (
+                      <div
+                        className="text-gray-700 leading-relaxed text-lg prose max-w-none"
+                        dangerouslySetInnerHTML={{ __html: publication.abstract }}
+                      />
+                    ) : (
+                      <p className="text-gray-700 leading-relaxed text-lg">
+                        {publication.abstract}
+                      </p>
+                    )}
                   </div>
                 </div>
               )}

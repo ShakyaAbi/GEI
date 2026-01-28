@@ -27,7 +27,9 @@ export interface Publication {
   publicationType: string
   doi?: string
   pdfUrl?: string
+  externalUrl?: string
   citations: number
+  orderIndex: number
   categoryId?: string
   isFeatured: boolean
   createdAt: string
@@ -55,10 +57,12 @@ export interface CreatePublicationRequest {
   publicationType?: string
   doi?: string
   pdfUrl?: string
+  externalUrl?: string
   citations?: number
   categoryId?: string
   isFeatured?: boolean
   authorIds?: string[]
+  orderIndex?: number
 }
 
 export interface UpdatePublicationRequest {
@@ -69,10 +73,12 @@ export interface UpdatePublicationRequest {
   publicationType?: string
   doi?: string
   pdfUrl?: string
+  externalUrl?: string
   citations?: number
   categoryId?: string
   isFeatured?: boolean
   authorIds?: string[]
+  orderIndex?: number
 }
 
 export interface CreateAuthorRequest {

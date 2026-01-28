@@ -101,6 +101,45 @@ router.get('/:slug', async (req, res) => {
   }
 });
 
+// Reorder program areas (authenticated)
+router.put('/reorder', authenticateToken, async (req, res) => {
+  try {
+    if (!req.user || req.user.role !== 'admin') {
+      return res.status(403).json({
+        error: true,
+        message: 'Admin privileges required'
+      });
+    }
+
+    const { orderedIds } = req.body;
+    if (!Array.isArray(orderedIds) || orderedIds.length === 0) {
+      return res.status(400).json({ error: true, message: 'orderedIds must be a non-empty array of program area IDs.' });
+    }
+
+    const count = await prisma.programArea.count({
+      where: { id: { in: orderedIds } }
+    });
+
+    if (count !== orderedIds.length) {
+      return res.status(400).json({ error: true, message: 'One or more program areas were not found.' });
+    }
+
+    await prisma.$transaction(
+      orderedIds.map((id, index) =>
+        prisma.programArea.update({
+          where: { id },
+          data: { orderIndex: index },
+        })
+      )
+    );
+
+    res.json({ error: false, message: 'Program area order updated.' });
+  } catch (error) {
+    console.error('Reorder program areas error:', error);
+    res.status(500).json({ error: true, message: 'Server error: Failed to reorder program areas.' });
+  }
+});
+
 // Create program area (authenticated)
 router.post('/', authenticateToken, [
   body('name').notEmpty().withMessage('Name is required'),

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Save, X, Upload, Loader2, Goal, Eye, Search, SortAsc, SortDesc, FolderOpen } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, Upload, Loader2, Goal, Eye, Search, SortAsc, SortDesc, FolderOpen, ArrowUp, ArrowDown, ListOrdered } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
 import { useProgramAreas } from '../../hooks/useProgramAreas';
 import ImageUpload from './ImageUpload';
@@ -26,6 +26,9 @@ const ProgramAreasAdmin = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'order_index' | 'created_at'>('order_index');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [reorderMode, setReorderMode] = useState(false);
+  const [reorderAreas, setReorderAreas] = useState<ProgramArea[]>([]);
+  const [isReorderSaving, setIsReorderSaving] = useState(false);
   
   // Image upload states
   const [selectedHeroImage, setSelectedHeroImage] = useState<globalThis.File | null>(null);
@@ -89,6 +92,13 @@ const ProgramAreasAdmin = () => {
     }
   });
 
+  useEffect(() => {
+    if (reorderMode) {
+      const ordered = [...programAreas].sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
+      setReorderAreas(ordered);
+    }
+  }, [reorderMode, programAreas]);
+
   const generateSlug = (name: string) => {
     return name
       .toLowerCase()
@@ -108,7 +118,7 @@ const ProgramAreasAdmin = () => {
         hero_image: programArea.hero_image || '',
         seo_title: programArea.seo_title || '',
         seo_description: programArea.seo_description || '',
-        order_index: programArea.order_index,
+        order_index: programArea.order_index ?? 0,
         icon: programArea.icon || '',
         icon_url: programArea.icon_url || ''
       });
@@ -293,6 +303,31 @@ const ProgramAreasAdmin = () => {
     window.open(`/areas/${programArea.slug}`, '_blank');
   };
 
+  const moveArea = (index: number, direction: -1 | 1) => {
+    setReorderAreas((prev) => {
+      const nextIndex = index + direction;
+      if (nextIndex < 0 || nextIndex >= prev.length) return prev;
+      const updated = [...prev];
+      const [moved] = updated.splice(index, 1);
+      updated.splice(nextIndex, 0, moved);
+      return updated;
+    });
+  };
+
+  const saveReorder = async () => {
+    setIsReorderSaving(true);
+    try {
+      await programAreasApi.reorderProgramAreas(reorderAreas.map((a) => a.id));
+      await refetch();
+      setReorderMode(false);
+    } catch (error) {
+      console.error('Failed to save program area order:', error);
+      alert('Failed to save program area order. Please try again.');
+    } finally {
+      setIsReorderSaving(false);
+    }
+  };
+
   const openFeatureModal = (programAreaId: string, feature?: any) => {
     setFeatureForm(feature ? {
       title: feature.title,
@@ -353,15 +388,24 @@ const ProgramAreasAdmin = () => {
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Programs Admin</h1>
                 <p className="text-gray-600">Manage program areas and projects</p>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 {activeTab === 'program-areas' && (
-                  <button
-                    onClick={() => openModal()}
-                    className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    <Plus className="w-5 h-5 mr-2" />
-                    Add Program Area
-                  </button>
+                  <>
+                    <button
+                      onClick={() => setReorderMode((prev) => !prev)}
+                      className="inline-flex items-center px-4 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <ListOrdered className="w-5 h-5 mr-2" />
+                      {reorderMode ? 'Exit Reorder' : 'Reorder'}
+                    </button>
+                    <button
+                      onClick={() => openModal()}
+                      className="inline-flex items-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      <Plus className="w-5 h-5 mr-2" />
+                      Add Program Area
+                    </button>
+                  </>
                 )}
               </div>
             </div>
@@ -413,6 +457,7 @@ const ProgramAreasAdmin = () => {
                       placeholder="Search program areas..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
+                      disabled={reorderMode}
                       className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
@@ -421,6 +466,7 @@ const ProgramAreasAdmin = () => {
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as any)}
+                      disabled={reorderMode}
                       className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option value="order_index">Order</option>
@@ -430,6 +476,7 @@ const ProgramAreasAdmin = () => {
                     
                     <button
                       onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                      disabled={reorderMode}
                       className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       {sortOrder === 'asc' ? <SortAsc className="w-4 h-4" /> : <SortDesc className="w-4 h-4" />}
@@ -438,6 +485,30 @@ const ProgramAreasAdmin = () => {
                 </div>
               </div>
             </div>
+
+            {reorderMode && (
+              <div className="p-4 bg-blue-50 border-b border-blue-200 flex items-center justify-between">
+                <p className="text-sm text-blue-700">
+                  Reorder mode is active. Drag using arrows and save to apply.
+                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setReorderMode(false)}
+                    className="px-3 py-2 text-sm font-medium text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={saveReorder}
+                    disabled={isReorderSaving}
+                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    {isReorderSaving ? 'Saving...' : 'Save Order'}
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className="p-4 bg-gray-50 border-b border-gray-200">
               <p className="text-sm text-gray-600">
@@ -461,6 +532,42 @@ const ProgramAreasAdmin = () => {
                   <Plus className="w-5 h-5 mr-2" />
                   Add First Program Area
                 </button>
+              </div>
+            ) : reorderMode ? (
+              <div className="divide-y divide-gray-200">
+                {reorderAreas.map((programArea, index) => (
+                  <div key={programArea.id} className="p-6 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-gray-500 w-6">{index + 1}</span>
+                      {programArea.icon_url
+                        ? <img src={programArea.icon_url} alt="icon" className="inline w-5 h-5" />
+                        : programArea.icon && getLucideIcon(programArea.icon)
+                      }
+                      <div>
+                        <div className="font-medium text-gray-900">{programArea.name}</div>
+                        <div className="text-xs text-gray-500">Order: {programArea.order_index}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => moveArea(index, -1)}
+                        disabled={index === 0}
+                        className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                        title="Move up"
+                      >
+                        <ArrowUp className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => moveArea(index, 1)}
+                        disabled={index === reorderAreas.length - 1}
+                        className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                        title="Move down"
+                      >
+                        <ArrowDown className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="divide-y divide-gray-200">

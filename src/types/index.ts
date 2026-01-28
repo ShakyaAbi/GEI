@@ -48,6 +48,7 @@ export interface Publication {
   citations: number;
   is_featured: boolean;
   pdf_url?: string;
+  external_url?: string;
   category_id?: string;
   research_categories?: ResearchCategory;
   publication_authors?: PublicationAuthor[];

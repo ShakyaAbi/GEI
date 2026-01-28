@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Save, X, MapPin, Calendar, Users, DollarSign, Goal, Eye, Search, Filter, Loader2, AlertCircle, Upload, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, MapPin, Calendar, Users, DollarSign, Goal, Eye, Search, Filter, Loader2, AlertCircle, Upload, Image as ImageIcon, ArrowUp, ArrowDown, ListOrdered } from 'lucide-react';
 import { useProjects } from '../../hooks/useProjects';
 import { useProgramAreas } from '../../hooks/useProgramAreas';
 import { ProjectStatusBadge } from '../projects/ProjectStatusBadge';
@@ -23,7 +23,7 @@ interface ImageUploadProps {
 }
 
 const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
-  const { projects, loading, error, createProject, updateProject, deleteProject } = useProjects();
+  const { projects, loading, error, createProject, updateProject, deleteProject, refetch: refetchProjects } = useProjects();
   const { programAreas } = useProgramAreas();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -31,6 +31,9 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [programAreaFilter, setProgramAreaFilter] = useState<string>(programAreaId || 'all');
+  const [reorderMode, setReorderMode] = useState(false);
+  const [reorderProjects, setReorderProjects] = useState<Project[]>([]);
+  const [isReorderSaving, setIsReorderSaving] = useState(false);
   
   // Image upload states
   const [selectedHeroImage, setSelectedHeroImage] = useState<globalThis.File | null>(null);
@@ -86,6 +89,12 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
     const matchesProgramArea = programAreaFilter === 'all' || project.program_area_id === programAreaFilter;
     return matchesSearch && matchesStatus && matchesProgramArea;
   });
+
+  useEffect(() => {
+    if (!reorderMode) return;
+    const ordered = [...projects].sort((a, b) => (a.order_index ?? 0) - (b.order_index ?? 0));
+    setReorderProjects(ordered);
+  }, [reorderMode, projects]);
 
   const openModal = async (project?: Project) => {
     if (project) {
@@ -177,6 +186,31 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
         impact_metrics: [...((prev.impact_metrics ?? [])), (impactMetric || '').trim()]
       }));
       setImpactMetric('');
+    }
+  };
+
+  const moveProject = (index: number, direction: -1 | 1) => {
+    setReorderProjects((prev) => {
+      const nextIndex = index + direction;
+      if (nextIndex < 0 || nextIndex >= prev.length) return prev;
+      const updated = [...prev];
+      const [moved] = updated.splice(index, 1);
+      updated.splice(nextIndex, 0, moved);
+      return updated;
+    });
+  };
+
+  const saveReorder = async () => {
+    setIsReorderSaving(true);
+    try {
+      await projectsApi.reorderProjects(reorderProjects.map((p) => p.id));
+      await refetchProjects();
+      setReorderMode(false);
+    } catch (error) {
+      console.error('Failed to save project order:', error);
+      alert('Failed to save project order. Please try again.');
+    } finally {
+      setIsReorderSaving(false);
     }
   };
 
@@ -386,13 +420,22 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
           <h2 className="text-2xl font-bold text-gray-900">Projects</h2>
           <p className="text-gray-600">Manage projects within program areas</p>
         </div>
-        <button
-          onClick={() => openModal()}
-          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Add Project
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setReorderMode((prev) => !prev)}
+            className="inline-flex items-center px-3 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <ListOrdered className="w-5 h-5 mr-2" />
+            {reorderMode ? 'Exit Reorder' : 'Reorder'}
+          </button>
+          <button
+            onClick={() => openModal()}
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Add Project
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -405,6 +448,7 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
               placeholder="Search projects..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              disabled={reorderMode}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
@@ -413,6 +457,7 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as ProjectStatus | 'all')}
+              disabled={reorderMode}
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">All Statuses</option>
@@ -427,6 +472,7 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
               <select
                 value={programAreaFilter}
                 onChange={(e) => setProgramAreaFilter(e.target.value)}
+                disabled={reorderMode}
                 className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="all">All Program Areas</option>
@@ -441,11 +487,73 @@ const ProjectsAdmin: React.FC<ProjectsAdminProps> = ({ programAreaId }) => {
         </div>
       </div>
 
+      {reorderMode && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
+          <div className="text-sm text-blue-700">
+            Reordering all projects.
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setReorderMode(false)}
+              className="px-3 py-2 text-sm font-medium text-blue-700 border border-blue-200 rounded-lg hover:bg-blue-100"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={saveReorder}
+              disabled={isReorderSaving}
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              {isReorderSaving ? 'Saving...' : 'Save Order'}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Projects List */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          </div>
+        ) : reorderMode ? (
+          <div className="divide-y divide-gray-200">
+            {reorderProjects.length === 0 ? (
+              <div className="text-center py-10 text-gray-600">
+                No projects available.
+              </div>
+            ) : (
+              reorderProjects.map((project, index) => (
+                <div key={project.id} className="p-6 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-gray-500 w-6">{index + 1}</span>
+                    <div>
+                      <div className="font-medium text-gray-900">{project.title}</div>
+                      <div className="text-xs text-gray-500">Order: {project.order_index ?? 0}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => moveProject(index, -1)}
+                      disabled={index === 0}
+                      className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                      title="Move up"
+                    >
+                      <ArrowUp className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => moveProject(index, 1)}
+                      disabled={index === reorderProjects.length - 1}
+                      className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                      title="Move down"
+                    >
+                      <ArrowDown className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         ) : filteredProjects.length === 0 ? (
           <div className="text-center py-20">

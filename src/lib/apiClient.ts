@@ -62,6 +62,12 @@ export const publicationsApi = {
     return true;
   },
 
+  // Reorder publications (optionally scoped to category)
+  async reorderPublications(orderedIds: string[], categoryId?: string) {
+    await api.put('/publications/reorder', { orderedIds, categoryId });
+    return true;
+  },
+
   // Add authors to publication
   async addAuthorsToPublication(publicationId: string, authorIds: string[]) {
     // This is now handled in the update publication endpoint
@@ -93,6 +99,12 @@ export const authorsApi = {
   async createAuthor(author: Omit<Author, 'id' | 'created_at'>) {
     const response = await api.post('/publications/authors', author);
     return response.data.data;
+  },
+
+  // Delete author
+  async deleteAuthor(id: string) {
+    await api.delete(`/publications/authors/${id}`);
+    return true;
   },
 }
 

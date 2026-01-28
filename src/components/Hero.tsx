@@ -250,7 +250,7 @@ const Hero = () => {
                   </h1>
                   <p className="text-lg md:text-xl leading-relaxed tracking-tight text-muted-foreground max-w-2xl text-left font-inter">
                     We design and implement innovative, community-led solutions
-                    to the world's most pressing challenges — from clean water
+                    to the world's most pressing challenges, from clean water
                     and sustainable jobs to maternal health and climate
                     resilience. Join us in transforming data into action and
                     action into lasting impact.

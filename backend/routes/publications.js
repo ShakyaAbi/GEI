@@ -41,9 +41,10 @@ router.get('/', async (req, res) => {
           }
         }
       },
-      orderBy: {
-        publicationYear: 'desc'
-      },
+      orderBy: [
+        { orderIndex: 'asc' },
+        { publicationYear: 'desc' }
+      ],
       skip: offset ? parseInt(offset) : undefined,
       take: limit ? parseInt(limit) : undefined
     });
@@ -86,6 +87,38 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Reorder publications (authenticated)
+router.put('/reorder', authenticateToken, async (req, res) => {
+  try {
+    const { orderedIds, categoryId } = req.body;
+    if (!Array.isArray(orderedIds) || orderedIds.length === 0) {
+      return res.status(400).json({ error: true, message: 'orderedIds must be a non-empty array of publication IDs.' });
+    }
+
+    const where = { id: { in: orderedIds } };
+    if (categoryId) where.categoryId = categoryId;
+
+    const count = await prisma.publication.count({ where });
+    if (count !== orderedIds.length) {
+      return res.status(400).json({ error: true, message: 'One or more publications were not found in the specified scope.' });
+    }
+
+    await prisma.$transaction(
+      orderedIds.map((id, index) =>
+        prisma.publication.update({
+          where: { id },
+          data: { orderIndex: index },
+        })
+      )
+    );
+
+    res.json({ error: false, message: 'Publication order updated.' });
+  } catch (error) {
+    console.error('Reorder publications error:', error);
+    res.status(500).json({ error: true, message: 'Server error: Failed to reorder publications.' });
+  }
+});
+
 // Create publication (authenticated)
 router.post('/', authenticateToken, [
   body('title').notEmpty().withMessage('Title is required'),
@@ -100,7 +133,7 @@ router.post('/', authenticateToken, [
   try {
     const { 
       title, abstract, journal, publicationYear, publicationType, 
-      doi, pdfUrl, citations, isFeatured, categoryId, authorIds 
+      doi, pdfUrl, externalUrl, external_url, citations, isFeatured, categoryId, authorIds 
     } = req.body;
     
     // Validate required fields (moved to express-validator)
@@ -118,6 +151,7 @@ router.post('/', authenticateToken, [
         publicationType: publicationType || 'Journal Article',
         doi,
         pdfUrl,
+        externalUrl: externalUrl || external_url,
         citations: citations ? parseInt(citations) : 0,
         isFeatured: isFeatured || false,
         categoryId
@@ -175,7 +209,7 @@ router.put('/:id', authenticateToken, [
     const { id } = req.params;
     const { 
       title, abstract, journal, publicationYear, publicationType, 
-      doi, pdfUrl, citations, isFeatured, categoryId, authorIds 
+      doi, pdfUrl, externalUrl, external_url, citations, isFeatured, categoryId, authorIds 
     } = req.body;
     
     // Check if publication exists
@@ -198,6 +232,7 @@ router.put('/:id', authenticateToken, [
         publicationType,
         doi,
         pdfUrl,
+        externalUrl: externalUrl || external_url,
         citations: citations ? parseInt(citations) : 0,
         isFeatured: isFeatured || false,
         categoryId

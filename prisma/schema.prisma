@@ -39,14 +39,17 @@ model Publication {
   publicationType    String              @default("Journal Article") @map("publication_type")
   doi                String?
   pdfUrl             String?             @map("pdf_url")
+  externalUrl        String?             @map("external_url")
   citations          Int                 @default(0)
   categoryId         String?             @map("category_id") @db.Uuid
   isFeatured         Boolean             @default(false) @map("is_featured")
+  orderIndex         Int                 @default(0) @map("order_index")
   createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime            @default(now()) @map("updated_at") @db.Timestamptz(6)
   publicationAuthors PublicationAuthor[]
   category           ResearchCategory?   @relation(fields: [categoryId], references: [id])
 
+  @@index([categoryId, orderIndex], name: "publications_category_order_idx")
   @@map("publications")
 }
 
@@ -81,6 +84,7 @@ model ProgramArea {
   projects       Project[]
   features       ProgramAreaFeature[]    // Relation to features
 
+  @@index([orderIndex], name: "program_areas_order_idx")
   @@map("program_areas")
 }
 
@@ -126,6 +130,7 @@ model Project {
   updates        ProjectUpdate[]
   programArea    ProgramArea?         @relation(fields: [programAreaId], references: [id], onDelete: Cascade)
 
+  @@index([programAreaId, orderIndex], name: "projects_program_area_order_idx")
   @@map("projects")
 }
 
