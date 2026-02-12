@@ -35,7 +35,7 @@ const Publications = ({ limit }: { limit?: number }) => {
   const { categories, loading: categoriesLoading } = useCategories();
   const publicationTypes = publications.length
     ? Array.from(
-        new Set(publications.map((pub) => pub.publicationType).filter(Boolean))
+        new Set(publications.map((pub) => pub.publicationType).filter(Boolean)),
       ).sort()
     : [];
 
@@ -49,7 +49,7 @@ const Publications = ({ limit }: { limit?: number }) => {
           }
         });
       },
-      { threshold: 0.2 }
+      { threshold: 0.2 },
     );
 
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
@@ -400,7 +400,7 @@ const Publications = ({ limit }: { limit?: number }) => {
                         {publication.category && (
                           <span
                             className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full border ${getCategoryColor(
-                              publication.category.name
+                              publication.category.name,
                             )} whitespace-normal break-words max-w-xs text-center`}
                           >
                             {publication.category.name}
@@ -431,8 +431,8 @@ const Publications = ({ limit }: { limit?: number }) => {
                                 .sort(
                                   (
                                     a: PublicationAuthor,
-                                    b: PublicationAuthor
-                                  ) => a.authorOrder - b.authorOrder
+                                    b: PublicationAuthor,
+                                  ) => a.authorOrder - b.authorOrder,
                                 )
                                 .map((pa: PublicationAuthor) => pa.author?.name)
                                 .join(", ")}
@@ -448,18 +448,19 @@ const Publications = ({ limit }: { limit?: number }) => {
                       )}
 
                       {/* Abstract */}
-                      {publication.abstract && (
-                        /<[a-z][\s\S]*>/i.test(publication.abstract) ? (
+                      {publication.abstract &&
+                        (/<[a-z][\s\S]*>/i.test(publication.abstract) ? (
                           <div
                             className="text-gray-600 leading-relaxed mb-4 line-clamp-3 prose max-w-none"
-                            dangerouslySetInnerHTML={{ __html: publication.abstract }}
+                            dangerouslySetInnerHTML={{
+                              __html: publication.abstract,
+                            }}
                           />
                         ) : (
                           <p className="text-gray-600 leading-relaxed mb-4 line-clamp-3">
                             {publication.abstract}
                           </p>
-                        )
-                      )}
+                        ))}
 
                       {/* DOI */}
                       {publication.doi && (
@@ -474,11 +475,11 @@ const Publications = ({ limit }: { limit?: number }) => {
                       <div className="flex lg:flex-col gap-3">
                         <button
                           onClick={() => viewPublication(publication.id)}
-                          className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
+                          className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
                         >
-                          <Eye className="w-4 h-4 mr-2" />
+                          <Eye className="w-3.5 h-3.5 mr-2" />
                           View Details
-                          <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                          <ExternalLink className="w-3.5 h-3.5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                         </button>
 
                         {(publication.pdfUrl || publication.externalUrl) && (
@@ -486,11 +487,13 @@ const Publications = ({ limit }: { limit?: number }) => {
                             href={publication.pdfUrl || publication.externalUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
+                            className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
                           >
-                            <Download className="w-4 h-4 mr-2" />
-                            {publication.pdfUrl ? 'Download PDF' : 'Open Publication'}
-                            <ExternalLink className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                            <Download className="w-3.5 h-3.5 mr-2" />
+                            {publication.pdfUrl
+                              ? "Download PDF"
+                              : "Open Publication"}
+                            <ExternalLink className="w-3.5 h-3.5 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                           </a>
                         )}
                       </div>

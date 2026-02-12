@@ -102,10 +102,10 @@ const ProjectsShowcase = () => {
                       <span
                         className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full border ${badgeStyle}`}
                       >
-                        {status.replace("_", " ")}
+                        {status.replace("_", " ").toUpperCase()}
                       </span>
                       {project.program_areas?.name && (
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-gray-500 tracking-tight break-words">
                           {project.program_areas.name}
                         </span>
                       )}

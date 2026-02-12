@@ -11,31 +11,31 @@ export function ProjectStatusBadge({ status, size = 'md' }: ProjectStatusBadgePr
     switch (status) {
       case 'active':
         return {
-          label: 'Active',
+          label: 'ACTIVE',
           icon: Play,
           className: 'bg-green-100 text-green-800 border-green-200'
         };
       case 'completed':
         return {
-          label: 'Completed',
+          label: 'COMPLETED',
           icon: CheckCircle,
           className: 'bg-blue-100 text-blue-800 border-blue-200'
         };
       case 'on_hold':
         return {
-          label: 'On Hold',
+          label: 'ON HOLD',
           icon: Pause,
           className: 'bg-orange-100 text-orange-800 border-orange-200'
         };
       case 'cancelled':
         return {
-          label: 'Cancelled',
+          label: 'CANCELLED',
           icon: XCircle,
           className: 'bg-red-100 text-red-800 border-red-200'
         };
       default:
         return {
-          label: 'Active',
+          label: 'ACTIVE',
           icon: Play,
           className: 'bg-gray-100 text-gray-800 border-gray-200'
         };

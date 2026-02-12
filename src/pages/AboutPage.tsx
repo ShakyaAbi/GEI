@@ -24,6 +24,9 @@ import Footer from "../components/Footer";
 import TiltedCard from "../components/TiltedCard";
 import { useFaculty } from "../hooks/useFaculty";
 import { Link } from "react-router-dom";
+import PartnerCarousel, {
+  defaultPartnerLogos,
+} from "../components/common/PartnerCarousel";
 
 const AboutPage = () => {
   const location = useLocation();
@@ -55,7 +58,7 @@ const AboutPage = () => {
           }
         });
       },
-      { threshold: 0.2 }
+      { threshold: 0.2 },
     );
 
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
@@ -154,7 +157,7 @@ const AboutPage = () => {
     setCurrentSlide(
       (prev) =>
         (prev - 1 + Math.ceil(milestones.length / 3)) %
-        Math.ceil(milestones.length / 3)
+        Math.ceil(milestones.length / 3),
     ); // Changed from values.length to milestones.length
   };
 
@@ -458,9 +461,9 @@ const AboutPage = () => {
                 .map((member) => (
                   <div
                     key={member.id}
-                    className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col items-center justify-center py-0 group hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+                    className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 flex flex-col items-center justify-center py-0 group hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 min-h-[520px] sm:min-h-[560px]"
                   >
-                    <div className="relative overflow-hidden w-full h-64 sm:h-72 bg-gray-100">
+                    <div className="relative overflow-hidden w-full h-80 sm:h-96 bg-gray-100">
                       <img
                         src={member.photo || "/faculty/placeholder.jpg"}
                         alt={member.name}
@@ -502,106 +505,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Partnerships Section */}
-      <section
-        id="partnerships"
-        className="py-24 bg-gradient-to-b from-gray-50 to-white"
-      >
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="text-center mb-16 reveal">
-            <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">
-              Global Partnerships
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-inter">
-              We collaborate with leading organizations, governments, and
-              communities to amplify our impact and create sustainable change.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl p-8 shadow-lg hover-lift border border-gray-100 reveal">
-              <h3 className="text-xl font-bold text-gray-900 mb-4 font-playfair">
-                UN Agencies
-              </h3>
-              <p className="text-gray-600 leading-relaxed font-inter">
-                Strategic partnerships with UNEP, UNESCO, and other UN agencies
-                to align our work with global sustainability goals.
-              </p>
-            </div>
-
-            <div
-              className="bg-white rounded-2xl p-8 shadow-lg hover-lift border border-gray-100 reveal"
-              style={{ animationDelay: "0.1s" }}
-            >
-              <h3 className="text-xl font-bold text-gray-900 mb-4 font-playfair">
-                Government Partners
-              </h3>
-              <p className="text-gray-600 leading-relaxed font-inter">
-                Collaboration with national and local governments to implement
-                policy-driven environmental solutions.
-              </p>
-            </div>
-
-            <div
-              className="bg-white rounded-2xl p-8 shadow-lg hover-lift border border-gray-100 reveal"
-              style={{ animationDelay: "0.2s" }}
-            >
-              <h3 className="text-xl font-bold text-gray-900 mb-4 font-playfair">
-                Academic Institutions
-              </h3>
-              <p className="text-gray-600 leading-relaxed font-inter">
-                Research partnerships with leading universities to advance
-                scientific understanding and innovation.
-              </p>
-            </div>
-          </div>
-
-          {/* Trusted Partners Bar */}
-          <div className="mt-20">
-            <p className="text-center uppercase text-sm tracking-wider text-gray-500 mb-8 font-medium font-inter">
-              Trusted by forward-thinking partners
-            </p>
-            <div className="relative w-full overflow-hidden opacity-60">
-              <div
-                className="flex flex-nowrap items-center w-max animate-scroll-left"
-                style={{ "--scroll-duration": "30s" } as React.CSSProperties}
-              >
-                {[...Array(5)].map((_, setIndex) =>
-                  [
-                    {
-                      name: "UNESCO",
-                      className: "text-2xl font-bold text-gray-400",
-                    },
-                    {
-                      name: "UNEP",
-                      className: "text-2xl font-bold text-gray-400",
-                    },
-                    {
-                      name: "WWF",
-                      className: "text-2xl font-bold text-gray-400",
-                    },
-                    {
-                      name: "Greenpeace",
-                      className: "text-2xl font-bold text-gray-400",
-                    },
-                    {
-                      name: "IUCN",
-                      className: "text-2xl font-bold text-gray-400",
-                    },
-                  ].map((logo, logoIndex) => (
-                    <div
-                      key={`logo-${setIndex}-${logoIndex}`}
-                      className={`flex-shrink-0 mx-6 ${logo.className}`}
-                    >
-                      {logo.name}
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PartnerCarousel logos={defaultPartnerLogos} minWidth="100%" />
 
       {/* Call to Action */}
       <section className="py-24 bg-gradient-to-br from-blue-500 to-blue-800 relative overflow-hidden">

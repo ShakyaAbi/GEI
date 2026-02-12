@@ -1,26 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, Loader2, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
-import { signIn, getCurrentUser } from '../lib/auth';
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Loader2,
+  AlertCircle,
+  CheckCircle,
+  ArrowLeft,
+} from "lucide-react";
+import { signIn, getCurrentUser } from "../lib/auth";
+import { normalizeImagePath } from "../lib/imageOptimization";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string>('');
-  const [success, setSuccess] = useState<string>('');
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) return; // Only check if token exists
       const user = await getCurrentUser();
       if (user) {
-        navigate('/admin/program-areas');
+        navigate("/admin/program-areas");
       }
     };
     checkAuth();
@@ -28,35 +38,41 @@ const LoginPage = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     // Clear errors when user starts typing
-    if (error) setError('');
+    if (error) setError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     try {
-      const { user, error: signInError } = await signIn(formData.email, formData.password);
-      
+      const { user, error: signInError } = await signIn(
+        formData.email,
+        formData.password,
+      );
+
       if (signInError) {
-        setError(signInError.message || 'Failed to sign in. Please check your credentials.');
+        setError(
+          signInError.message ||
+            "Failed to sign in. Please check your credentials.",
+        );
         return;
       }
 
       if (user) {
-        setSuccess('Login successful! Redirecting...');
+        setSuccess("Login successful! Redirecting...");
         // Small delay to show success message
         setTimeout(() => {
-          navigate('/admin/program-areas');
+          navigate("/admin/program-areas");
         }, 1000);
       }
     } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
-      console.error('Login error:', err);
+      setError("An unexpected error occurred. Please try again.");
+      console.error("Login error:", err);
     } finally {
       setIsLoading(false);
     }
@@ -90,10 +106,21 @@ const LoginPage = () => {
         <div className="text-center">
           <div className="flex items-center justify-center mb-6">
             <div className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg bg-white overflow-hidden">
-              <img src="/GEI_Envirohealth_Icon[1].png" alt="GEI Logo" className="w-16 h-16 object-contain" />
+              <img
+                src={normalizeImagePath("/GEI_Envirohealth_Icon[1].png")}
+                alt="GEI Logo"
+                className="w-16 h-16 object-contain"
+                loading="eager"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = "none";
+                }}
+              />
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            Welcome Back
+          </h2>
           <p className="text-gray-600">Sign in to access the admin dashboard</p>
         </div>
 
@@ -105,7 +132,9 @@ const LoginPage = () => {
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start">
                 <AlertCircle className="w-5 h-5 text-red-600 mr-3 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h3 className="text-sm font-medium text-red-800">Sign In Failed</h3>
+                  <h3 className="text-sm font-medium text-red-800">
+                    Sign In Failed
+                  </h3>
                   <p className="text-sm text-red-700 mt-1">{error}</p>
                 </div>
               </div>
@@ -116,7 +145,9 @@ const LoginPage = () => {
               <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start">
                 <CheckCircle className="w-5 h-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h3 className="text-sm font-medium text-green-800">Success</h3>
+                  <h3 className="text-sm font-medium text-green-800">
+                    Success
+                  </h3>
                   <p className="text-sm text-green-700 mt-1">{success}</p>
                 </div>
               </div>
@@ -124,7 +155,10 @@ const LoginPage = () => {
 
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Email Address
               </label>
               <div className="relative">
@@ -148,7 +182,10 @@ const LoginPage = () => {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Password
               </label>
               <div className="relative">
@@ -158,7 +195,7 @@ const LoginPage = () => {
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
                   value={formData.password}
@@ -191,13 +228,19 @@ const LoginPage = () => {
                   type="checkbox"
                   className="h-4 w-4 text-brand-blue focus:ring-brand-blue border-gray-300 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-gray-700"
+                >
                   Remember me
                 </label>
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-medium text-brand-blue hover:text-brand-dark-blue transition-colors">
+                <a
+                  href="#"
+                  className="font-medium text-brand-blue hover:text-brand-dark-blue transition-colors"
+                >
                   Forgot your password?
                 </a>
               </div>
@@ -216,7 +259,7 @@ const LoginPage = () => {
                     Signing In...
                   </>
                 ) : (
-                  'Sign In'
+                  "Sign In"
                 )}
               </button>
             </div>
@@ -225,8 +268,11 @@ const LoginPage = () => {
           {/* Additional Info */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link to="/signup" className="font-medium text-brand-blue hover:text-brand-dark-blue transition-colors">
+              Don't have an account?{" "}
+              <Link
+                to="/signup"
+                className="font-medium text-brand-blue hover:text-brand-dark-blue transition-colors"
+              >
                 Contact your administrator
               </Link>
             </p>
@@ -236,9 +282,12 @@ const LoginPage = () => {
         {/* Demo Credentials (for development) */}
         {import.meta.env.DEV && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
-            <h3 className="text-sm font-medium text-yellow-800 mb-2">Development Mode</h3>
+            <h3 className="text-sm font-medium text-yellow-800 mb-2">
+              Development Mode
+            </h3>
             <p className="text-xs text-yellow-700">
-              Use your Supabase credentials to sign in. Make sure you have set up authentication in your Supabase project.
+              Use your Supabase credentials to sign in. Make sure you have set
+              up authentication in your Supabase project.
             </p>
           </div>
         )}

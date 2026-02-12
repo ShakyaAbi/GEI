@@ -25,6 +25,7 @@ import type { ProgramArea } from "../lib/programAreasApi";
 import type { Project } from "../types/project";
 import CountUp from "../components/CountUp";
 import * as LucideIcons from "lucide-react";
+import { normalizeImagePath } from "../lib/imageOptimization";
 
 // Helper to get Lucide icon component by name
 function getLucideIcon(iconName: string) {
@@ -57,7 +58,7 @@ const OurWorkPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [sortBy, setSortBy] = useState<"name" | "created_at" | "order_index">(
-    "created_at"
+    "created_at",
   );
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -91,7 +92,7 @@ const OurWorkPage = () => {
           }
         });
       },
-      { threshold: 0.2 }
+      { threshold: 0.2 },
     );
 
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
@@ -102,7 +103,7 @@ const OurWorkPage = () => {
   // Memoize expensive calculations
   const activeProjectsCount = useMemo(
     () => projects.filter((p) => p.status === "active").length,
-    [projects]
+    [projects],
   );
 
   const totalProjectsCount = useMemo(() => projects.length, [projects]);
@@ -134,7 +135,7 @@ const OurWorkPage = () => {
         color: "from-blue-600 to-cyan-600",
       },
     ],
-    [activeProjectsCount, totalProjectsCount]
+    [activeProjectsCount, totalProjectsCount],
   );
 
   const sortedProgramAreas = useMemo(() => {
@@ -176,7 +177,7 @@ const OurWorkPage = () => {
           "Climate resilience programs protecting vulnerable communities",
       },
       {
-        src: "/image2.jpg",
+        src: "/image2-960x1280.jpg",
         alt: "Water and sanitation infrastructure development",
         caption: "Clean water access transforming health outcomes",
       },
@@ -185,13 +186,8 @@ const OurWorkPage = () => {
         alt: "Renewable energy installation in remote area",
         caption: "Solar energy bringing power to off-grid communities",
       },
-      {
-        src: "/Story1.jpg",
-        alt: "Forest conservation and restoration efforts",
-        caption: "Reforestation initiatives protecting biodiversity",
-      },
     ],
-    []
+    [],
   );
 
   if (error) {
@@ -398,7 +394,7 @@ const OurWorkPage = () => {
                     <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 font-playfair group-hover:text-blue-600 transition-colors flex items-center">
                       {programArea.icon_url ? (
                         <img
-                          src={programArea.icon_url}
+                          src={normalizeImagePath(programArea.icon_url)}
                           alt="icon"
                           className="inline w-5 h-5 mr-2 align-middle"
                           loading="lazy"
@@ -427,7 +423,7 @@ const OurWorkPage = () => {
                           style={{
                             width: `${Math.min(
                               ((programArea.projectCount ?? 0) / 10) * 100,
-                              100
+                              100,
                             )}%`,
                           }}
                         ></div>
@@ -503,7 +499,7 @@ const OurWorkPage = () => {
                 {displayedProjects.map((project, index) => (
                   <div
                     key={project.id}
-                    className="bg-white rounded-2xl overflow-hidden shadow-lg hover-lift border border-gray-100 group reveal"
+                    className="bg-white rounded-2xl overflow-hidden shadow-lg hover-lift border border-gray-100 group reveal h-full flex flex-col"
                     style={{ animationDelay: `${index * 0.05}s` }}
                   >
                     <div className="relative overflow-hidden h-48">
@@ -533,10 +529,10 @@ const OurWorkPage = () => {
                             project.status === "active"
                               ? "bg-green-100/90 text-green-800 border-green-200"
                               : project.status === "completed"
-                              ? "bg-blue-100/90 text-blue-800 border-blue-200"
-                              : project.status === "on_hold"
-                              ? "bg-yellow-100/90 text-yellow-800 border-yellow-200"
-                              : "bg-red-100/90 text-red-800 border-red-200"
+                                ? "bg-blue-100/90 text-blue-800 border-blue-200"
+                                : project.status === "on_hold"
+                                  ? "bg-yellow-100/90 text-yellow-800 border-yellow-200"
+                                  : "bg-red-100/90 text-red-800 border-red-200"
                           }`}
                         >
                           {project.status
@@ -559,7 +555,7 @@ const OurWorkPage = () => {
                       )}
                     </div>
 
-                    <div className="p-6 bg-gradient-to-br from-white via-green-50/50 to-emerald-50/30">
+                    <div className="p-6 bg-gradient-to-br from-white via-green-50/50 to-emerald-50/30 flex-1 flex flex-col">
                       <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 font-playfair group-hover:text-green-600 transition-colors">
                         {project.title}
                       </h3>
@@ -589,7 +585,7 @@ const OurWorkPage = () => {
                         )}
                       </div>
 
-                      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
                         <button
                           onClick={() => viewProject(project)}
                           className="inline-flex items-center px-4 py-2 text-green-600 hover:text-white hover:bg-gradient-to-r hover:from-green-600 hover:to-emerald-600 text-sm font-medium rounded-lg border border-green-200 hover:border-transparent transition-all duration-300 group/btn shadow-sm hover:shadow-md"

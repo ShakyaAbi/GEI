@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import ImageGalleryCarousel from "./ImageGalleryCarousel";
 import CountUp from "./CountUp";
+import PartnerCarousel, { defaultPartnerLogos } from "./common/PartnerCarousel";
 import { useNavigate } from "react-router-dom";
 import { useProjects } from "../hooks/useProjects";
 
@@ -40,22 +41,22 @@ const Hero = () => {
       },
       {
         title: "Sustainability",
-        image: "/image2.jpg",
+        image: "/image2-960x1280.jpg",
         link: "/our-stories",
       },
       {
         title: "Community",
-        image: "/Story1.jpg",
+        image: "/Story1-1800x1200-1440x960.jpg",
         link: "/our-stories",
       },
       {
         title: "Empowerment",
         image:
-          "/american-physician-examines-elderly-asian-patients-using-hearing-aid.jpg",
+          "/american-physician-examines-elderly-asian-patients-using-hearing-aid-1650x1100.jpg",
         link: "/our-stories",
       },
     ],
-    []
+    [],
   );
 
   useEffect(() => {
@@ -73,7 +74,7 @@ const Hero = () => {
   const statistics = useMemo(() => {
     // Count active projects
     const activeProjectsCount = projects.filter(
-      (p) => p.status === "active"
+      (p) => p.status === "active",
     ).length;
 
     // Extract unique countries from projects
@@ -109,20 +110,6 @@ const Hero = () => {
     };
   }, [projects]);
 
-  // Define partner logos with actual images
-  const partnerLogos = [
-    { name: "Partner 1", src: "/client-1.png" },
-    { name: "Partner 2", src: "/client-2.png" },
-    { name: "Partner 3", src: "/client-3.png" },
-    { name: "Partner 4", src: "/client-4.png" },
-    { name: "Partner 5", src: "/client-5.png" },
-    { name: "Partner 6", src: "/client-6.png" },
-    { name: "Partner 7", src: "/client-7.png" },
-    { name: "Partner 8", src: "/client-8.png" },
-    { name: "Partner 9", src: "/client-9.png" },
-    { name: "Partner 10", src: "/client-10.png" },
-  ];
-
   useEffect(() => {
     // Intersection Observer for reveal animations
     const observer = new IntersectionObserver(
@@ -134,7 +121,7 @@ const Hero = () => {
           }
         });
       },
-      { threshold: 0.2 }
+      { threshold: 0.2 },
     );
 
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
@@ -277,36 +264,7 @@ const Hero = () => {
       </section>
 
       {/* Trust Bar - Updated with actual images */}
-      <section className="py-16 bg-white">
-        <div className="mt-20">
-          <p className="text-center uppercase text-sm tracking-wider text-gray-500 mb-8 font-medium">
-            Trusted by forward-thinking partners
-          </p>
-          <div className="relative w-full overflow-hidden">
-            <div
-              className="flex flex-nowrap items-center w-max animate-scroll-left"
-              style={{ "--scroll-duration": "30s" } as React.CSSProperties}
-            >
-              {[...Array(3)].map((_, setIndex) =>
-                partnerLogos.map((logo, logoIndex) => (
-                  <div
-                    key={`logo-${setIndex}-${logoIndex}`}
-                    className="flex-shrink-0 mx-8 grayscale hover:grayscale-0 transition-all duration-300 opacity-60 hover:opacity-100"
-                  >
-                    <img
-                      src={logo.src}
-                      alt={logo.name}
-                      className="h-16 w-auto object-contain"
-                      loading="eager"
-                      decoding="async"
-                    />
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
+      <PartnerCarousel logos={defaultPartnerLogos} />
 
       {/* Impact Metrics - Connected to Backend */}
       <section className="py-16 bg-[#e6f4ff]">
@@ -401,7 +359,7 @@ const Hero = () => {
                   style={{ left: `${location.x}%`, top: `${location.y}%` }}
                   onClick={() =>
                     setActiveLocation(
-                      activeLocation === location.id ? null : location.id
+                      activeLocation === location.id ? null : location.id,
                     )
                   }
                 >
@@ -436,7 +394,7 @@ const Hero = () => {
           <div className="bg-white rounded-2xl shadow border border-gray-200 overflow-hidden max-w-sm w-full animate-fadeInUp">
             {(() => {
               const location = locations.find(
-                (loc) => loc.id === activeLocation
+                (loc) => loc.id === activeLocation,
               );
               if (!location) return null;
 

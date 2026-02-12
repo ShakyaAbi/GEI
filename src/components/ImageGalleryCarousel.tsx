@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Image {
   src: string;
@@ -16,12 +16,36 @@ interface ImageGalleryCarouselProps {
 }
 
 const defaultImages = [
-  { src: 'https://picsum.photos/id/1011/600/350', alt: 'Dummy 1', caption: 'Greenhouse farming' },
-  { src: 'https://picsum.photos/id/1015/600/350', alt: 'Dummy 2', caption: 'Seedling in hand' },
-  { src: 'https://picsum.photos/id/1025/600/350', alt: 'Dummy 3', caption: 'Lightbulb with plant' },
-  { src: 'https://picsum.photos/id/1035/600/350', alt: 'Dummy 4', caption: 'Forest path' },
-  { src: 'https://picsum.photos/id/1045/600/350', alt: 'Dummy 5', caption: 'Mountain landscape' },
-  { src: 'https://picsum.photos/id/1055/600/350', alt: 'Dummy 6', caption: 'River and trees' },
+  {
+    src: "https://picsum.photos/id/1011/600/350",
+    alt: "Dummy 1",
+    caption: "Greenhouse farming",
+  },
+  {
+    src: "https://picsum.photos/id/1015/600/350",
+    alt: "Dummy 2",
+    caption: "Seedling in hand",
+  },
+  {
+    src: "https://picsum.photos/id/1025/600/350",
+    alt: "Dummy 3",
+    caption: "Lightbulb with plant",
+  },
+  {
+    src: "https://picsum.photos/id/1035/600/350",
+    alt: "Dummy 4",
+    caption: "Forest path",
+  },
+  {
+    src: "https://picsum.photos/id/1045/600/350",
+    alt: "Dummy 5",
+    caption: "Mountain landscape",
+  },
+  {
+    src: "https://picsum.photos/id/1055/600/350",
+    alt: "Dummy 6",
+    caption: "River and trees",
+  },
 ];
 
 const ImageGalleryCarousel: React.FC<ImageGalleryCarouselProps> = ({
@@ -29,7 +53,7 @@ const ImageGalleryCarousel: React.FC<ImageGalleryCarouselProps> = ({
   sectionTitle,
   sectionDescription,
   autoScrollSpeed = 3000,
-  className = ''
+  className = "",
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -43,7 +67,11 @@ const ImageGalleryCarousel: React.FC<ImageGalleryCarouselProps> = ({
     if (container) {
       const slide = container.children[index] as HTMLElement;
       if (slide) {
-        slide.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        slide.scrollIntoView({
+          behavior: "smooth",
+          inline: "center",
+          block: "nearest",
+        });
       }
     }
   };
@@ -56,10 +84,13 @@ const ImageGalleryCarousel: React.FC<ImageGalleryCarouselProps> = ({
     scrollToIndex((selectedIndex + 1) % imgs.length);
   };
 
-  const handleArrowClick = (e: React.MouseEvent | React.KeyboardEvent, direction: 'prev' | 'next') => {
+  const handleArrowClick = (
+    e: React.MouseEvent | React.KeyboardEvent,
+    direction: "prev" | "next",
+  ) => {
     e.preventDefault();
     e.stopPropagation();
-    if (direction === 'prev') prevSlide();
+    if (direction === "prev") prevSlide();
     else nextSlide();
   };
 
@@ -74,7 +105,9 @@ const ImageGalleryCarousel: React.FC<ImageGalleryCarouselProps> = ({
   }
 
   return (
-    <section className={`py-24 bg-gradient-to-b from-white to-gray-50 ${className}`}>
+    <section
+      className={`py-24 bg-gradient-to-b from-white to-gray-50 ${className}`}
+    >
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-16 reveal">
@@ -91,32 +124,35 @@ const ImageGalleryCarousel: React.FC<ImageGalleryCarouselProps> = ({
           {/* Left Arrow - inside carousel, transparent, fade in on hover */}
           <button
             type="button"
-            onClick={(e) => handleArrowClick(e, 'prev')}
+            onClick={(e) => handleArrowClick(e, "prev")}
             className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-transparent opacity-40 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center text-white hover:bg-black/30 hover:opacity-100 rounded-full z-20"
             aria-label="Previous image"
             disabled={selectedIndex === 0}
-            style={{ pointerEvents: selectedIndex === 0 ? 'none' : 'auto' }}
+            style={{ pointerEvents: selectedIndex === 0 ? "none" : "auto" }}
           >
             <ChevronLeft className="w-7 h-7" />
           </button>
           <div className="carousel-viewport overflow-hidden rounded-3xl shadow-2xl bg-white border border-gray-100 relative">
-            <div className="carousel-container flex scroll-smooth" ref={containerRef}>
+            <div
+              className="carousel-container flex scroll-smooth"
+              ref={containerRef}
+            >
               {imgs.map((image, index) => (
                 <div
                   className="carousel-slide flex-shrink-0 relative aspect-[16/9] w-full mx-0 flex items-center justify-center bg-slate-50 group"
                   key={index}
                   style={{
                     opacity: 1,
-                    transition: 'transform 0.3s',
-                    transform: index === selectedIndex ? 'scale(1.05)' : 'none',
-                    zIndex: index === selectedIndex ? 1 : 0
+                    transition: "transform 0.3s",
+                    transform: index === selectedIndex ? "scale(1.05)" : "none",
+                    zIndex: index === selectedIndex ? 1 : 0,
                   }}
                 >
                   <img
                     className="w-full h-full object-cover transition-transform duration-700 rounded-xl"
                     src={image.src}
                     alt={image.alt}
-                    loading={index === 0 ? 'eager' : 'lazy'}
+                    loading={index === 0 ? "eager" : "lazy"}
                   />
                   {image.caption && (
                     <div
@@ -124,7 +160,7 @@ const ImageGalleryCarousel: React.FC<ImageGalleryCarouselProps> = ({
                         opacity-0 translate-y-4 transition-all duration-500 ease-out
                         group-hover:opacity-100 group-hover:translate-y-0
                         mb-8 bottom-8 text-center"
-                      style={{ pointerEvents: 'none' }}
+                      style={{ pointerEvents: "none" }}
                     >
                       {image.caption}
                     </div>
@@ -136,11 +172,14 @@ const ImageGalleryCarousel: React.FC<ImageGalleryCarouselProps> = ({
           {/* Right Arrow - inside carousel, transparent, fade in on hover */}
           <button
             type="button"
-            onClick={(e) => handleArrowClick(e, 'next')}
+            onClick={(e) => handleArrowClick(e, "next")}
             className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-transparent opacity-40 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center text-white hover:bg-black/30 hover:opacity-100 rounded-full z-20"
             aria-label="Next image"
             disabled={selectedIndex === imgs.length - 1}
-            style={{ pointerEvents: selectedIndex === imgs.length - 1 ? 'none' : 'auto' }}
+            style={{
+              pointerEvents:
+                selectedIndex === imgs.length - 1 ? "none" : "auto",
+            }}
           >
             <ChevronRight className="w-7 h-7" />
           </button>
@@ -152,9 +191,9 @@ const ImageGalleryCarousel: React.FC<ImageGalleryCarouselProps> = ({
                 key={idx}
                 onClick={(e) => handleDotClick(e, idx)}
                 className={`w-3 h-3 rounded-full transition-all duration-500 ${
-                  idx === selectedIndex 
-                    ? 'bg-base-blue scale-125 shadow-lg' 
-                    : 'bg-gray-300 hover:bg-gray-400 hover:scale-110'
+                  idx === selectedIndex
+                    ? "bg-base-blue scale-125 shadow-lg"
+                    : "bg-gray-300 hover:bg-gray-400 hover:scale-110"
                 }`}
                 aria-label={`Go to slide ${idx + 1}`}
               />

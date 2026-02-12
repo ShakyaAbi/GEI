@@ -128,7 +128,7 @@ const Faculty = () => {
                   className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group"
                 >
                   {/* Profile Image */}
-                  <div className="relative overflow-hidden h-64 sm:h-72 bg-gray-100">
+                  <div className="relative overflow-hidden h-80 sm:h-96 bg-gray-100">
                     <img
                       src={normalizeImagePath(
                         member.photo || "/faculty/placeholder.jpg"

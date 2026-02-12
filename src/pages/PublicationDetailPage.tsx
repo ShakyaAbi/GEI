@@ -100,7 +100,7 @@ const PublicationDetailPage = () => {
     return (
       <div className="min-h-screen bg-white">
         <div className="pt-32 pb-20">
-          <div className="max-w-4xl mx-auto px-6 lg:px-10">
+          <div className="max-w-6xl mx-auto px-4 lg:px-8">
             <div className="flex items-center justify-center py-20">
               <div className="text-center">
                 <Loader2 className="w-12 h-12 animate-spin text-teal-600 mx-auto mb-4" />
@@ -118,7 +118,7 @@ const PublicationDetailPage = () => {
     return (
       <div className="min-h-screen bg-white">
         <div className="pt-32 pb-20">
-          <div className="max-w-4xl mx-auto px-6 lg:px-10">
+          <div className="max-w-6xl mx-auto px-4 lg:px-8">
             <div className="text-center py-20">
               <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
               <h1 className="text-2xl font-bold text-gray-900 mb-4">Publication Not Found</h1>
@@ -144,7 +144,7 @@ const PublicationDetailPage = () => {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="pt-32 pb-12 bg-gradient-to-br from-teal-50 via-white to-cyan-50">
-        <div className="max-w-4xl mx-auto px-6 lg:px-10">
+        <div className="max-w-6xl mx-auto px-4 lg:px-8">
           {/* Back Button */}
           <button
             onClick={() => navigate(-1)}
@@ -267,7 +267,7 @@ const PublicationDetailPage = () => {
 
       {/* Content Section */}
       <section className="py-12">
-        <div className="max-w-4xl mx-auto px-6 lg:px-10">
+        <div className="max-w-6xl mx-auto px-4 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Main Content */}
             <div className="lg:col-span-2">

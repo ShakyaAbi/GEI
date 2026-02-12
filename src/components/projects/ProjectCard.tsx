@@ -98,8 +98,8 @@ export function ProjectCard({ project, viewMode = 'grid' }: ProjectCardProps) {
   }
 
   return (
-    <Link to={`/projects/${project.slug || project.id}`} className="group block">
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+    <Link to={`/projects/${project.slug || project.id}`} className="group block h-full">
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 h-full flex flex-col">
         {(project.hero_image || project.image) && (
           <div className="aspect-video overflow-hidden relative">
             <img
@@ -114,7 +114,7 @@ export function ProjectCard({ project, viewMode = 'grid' }: ProjectCardProps) {
           </div>
         )}
         
-        <div className="p-6 bg-gradient-to-br from-white to-gray-50/50">
+        <div className="p-6 bg-gradient-to-br from-white to-gray-50/50 flex-1 flex flex-col">
           <div className="flex items-start justify-between mb-3">
             <div>
               <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
@@ -123,7 +123,7 @@ export function ProjectCard({ project, viewMode = 'grid' }: ProjectCardProps) {
               {project.program_areas?.icon && (
                 <div className="flex items-center mt-1">
                   {getLucideIcon(project.program_areas.icon)}
-                  <span className="text-sm text-blue-700 font-medium ml-1">{project.program_areas.name}</span>
+                  <span className="text-xs text-blue-700 font-medium ml-1 tracking-tight break-words">{project.program_areas.name}</span>
                 </div>
               )}
             </div>
@@ -161,7 +161,7 @@ export function ProjectCard({ project, viewMode = 'grid' }: ProjectCardProps) {
             )}
           </div>
           
-          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
             <div className="flex items-center text-blue-600 group-hover:text-blue-800 font-semibold">
               <TrendingUp className="w-4 h-4 mr-2" />
               <span className="text-sm">View Details</span>

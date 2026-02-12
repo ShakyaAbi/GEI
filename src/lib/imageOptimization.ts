@@ -15,7 +15,7 @@ export interface ImageOptimizationOptions {
  */
 export const generateImageSrcset = (
   imagePath: string,
-  widths: number[] = [320, 640, 960, 1280, 1920]
+  widths: number[] = [320, 640, 960, 1280, 1920],
 ): string => {
   return widths.map((width) => `${imagePath}?w=${width} ${width}w`).join(", ");
 };
@@ -31,20 +31,26 @@ export const normalizeImagePath = (path: string): string => {
     return path;
   }
 
-  // Get the API URL from environment or use current origin
+  // Prefer same-origin for public assets; use API origin for uploads.
   const apiUrl =
-    typeof window !== "undefined"
-      ? import.meta.env.VITE_API_URL || window.location.origin
-      : "";
-  const baseUrl = apiUrl.replace("/api", "");
+    typeof window !== "undefined" ? import.meta.env.VITE_API_URL : "";
+  const apiBase = apiUrl ? apiUrl.replace(/\/api\/?$/, "") : "";
+  const siteBase = typeof window !== "undefined" ? window.location.origin : "";
 
-  // Already has leading slash - make it absolute if we have a base URL
+  // Already has leading slash - choose the right origin
   if (path.startsWith("/")) {
-    return baseUrl ? `${baseUrl}${path}` : path;
+    const useApiBase = path.startsWith("/uploads/") || path.startsWith("/api/");
+    const origin = useApiBase ? apiBase : siteBase;
+    return origin ? `${origin}${path}` : path;
   }
 
   // Add leading slash and make absolute
-  return baseUrl ? `${baseUrl}/${path}` : `/${path}`;
+  const normalizedPath = `/${path}`;
+  const useApiBase =
+    normalizedPath.startsWith("/uploads/") ||
+    normalizedPath.startsWith("/api/");
+  const origin = useApiBase ? apiBase : siteBase;
+  return origin ? `${origin}${normalizedPath}` : normalizedPath;
 };
 
 /**
@@ -52,7 +58,7 @@ export const normalizeImagePath = (path: string): string => {
  */
 export const getOptimizedImageUrl = (
   imagePath: string,
-  options: ImageOptimizationOptions = {}
+  options: ImageOptimizationOptions = {},
 ): string => {
   const normalized = normalizeImagePath(imagePath);
 
@@ -87,7 +93,7 @@ export const preloadImage = (src: string, retries = 3): Promise<void> => {
           setTimeout(() => attemptLoad(attemptsLeft - 1), 1000);
         } else {
           reject(
-            new Error(`Failed to load image after ${retries} attempts: ${src}`)
+            new Error(`Failed to load image after ${retries} attempts: ${src}`),
           );
         }
       };
@@ -161,7 +167,7 @@ export const getOptimalQuality = (): number => {
  * Create a lazy-loading image component helper
  */
 export const createLazyImageObserver = (
-  callback: (entry: IntersectionObserverEntry) => void
+  callback: (entry: IntersectionObserverEntry) => void,
 ) => {
   if (typeof window === "undefined") return null;
 

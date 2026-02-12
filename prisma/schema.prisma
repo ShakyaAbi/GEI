@@ -5,6 +5,9 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  
+  // Connection pool settings for performance
+  // shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model ResearchCategory {

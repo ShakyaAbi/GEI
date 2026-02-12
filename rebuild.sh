@@ -1,17 +1,44 @@
 #!/bin/bash
+
+cd /root/GEI
+
+echo "================================"
 echo "🔄 Stopping containers..."
-docker-compose -f docker-compose.prod.yml down
+echo "================================"
+docker compose -f docker-compose.prod.yml down
 
-echo "🗑️  Removing old build..."
-rm -rf frontend/dist
-
+echo ""
+echo "================================"
 echo "🔨 Rebuilding (no cache)..."
-docker-compose -f docker-compose.prod.yml build --no-cache app
+echo "================================"
+docker compose -f docker-compose.prod.yml build --no-cache app
 
+echo ""
+echo "================================"
 echo "🚀 Starting containers..."
-docker-compose -f docker-compose.prod.yml up -d
+echo "================================"
+docker compose -f docker-compose.prod.yml up -d
 
-echo "📋 Checking logs..."
-docker-compose -f docker-compose.prod.yml logs app --tail=20
+echo ""
+echo "⏳ Waiting 10 seconds for services to start..."
+sleep 10
 
-echo "✅ Done! Clear your browser cache with Ctrl+Shift+R"
+echo ""
+echo "================================"
+echo "📊 Container Status:"
+echo "================================"
+docker compose -f docker-compose.prod.yml ps
+
+echo ""
+echo "================================"
+echo "📋 Backend Logs (Last 50 lines):"
+echo "================================"
+docker logs gei-website-prod --tail=50
+
+echo ""
+echo "✅ Done!"
+echo ""
+echo "Quick log commands:"
+echo "  backend: docker logs gei-website-prod --tail=50"
+echo "  database: docker logs gei-db-prod --tail=50"
+echo "  nginx:   docker logs gei-nginx --tail=50"

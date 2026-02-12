@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 5000;
 const HOST = "0.0.0.0";
 
 // Trust proxy only in production (avoid permissive trust proxy in dev)
-app.set("trust proxy", process.env.NODE_ENV === "production" ? 1 : false);
+app.set("trust proxy", true);
 
 // Get current directory
 const __filename = fileURLToPath(import.meta.url);
@@ -49,19 +49,31 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  })
+  }),
 );
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Request timing middleware for performance monitoring
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    if (duration > 1000) {
+      console.warn(`[SLOW] ${req.method} ${req.path} - ${duration}ms`);
+    }
+  });
+  next();
+});
+
 // Security headers (more permissive for production)
 app.use(
   helmet({
     contentSecurityPolicy: false, // Disable CSP temporarily
     crossOriginEmbedderPolicy: false,
-  })
+  }),
 );
 
 // API rate limiting - Fix the proxy issue
@@ -78,6 +90,14 @@ const limiter = rateLimit({
 });
 
 app.use("/api/", limiter);
+
+// Prevent API response caching
+app.use("/api/", (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
 
 // Serve static files from uploads directory with better error handling
 app.use(
@@ -101,7 +121,7 @@ app.use(
         res.setHeader("Cache-Control", "public, max-age=86400"); // 1 day
       }
     },
-  })
+  }),
 );
 
 // Serve static files from public directory
@@ -113,7 +133,7 @@ app.use(
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
     },
-  })
+  }),
 );
 
 // API Routes
@@ -158,7 +178,7 @@ app.post("/api/contact", async (req, res) => {
         organization || ""
       }</p><p><strong>Subject:</strong> ${subject}</p><p><strong>Message:</strong><br/>${message.replace(
         /\n/g,
-        "<br/>"
+        "<br/>",
       )}</p>`,
     };
 
@@ -221,6 +241,11 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, HOST, () => {
   console.log(`Server running on http://${HOST}:${PORT}`);
 });
+
+// Set server timeouts to prevent 502 errors
+server.setTimeout(60000); // 60 second timeout
+server.keepAliveTimeout = 65000; // Keep-alive timeout slightly longer
+
