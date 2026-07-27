@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronDown, Home } from 'lucide-react';
-import { APP_CONFIG } from '../../constants/app';
+import { Menu, X, ChevronDown } from 'lucide-react';
+import { getNavigationItems } from '../../constants/navigation';
 import { useProgramAreas } from '../../hooks/useProgramAreas';
 
 const Header: React.FC = () => {
@@ -12,48 +12,7 @@ const Header: React.FC = () => {
 
   // Fetch program areas for dynamic Our Work dropdown
   const { programAreas } = useProgramAreas();
-
-  const navigationItems = [
-    { 
-      name: 'Who We Are', 
-      path: '/about',
-      hasDropdown: true,
-      dropdownItems: [
-        { name: 'Our Mission', path: '/about#mission', description: 'Learn about our core mission and values' },
-        { name: 'Our Team', path: '/about#team', description: 'Meet our leadership and expert team' },
-        { name: 'Our History', path: '/about#history', description: 'Our journey and key milestones' },
-        { name: 'Our Stories', path: '/our-stories', description: 'Stories of impact and change' },
-        { name: 'Partnerships', path: '/about#partnerships', description: 'Our global network of collaborators' },
-        
-      ]
-    },
-    { 
-      name: 'Our Work', 
-      path: '/our-work',
-      hasDropdown: true,
-      dropdownItems: [
-        { name: 'All Programs', path: '/our-work', description: 'All program areas' },
-        { name: 'Research & Publications', path: '/our-work/research-publications', description: 'Explore our research and publications' },
-        //{ name: 'Donations & Microloans', path: '/our-work/donations-microloans', description: 'Support and empower communities through giving and microfinance' },
-        ...(programAreas && programAreas.length > 0
-          ? programAreas.map(area => ({
-              name: area.name,
-              path: `/areas/${area.slug}`,
-              description: 'Learn more'
-            }))
-          : [])
-      ]
-    },
-    { 
-      name: 'Join us', 
-      path: '/ideas',
-      hasDropdown: true,
-      dropdownItems: [
-        { name: 'Collaborate with Us', path: '/ideas', description: 'Partner or volunteer with us to make an impact' },
-        { name: 'Contact Us', path: '/ideas', description: 'Get in touch with our team' }
-      ]
-    }
-  ];
+  const navigationItems = getNavigationItems(programAreas);
 
   // Handle scroll effect with throttling
   useEffect(() => {
@@ -107,10 +66,6 @@ const Header: React.FC = () => {
     }
     return location.pathname.startsWith(path);
   }, [location.pathname]);
-
-  const closeMobileMenu = useCallback(() => {
-    setIsMobileMenuOpen(false);
-  }, []);
 
   const toggleDropdown = useCallback((itemName: string) => {
     setActiveDropdown(prev => prev === itemName ? null : itemName);

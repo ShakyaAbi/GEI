@@ -1,32 +1,52 @@
-import { NavItem, DropdownItems } from '../types';
+import type { ProgramArea } from '../lib/programAreasApi';
 
-export const NAV_ITEMS: NavItem[] = [
-  { name: 'About', path: '/about', hasDropdown: true, key: 'about' },
-  { name: 'Our Work', path: '/our-work', hasDropdown: true, key: 'our-work' },
-  { name: 'Research', path: '/research', hasDropdown: true, key: 'research' },
-  { name: 'Contact', path: '/contact', hasDropdown: false, key: 'contact' },
+export interface NavigationDropdownItem {
+  name: string;
+  path: string;
+  description: string;
+}
+
+export interface NavigationItem {
+  name: string;
+  path: string;
+  hasDropdown: boolean;
+  dropdownItems: NavigationDropdownItem[];
+}
+
+export const getNavigationItems = (programAreas: ProgramArea[] = []): NavigationItem[] => [
+  {
+    name: 'Who We Are',
+    path: '/about',
+    hasDropdown: true,
+    dropdownItems: [
+      { name: 'Our Mission', path: '/about#mission', description: 'Learn about our core mission and values' },
+      { name: 'Our Team', path: '/about#team', description: 'Meet our leadership and expert team' },
+      { name: 'Our History', path: '/about#history', description: 'Our journey and key milestones' },
+      { name: 'Our Stories', path: '/our-stories', description: 'Stories of impact and change' },
+      { name: 'Partnerships', path: '/about#partnerships', description: 'Our global network of collaborators' },
+    ],
+  },
+  {
+    name: 'Our Work',
+    path: '/our-work',
+    hasDropdown: true,
+    dropdownItems: [
+      { name: 'All Programs', path: '/our-work', description: 'All program areas' },
+      { name: 'Research & Publications', path: '/our-work/research-publications', description: 'Explore our research and publications' },
+      ...programAreas.map((area) => ({
+        name: area.name,
+        path: `/areas/${area.slug}`,
+        description: 'Learn more',
+      })),
+    ],
+  },
+  {
+    name: 'Join us',
+    path: '/ideas',
+    hasDropdown: true,
+    dropdownItems: [
+      { name: 'Collaborate with Us', path: '/ideas', description: 'Partner or volunteer with us to make an impact' },
+      { name: 'Contact Us', path: '/ideas', description: 'Get in touch with our team' },
+    ],
+  },
 ];
-
-export const DROPDOWN_ITEMS: DropdownItems = {
-  about: [
-    { name: 'Our Story', path: '/about/our-story', description: 'Learn about our mission, vision, and values' },
-    { name: 'Our Team', path: '/about/our-team', description: 'Meet our leadership and expert team' },
-    { name: 'Our History', path: '/about/our-history', description: 'Our journey and key milestones' },
-    { name: 'Partnerships', path: '/about/partnerships', description: 'Our global network of collaborators' },
-    { name: 'Careers', path: '/about/careers', description: 'Join our mission for environmental change' },
-  ],
-  'our-work': [
-    { name: 'Climate Action', path: '/our-work/climate-action', description: 'Fighting climate change through innovative solutions' },
-    { name: 'Conservation', path: '/our-work/conservation', description: 'Protecting ecosystems and biodiversity' },
-    { name: 'Renewable Energy', path: '/our-work/renewable-energy', description: 'Advancing clean energy technologies' },
-    { name: 'Sustainability', path: '/our-work/sustainability', description: 'Building sustainable communities' },
-    { name: 'Policy & Advocacy', path: '/our-work/policy-advocacy', description: 'Influencing environmental policy' },
-  ],
-  research: [
-    { name: 'Publications', path: '/research/publications', description: 'Latest research papers and findings' },
-    { name: 'Data & Reports', path: '/research/data-reports', description: 'Environmental data and analysis' },
-    { name: 'Case Studies', path: '/research/case-studies', description: 'Real-world impact stories' },
-    { name: 'White Papers', path: '/research/white-papers', description: 'In-depth policy analysis' },
-    { name: 'Research Partners', path: '/research/partners', description: 'Academic and institutional collaborations' },
-  ],
-}; 

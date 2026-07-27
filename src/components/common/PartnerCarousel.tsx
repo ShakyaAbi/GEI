@@ -9,6 +9,9 @@ type PartnerCarouselProps = {
   logos: PartnerLogo[];
   repeatCount?: number;
   minWidth?: string;
+  showLabel?: boolean;
+  sectionClassName?: string;
+  contentClassName?: string;
 };
 
 export const defaultPartnerLogos: PartnerLogo[] = [
@@ -29,13 +32,18 @@ export default function PartnerCarousel({
   logos,
   repeatCount = 3,
   minWidth,
+  showLabel = true,
+  sectionClassName = "py-16 bg-white",
+  contentClassName = "mt-20",
 }: PartnerCarouselProps) {
   return (
-    <section className="py-16 bg-white">
-      <div className="mt-20">
-        <p className="text-center uppercase text-sm tracking-wider text-gray-500 mb-8 font-medium">
-          Trusted by forward-thinking partners
-        </p>
+    <section className={sectionClassName}>
+      <div className={contentClassName}>
+        {showLabel && (
+          <p className="mb-8 text-center text-sm font-medium uppercase tracking-wider text-gray-500">
+            Trusted by forward-thinking partners
+          </p>
+        )}
         <div className="relative w-full overflow-hidden">
           <div
             className="flex flex-nowrap items-center w-max animate-scroll-left"

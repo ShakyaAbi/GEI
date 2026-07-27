@@ -48,6 +48,7 @@ router.post('/', authenticateToken, isAdmin, [
     const newStory = await prisma.story.create({
       data: req.body,
     });
+    console.log('Story created successfully:', { id: newStory.id, title: newStory.title, image: newStory.image });
     res.status(201).json(newStory);
   } catch (error) {
     console.error('Create story error:', error);
@@ -70,6 +71,7 @@ router.put('/:id', authenticateToken, isAdmin, [
       where: { id: req.params.id },
       data: req.body,
     });
+    console.log('Story updated successfully:', { id: updatedStory.id, title: updatedStory.title, image: updatedStory.image });
     res.json(updatedStory);
   } catch (error) {
     console.error('Update story error:', error);

@@ -1,18 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import {
-  MoveRight,
-  PhoneCall,
-  ArrowRight,
-  Globe,
-  Users,
-  Zap,
-  MapPin,
-  ExternalLink,
-  X,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import ImageGalleryCarousel from "./ImageGalleryCarousel";
+import { MoveRight, Globe, Users, Zap, MapPin, X } from "lucide-react";
+import { Button } from "./ui/button";
 import CountUp from "./CountUp";
 import PartnerCarousel, { defaultPartnerLogos } from "./common/PartnerCarousel";
 import { useNavigate } from "react-router-dom";
@@ -129,13 +118,6 @@ const Hero = () => {
     return () => observer.disconnect();
   }, []);
 
-  const handleExploreClick = () => {
-    const element = document.querySelector("#about");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   const locations = [
     {
       id: 1,
@@ -203,6 +185,7 @@ const Hero = () => {
                     variant="secondary"
                     size="sm"
                     className="gap-4 font-inter"
+                    onClick={() => navigate('/our-stories')}
                   >
                     Read our Impact Stories <MoveRight className="w-4 h-4" />
                   </Button>

@@ -28,6 +28,8 @@ import PartnerCarousel, {
   defaultPartnerLogos,
 } from "../components/common/PartnerCarousel";
 
+const ABOUT_PAGE_SCROLL_OFFSET = 96;
+
 const AboutPage = () => {
   const location = useLocation();
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -42,7 +44,11 @@ const AboutPage = () => {
       if (element) {
         // Small delay to ensure the page is fully rendered
         setTimeout(() => {
-          element.scrollIntoView({ behavior: "smooth" });
+          const elementTop = element.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({
+            top: Math.max(elementTop - ABOUT_PAGE_SCROLL_OFFSET, 0),
+            behavior: "smooth",
+          });
         }, 100);
       }
     }
@@ -307,7 +313,7 @@ const AboutPage = () => {
       </section>
 
       {/* Mission & Vision */}
-      <section id="mission" className="py-24 bg-white">
+      <section id="mission" className="scroll-mt-28 py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 lg:p-12 border border-blue-100 reveal">
@@ -327,7 +333,7 @@ const AboutPage = () => {
 
             <div
               id="vision"
-              className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 lg:p-12 border border-blue-100 reveal"
+              className="scroll-mt-28 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-8 lg:p-12 border border-blue-100 reveal"
               style={{ animationDelay: "0.2s" }}
             >
               <div className="flex items-center mb-8">
@@ -376,7 +382,7 @@ const AboutPage = () => {
       {/* History Timeline */}
       <section
         id="history"
-        className="py-24 bg-gradient-to-b from-gray-50 to-white"
+        className="scroll-mt-28 py-24 bg-gradient-to-b from-gray-50 to-white"
       >
         <div className="max-w-6xl mx-auto px-6 lg:px-10">
           <div className="text-center mb-16 reveal">
@@ -429,7 +435,7 @@ const AboutPage = () => {
       </section>
 
       {/* Team Section */}
-      <section id="team" className="py-24 bg-white">
+      <section id="team" className="scroll-mt-28 py-24 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <div className="text-center mb-16 reveal">
             <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-6">
@@ -505,7 +511,25 @@ const AboutPage = () => {
         </div>
       </section>
 
-      <PartnerCarousel logos={defaultPartnerLogos} minWidth="100%" />
+      <section id="partnerships" className="scroll-mt-28 bg-white py-12">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="mb-8 text-center reveal">
+            <h2 className="text-3xl lg:text-5xl font-bold font-playfair text-gray-900 mb-4">
+              Partnerships
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto font-inter">
+              Our global network of collaborators across research, healthcare, and community development.
+            </p>
+          </div>
+        </div>
+        <PartnerCarousel
+          logos={defaultPartnerLogos}
+          minWidth="100%"
+          showLabel={false}
+          sectionClassName="bg-white pb-4"
+          contentClassName="mt-0"
+        />
+      </section>
 
       {/* Call to Action */}
       <section className="py-24 bg-gradient-to-br from-blue-500 to-blue-800 relative overflow-hidden">

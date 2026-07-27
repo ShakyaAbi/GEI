@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Calendar, Users, Leaf, Globe, Heart, ArrowLeft } from 'lucide-react';
+import DOMPurify from 'dompurify';
 import Footer from '../components/Footer';
+import { normalizeRichTextContent } from '../utils/richText.ts';
 
 interface Story {
   id: string;
@@ -71,6 +73,8 @@ const StoryDetailPage: React.FC = () => {
     );
   }
 
+  const renderedContent = DOMPurify.sanitize(normalizeRichTextContent(story.content));
+
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-3xl mx-auto pt-32 pb-16 px-6 lg:px-0">
@@ -95,7 +99,10 @@ const StoryDetailPage: React.FC = () => {
         </div>
         <h1 className="text-4xl font-bold text-gray-900 mb-4 font-playfair">{story.title}</h1>
         <div className="text-gray-600 mb-8">By {story.author}</div>
-        <div className="text-lg text-gray-800 leading-relaxed whitespace-pre-line mb-12">{story.content}</div>
+        <div
+          className="prose prose-lg max-w-none text-gray-800 mb-12 prose-headings:font-playfair prose-a:text-blue-600"
+          dangerouslySetInnerHTML={{ __html: renderedContent }}
+        />
       </div>
       <Footer />
     </div>

@@ -71,6 +71,7 @@ router.post(
       );
       // Return the correct URL
       const fileUrl = `/uploads/${folder ? folder + '/' : ''}${req.file.filename}`;
+      console.log('Image uploaded successfully:', { fileUrl, folder, filename: req.file.filename });
       res.status(201).json({
         error: false,
         data: { ...fileData, url: fileUrl }

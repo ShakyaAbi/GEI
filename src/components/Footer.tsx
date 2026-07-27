@@ -2,37 +2,17 @@ import React from "react";
 import {
   Twitter,
   Linkedin,
-  Github,
   Youtube,
-  Mail,
   ExternalLink,
-  Leaf,
   ArrowUp,
 } from "lucide-react";
+import { getNavigationItems } from "../constants/navigation";
+import { useProgramAreas } from "../hooks/useProgramAreas";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-
-  const footerLinks = {
-    about: [
-      { name: "About Us", href: "/about" },
-      { name: "Our Team", href: "/about#team" },
-      { name: "Faculty", href: "/about#faculty" },
-      { name: "Contact", href: "/contact" },
-    ],
-    work: [
-      { name: "Our Work", href: "/our-work" },
-      { name: "Program Areas", href: "/our-work#program-areas" },
-      { name: "Projects", href: "/projects" },
-      { name: "Partners", href: "/partners" },
-    ],
-    ideas: [
-      { name: "Publications", href: "/publications" },
-      { name: "Research", href: "/research" },
-      { name: "News", href: "/news" },
-      { name: "Resources", href: "/resources" },
-    ],
-  };
+  const { programAreas } = useProgramAreas();
+  const footerSections = getNavigationItems(programAreas);
 
   const socialLinks = [
     { icon: Twitter, href: "#", label: "Twitter" },
@@ -114,65 +94,26 @@ const Footer = () => {
               </div>
             </div>
 
-            {/* About Us */}
-            <div>
-              <h4 className="text-lg font-semibold mb-6 font-playfair">
-                About Us
-              </h4>
-              <ul className="space-y-3">
-                {footerLinks.about.map((link, index) => (
-                  <li key={index}>
-                    <button
-                      onClick={() => handleLinkClick(link.href)}
-                      className="text-gray-300 hover:text-white transition-colors hover:translate-x-1 transform duration-200 flex items-center group"
-                    >
-                      {link.name}
-                      <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Our Work */}
-            <div>
-              <h4 className="text-lg font-semibold mb-6 font-playfair">
-                Our Work
-              </h4>
-              <ul className="space-y-3">
-                {footerLinks.work.map((link, index) => (
-                  <li key={index}>
-                    <button
-                      onClick={() => handleLinkClick(link.href)}
-                      className="text-gray-300 hover:text-white transition-colors hover:translate-x-1 transform duration-200 flex items-center group"
-                    >
-                      {link.name}
-                      <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Ideas & Resources */}
-            <div>
-              <h4 className="text-lg font-semibold mb-6 font-playfair">
-                Join Us
-              </h4>
-              <ul className="space-y-3 mb-8">
-                {footerLinks.ideas.map((link, index) => (
-                  <li key={index}>
-                    <button
-                      onClick={() => handleLinkClick(link.href)}
-                      className="text-gray-300 hover:text-white transition-colors hover:translate-x-1 transform duration-200 flex items-center group"
-                    >
-                      {link.name}
-                      <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {footerSections.map((section) => (
+              <div key={section.name}>
+                <h4 className="text-lg font-semibold mb-6 font-playfair">
+                  {section.name}
+                </h4>
+                <ul className="space-y-3 mb-8">
+                  {section.dropdownItems.map((link) => (
+                    <li key={link.path}>
+                      <button
+                        onClick={() => handleLinkClick(link.path)}
+                        className="text-gray-300 hover:text-white transition-colors hover:translate-x-1 transform duration-200 flex items-center group text-left"
+                      >
+                        {link.name}
+                        <ExternalLink className="w-3 h-3 ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
           {/* Bottom Bar */}

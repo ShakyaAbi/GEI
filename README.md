@@ -280,6 +280,8 @@ docker-compose -f docker-compose.prod.yml restart nginx
 docker-compose -f docker-compose.prod.yml down
 
 # Remove everything including volumes
+# WARNING: this deletes the Postgres data volume and will remove database data.
+# Only use it if you intentionally want a full reset.
 docker-compose -f docker-compose.prod.yml down -v
 
 # Rebuild after code changes

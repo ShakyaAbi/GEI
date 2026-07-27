@@ -44,6 +44,7 @@ export const uploadConfig = {
   // Subdirectories
   subDirs: {
     images: 'images',
+    stories: 'images/stories',
     pdfs: 'pdfs',
     documents: 'documents',
     videos: 'videos',

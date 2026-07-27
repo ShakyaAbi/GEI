@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 5000;
 const HOST = "0.0.0.0";
 
 // Trust proxy only in production (avoid permissive trust proxy in dev)
-app.set("trust proxy", true);
+app.set("trust proxy", 1);
 
 // Get current directory
 const __filename = fileURLToPath(import.meta.url);

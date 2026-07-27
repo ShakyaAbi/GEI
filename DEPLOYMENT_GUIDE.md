@@ -201,6 +201,10 @@ git pull
 # Access database
 docker-compose -f docker-compose.prod.yml exec db psql -U geiuser -d gei
 
+# Safe stop/restart commands do not remove the named Postgres volume.
+# Do NOT use `docker-compose ... down -v` on production unless you want to delete all database data.
+# Back up the database before running migrations, especially when a migration drops or renames a column.
+
 # Run migrations
 docker-compose -f docker-compose.prod.yml exec app npx prisma migrate deploy
 

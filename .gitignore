@@ -36,4 +36,19 @@ ssl/
 
 # Database backups
 backup.sql
+backup_*.sql
 *.sql.backup
+
+# Build artifacts
+.build.log
+
+# SSL / Certbot
+certbot/
+letsencrypt/
+
+# Uploaded files
+uploads/
+
+# Prisma test/backup files
+backend/prismatestbck/
+backend/prisma/
