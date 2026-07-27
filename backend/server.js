@@ -71,7 +71,18 @@ app.use((req, res, next) => {
 // Security headers (more permissive for production)
 app.use(
   helmet({
-    contentSecurityPolicy: false, // Disable CSP temporarily
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", "data:", "blob:", "https://images.unsplash.com"],
+        connectSrc: ["'self'", "https://geiglobal.org"],
+        frameSrc: ["'none'", "https://www.google.com"],
+        objectSrc: ["'none'"],
+      },
+    },
     crossOriginEmbedderPolicy: false,
   }),
 );

@@ -24,7 +24,7 @@ export default defineConfig({
     "**/*.webp",
   ],
   optimizeDeps: {
-    exclude: ["lucide-react", "pg", "events"],
+    exclude: ["pg", "events"],
   },
   build: {
     assetsInlineLimit: 4096,

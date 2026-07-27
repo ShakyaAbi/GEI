@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Save, X, Upload, Loader2, Goal, Eye, Search, SortAsc, SortDesc, FolderOpen, ArrowUp, ArrowDown, ListOrdered } from 'lucide-react';
-import * as LucideIcons from 'lucide-react';
+import { getLucideIcon } from '../../lib/iconMap';
 import { useProgramAreas } from '../../hooks/useProgramAreas';
 import ImageUpload from './ImageUpload';
 import { programAreasApi } from '../../lib/programAreasApi';
@@ -8,13 +8,6 @@ import { imageUploadService } from '../../lib/imageUpload';
 import type { ProgramArea } from '../../lib/programAreasApi';
 import ProjectsAdmin from './ProjectsAdmin';
 import axios from 'axios';
-
-// Helper to get Lucide icon component by name
-function getLucideIcon(iconName: string) {
-  if (!iconName) return null;
-  const IconComponent = (LucideIcons as any)[iconName];
-  return IconComponent ? <IconComponent className="w-5 h-5 mr-2 text-blue-500 inline-block align-middle" /> : null;
-}
 
 const getOrderIndex = (area: Partial<ProgramArea> | null | undefined) =>
   (area as any)?.order_index ?? (area as any)?.orderIndex ?? 0;

@@ -15,6 +15,7 @@ import {
   SortAsc,
   SortDesc,
 } from "lucide-react";
+import { getLucideIcon } from "../lib/iconMap";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import ImageGalleryCarousel from "../components/ImageGalleryCarousel";
@@ -24,17 +25,7 @@ import { Link } from "react-router-dom";
 import type { ProgramArea } from "../lib/programAreasApi";
 import type { Project } from "../types/project";
 import CountUp from "../components/CountUp";
-import * as LucideIcons from "lucide-react";
 import { normalizeImagePath } from "../lib/imageOptimization";
-
-// Helper to get Lucide icon component by name
-function getLucideIcon(iconName: string) {
-  if (!iconName) return null;
-  const IconComponent = (LucideIcons as any)[iconName];
-  return IconComponent ? (
-    <IconComponent className="w-4 h-4 mr-1 text-blue-500 inline-block align-middle" />
-  ) : null;
-}
 
 function ProjectSkeletonCard() {
   return (
@@ -400,7 +391,7 @@ const OurWorkPage = () => {
                           loading="lazy"
                         />
                       ) : (
-                        programArea.icon && getLucideIcon(programArea.icon)
+                        programArea.icon && getLucideIcon(programArea.icon, "w-4 h-4 mr-1 text-blue-500 inline-block align-middle")
                       )}
                       {programArea.name}
                     </h3>
@@ -546,7 +537,7 @@ const OurWorkPage = () => {
                         <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           <div className="px-3 py-1 bg-gradient-to-r from-white/90 to-blue-100/90 backdrop-blur-sm text-blue-800 text-xs font-medium rounded-full border border-white/50 shadow-lg flex items-center max-w-[260px] whitespace-nowrap overflow-hidden text-ellipsis">
                             {project.program_areas.icon &&
-                              getLucideIcon(project.program_areas.icon)}
+                              getLucideIcon(project.program_areas.icon, "w-4 h-4 mr-1 text-blue-500 inline-block align-middle")}
                             <span className="overflow-hidden text-ellipsis whitespace-nowrap">
                               {project.program_areas.name}
                             </span>

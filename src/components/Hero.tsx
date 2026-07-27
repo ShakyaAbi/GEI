@@ -153,7 +153,7 @@ const Hero = () => {
       country: "Cambodia",
       x: 75,
       y: 48,
-      image: "kandawgyi-lake-yangon-burma-myanmar.jpg",
+      image: "/kandawgyi-lake-yangon-burma-myanmar.jpg",
       description:
         "Building water security infrastructure and training communities in environmental conservation practices.",
       impact: "25,000+ people with clean water",

@@ -1,20 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Calendar, Users, ArrowRight, Clock, Goal, Award, TrendingUp } from 'lucide-react';
-import * as LucideIcons from 'lucide-react';
+import { getLucideIcon } from '../../lib/iconMap';
 import type { Project } from '../../types/project';
 import { ProjectStatusBadge } from './ProjectStatusBadge';
 
 interface ProjectCardProps {
   project: Project;
   viewMode?: 'grid' | 'list';
-}
-
-// Helper to get Lucide icon component by name
-function getLucideIcon(iconName: string) {
-  if (!iconName) return null;
-  const IconComponent = (LucideIcons as any)[iconName];
-  return IconComponent ? <IconComponent className="w-4 h-4 mr-1 text-blue-500 inline-block align-middle" /> : null;
 }
 
 export function ProjectCard({ project, viewMode = 'grid' }: ProjectCardProps) {
@@ -122,7 +115,7 @@ export function ProjectCard({ project, viewMode = 'grid' }: ProjectCardProps) {
               </h3>
               {project.program_areas?.icon && (
                 <div className="flex items-center mt-1">
-                  {getLucideIcon(project.program_areas.icon)}
+                  {getLucideIcon(project.program_areas.icon, "w-4 h-4 mr-1 text-blue-500 inline-block align-middle")}
                   <span className="text-xs text-blue-700 font-medium ml-1 tracking-tight break-words">{project.program_areas.name}</span>
                 </div>
               )}

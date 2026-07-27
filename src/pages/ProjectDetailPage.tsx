@@ -28,7 +28,7 @@ import {
   ImageIcon,
   Goal
 } from 'lucide-react';
-import * as LucideIcons from 'lucide-react';
+import { getLucideIcon } from '../lib/iconMap';
 import Footer from '../components/Footer';
 import { projectsApi, fetchProjectBySlug, fetchProjectWithCustomFields, fetchProjectContent } from '../lib/projectsApi';
 import type { ProjectWithCustomFields } from '../types/project';
@@ -37,13 +37,6 @@ import ImageGalleryCarousel from '../components/ImageGalleryCarousel';
 import ProjectContentViewer from '../components/projects/ProjectContentViewer';
 import ProjectMediaGallery from '../components/projects/ProjectMediaGallery';
 import ReactMarkdown from 'react-markdown';
-
-// Helper to get Lucide icon component by name
-function getLucideIcon(iconName: string) {
-  if (!iconName) return null;
-  const IconComponent = (LucideIcons as any)[iconName];
-  return IconComponent ? <IconComponent className="w-5 h-5 mr-2 text-blue-500 inline-block align-middle" /> : null;
-}
 
 const ProjectDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
