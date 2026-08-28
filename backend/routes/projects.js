@@ -1,5 +1,5 @@
 import express from 'express';
-import prisma from '../prisma/client.js';
+import { PrismaClient } from "@prisma/client";
 import { authenticateToken } from '../middleware/auth.js';
 import path from 'path';
 import fs from 'fs';

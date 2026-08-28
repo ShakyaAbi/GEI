@@ -13,6 +13,7 @@ import Navbar from './components/navbar/Navbar';
 // import ProjectDetailPage from './pages/ProjectDetailPage';
 // import LoginPage from './pages/LoginPage';
 import ProtectedRoute from './components/admin/ProtectedRoute';
+import DonatePage from './pages/DonatePage';
 // import ResearchPublicationsPage from './pages/ResearchPublicationsPage';
 // import OurStoriesPage from './pages/OurStoriesPage';
 import AdminLayout from './components/admin/AdminLayout';
@@ -59,6 +60,7 @@ function App() {
           <Route path="/our-stories" element={<PublicLayout><OurStoriesPage /></PublicLayout>} />
           <Route path="/our-stories/:id" element={<PublicLayout><StoryDetailPage /></PublicLayout>} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/donate" element={<PublicLayout><DonatePage /></PublicLayout>} />
 
           {/* Admin pages use AdminRootLayout */}
           <Route path="/admin/publications" element={

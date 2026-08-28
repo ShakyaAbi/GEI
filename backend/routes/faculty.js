@@ -1,5 +1,5 @@
 import express from 'express';
-import prisma from '../prisma/client.js';
+import { PrismaClient } from "@prisma/client";
 import { body, validationResult } from 'express-validator'; // New import
 
 const router = express.Router();

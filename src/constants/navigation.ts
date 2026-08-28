@@ -49,4 +49,10 @@ export const getNavigationItems = (programAreas: ProgramArea[] = []): Navigation
       { name: 'Contact Us', path: '/ideas', description: 'Get in touch with our team' },
     ],
   },
+  {
+    name: 'Donate',
+    path: '/donate',
+    hasDropdown: false,
+    dropdownItems: [],
+  },
 ];

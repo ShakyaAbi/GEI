@@ -4,7 +4,7 @@ import fs from 'fs';
 import { uploadConfig } from '../config/upload.js';
 import upload, { uploadLimiter, handleUploadError } from '../middleware/upload.js';
 import { authenticateToken } from '../middleware/auth.js';
-import prisma from '../prisma/client.js';
+import { PrismaClient } from "@prisma/client";
 
 const router = express.Router();
 

@@ -93,20 +93,65 @@ const limiter = rateLimit({
   max: 1000,
   standardHeaders: true,
   legacyHeaders: false,
-  // Skip trust proxy check if behind nginx
   skip: (req) => {
     const forwarded = req.headers["x-forwarded-for"];
-    return !forwarded; // Skip if no proxy headers
+    return !forwarded;
   },
 });
 
 app.use("/api/", limiter);
 
-// Prevent API response caching
+// In-memory API response cache (5 min TTL) — ponytail: simple Map, no Redis
+const apiCache = new Map();
+const CACHE_TTL = 5 * 60 * 1000;
+const CACHED_PATHS = [
+  "/api/publications",
+  "/api/program-areas",
+  "/api/projects",
+  "/api/stories",
+  "/api/faculty",
+];
+
+function cacheKey(req) {
+  return req.method + ":" + req.originalUrl;
+}
+
 app.use("/api/", (req, res, next) => {
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
+  if (req.method !== "GET") return next();
+  const shouldCache = CACHED_PATHS.some((p) => req.path.startsWith(p));
+  if (!shouldCache) return next();
+
+  const key = cacheKey(req);
+  const cached = apiCache.get(key);
+  if (cached && Date.now() - cached.ts < CACHE_TTL) {
+    res.setHeader("X-Cache", "HIT");
+    return res.json(cached.data);
+  }
+
+  const originalJson = res.json.bind(res);
+  res.json = (data) => {
+    if (res.statusCode === 200) {
+      apiCache.set(key, { data, ts: Date.now() });
+      if (apiCache.size > 500) {
+        const oldest = apiCache.keys().next().value;
+        apiCache.delete(oldest);
+      }
+    }
+    res.setHeader("X-Cache", "MISS");
+    return originalJson(data);
+  };
+  next();
+});
+
+// Cache-Control for cached endpoints (browser + CDN)
+app.use("/api/", (req, res, next) => {
+  if (req.method === "GET" && CACHED_PATHS.some((p) => req.path.startsWith(p))) {
+    res.setHeader("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
+  } else {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+  }
   next();
 });
 
