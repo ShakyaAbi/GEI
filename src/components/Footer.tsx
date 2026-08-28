@@ -3,6 +3,7 @@ import {
   Twitter,
   Linkedin,
   Youtube,
+  Instagram,
   ExternalLink,
   ArrowUp,
 } from "lucide-react";
@@ -14,11 +15,14 @@ const Footer = () => {
   const { programAreas } = useProgramAreas();
   const footerSections = getNavigationItems(programAreas);
 
-  const socialLinks = [
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-    { icon: Youtube, href: "#", label: "YouTube" },
-  ];
+  // Hidden for now — uncomment to enable. Add Instagram when ready.
+  // const socialLinks = [
+  //   { icon: Twitter, href: "https://twitter.com/your-handle", label: "Twitter" },
+  //   { icon: Linkedin, href: "https://linkedin.com/company/your-handle", label: "LinkedIn" },
+  //   { icon: Youtube, href: "https://youtube.com/@your-handle", label: "YouTube" },
+  //   // { icon: Instagram, href: "https://instagram.com/your-handle", label: "Instagram" },
+  // ];
+  const socialLinks = [];
 
   const handleLinkClick = (href: string) => {
     if (href.startsWith("/")) {
