@@ -236,15 +236,13 @@ app.post("/api/contact", async (req, res) => {
       to: process.env.CONTACT_RECEIVER || process.env.SMTP_USER,
       subject: `Contact Form: ${subject}`,
       replyTo: email,
-      text: `Name: ${firstName} ${lastName}\nEmail: ${email}\nOrganization: ${
-        organization || ""
-      }\nSubject: ${subject}\nMessage:\n${message}`,
-      html: `<p><strong>Name:</strong> ${firstName} ${lastName}</p><p><strong>Email:</strong> ${email}</p><p><strong>Organization:</strong> ${
-        organization || ""
-      }</p><p><strong>Subject:</strong> ${subject}</p><p><strong>Message:</strong><br/>${message.replace(
-        /\n/g,
-        "<br/>",
-      )}</p>`,
+      text: `Name: ${firstName} ${lastName}\nEmail: ${email}\nOrganization: ${organization || ""
+        }\nSubject: ${subject}\nMessage:\n${message}`,
+      html: `<p><strong>Name:</strong> ${firstName} ${lastName}</p><p><strong>Email:</strong> ${email}</p><p><strong>Organization:</strong> ${organization || ""
+        }</p><p><strong>Subject:</strong> ${subject}</p><p><strong>Message:</strong><br/>${message.replace(
+          /\n/g,
+          "<br/>",
+        )}</p>`,
     };
 
     await transporter.sendMail(mailOptions);

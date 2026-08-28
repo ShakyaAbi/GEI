@@ -10,24 +10,24 @@ const prisma = new PrismaClient();
 router.get('/', async (req, res) => {
   try {
     const { category, year, featured, limit, offset } = req.query;
-    
+
     // Build query
     const where = {};
-    
+
     if (category && category !== 'all') {
       where.category = {
         slug: category
       };
     }
-    
+
     if (year) {
       where.publicationYear = parseInt(year);
     }
-    
+
     if (featured !== undefined) {
       where.isFeatured = featured === 'true';
     }
-    
+
     // Execute query
     const publications = await prisma.publication.findMany({
       where,
@@ -49,7 +49,7 @@ router.get('/', async (req, res) => {
       skip: offset ? parseInt(offset) : undefined,
       take: limit ? parseInt(limit) : undefined
     });
-    
+
     res.json({ error: false, data: publications });
   } catch (error) {
     console.error('Get publications error:', error);
@@ -61,7 +61,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const publication = await prisma.publication.findUnique({
       where: { id },
       include: {
@@ -76,11 +76,11 @@ router.get('/:id', async (req, res) => {
         }
       }
     });
-    
+
     if (!publication) {
       return res.status(404).json({ error: true, message: 'Publication not found' });
     }
-    
+
     res.json({ error: false, data: publication });
   } catch (error) {
     console.error('Get publication error:', error);
@@ -132,16 +132,16 @@ router.post('/', authenticateToken, [
     return res.status(400).json({ error: true, message: errorMessages });
   }
   try {
-    const { 
-      title, abstract, journal, publicationYear, publicationType, 
-      doi, pdfUrl, externalUrl, external_url, citations, isFeatured, categoryId, authorIds 
+    const {
+      title, abstract, journal, publicationYear, publicationType,
+      doi, pdfUrl, externalUrl, external_url, citations, isFeatured, categoryId, authorIds
     } = req.body;
-    
+
     // Validate required fields (moved to express-validator)
     // if (!title) {
     //   return res.status(400).json({ error: true, message: 'Title is required' });
     // }
-    
+
     // Create publication
     const publication = await prisma.publication.create({
       data: {
@@ -158,7 +158,7 @@ router.post('/', authenticateToken, [
         categoryId
       }
     });
-    
+
     // Add authors if provided
     if (authorIds && authorIds.length > 0) {
       const authorData = authorIds.map((authorId, index) => ({
@@ -166,12 +166,12 @@ router.post('/', authenticateToken, [
         authorId,
         authorOrder: index + 1
       }));
-      
+
       await prisma.publicationAuthor.createMany({
         data: authorData
       });
     }
-    
+
     // Return the created publication with authors
     const createdPublication = await prisma.publication.findUnique({
       where: { id: publication.id },
@@ -187,7 +187,7 @@ router.post('/', authenticateToken, [
         }
       }
     });
-    
+
     res.status(201).json({ error: false, data: createdPublication });
   } catch (error) {
     console.error('Create publication error:', error);
@@ -208,20 +208,20 @@ router.put('/:id', authenticateToken, [
   }
   try {
     const { id } = req.params;
-    const { 
-      title, abstract, journal, publicationYear, publicationType, 
-      doi, pdfUrl, externalUrl, external_url, citations, isFeatured, categoryId, authorIds 
+    const {
+      title, abstract, journal, publicationYear, publicationType,
+      doi, pdfUrl, externalUrl, external_url, citations, isFeatured, categoryId, authorIds
     } = req.body;
-    
+
     // Check if publication exists
     const existingPublication = await prisma.publication.findUnique({
       where: { id }
     });
-    
+
     if (!existingPublication) {
       return res.status(404).json({ error: true, message: 'Publication not found' });
     }
-    
+
     // Update publication
     const publication = await prisma.publication.update({
       where: { id },
@@ -239,14 +239,14 @@ router.put('/:id', authenticateToken, [
         categoryId
       }
     });
-    
+
     // Update authors if provided
     if (authorIds) {
       // Remove existing authors
       await prisma.publicationAuthor.deleteMany({
         where: { publicationId: id }
       });
-      
+
       // Add new authors
       if (authorIds.length > 0) {
         const authorData = authorIds.map((authorId, index) => ({
@@ -254,13 +254,13 @@ router.put('/:id', authenticateToken, [
           authorId,
           authorOrder: index + 1
         }));
-        
+
         await prisma.publicationAuthor.createMany({
           data: authorData
         });
       }
     }
-    
+
     // Return the updated publication with authors
     const updatedPublication = await prisma.publication.findUnique({
       where: { id },
@@ -276,7 +276,7 @@ router.put('/:id', authenticateToken, [
         }
       }
     });
-    
+
     res.json({ error: false, data: updatedPublication });
   } catch (error) {
     console.error('Update publication error:', error);
@@ -288,21 +288,21 @@ router.put('/:id', authenticateToken, [
 router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     // Check if publication exists
     const existingPublication = await prisma.publication.findUnique({
       where: { id }
     });
-    
+
     if (!existingPublication) {
       return res.status(404).json({ error: true, message: 'Publication not found' });
     }
-    
+
     // Delete publication (will cascade delete publication_authors)
     await prisma.publication.delete({
       where: { id }
     });
-    
+
     res.status(204).send(); // Standardize 204 response
   } catch (error) {
     console.error('Delete publication error:', error);

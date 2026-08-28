@@ -18,19 +18,19 @@ const processUploadedFile = (file, allowedTypes, maxSize) => {
 
   // Validate file type
   if (!allowedTypes.includes(file.mimetype)) {
-    fs.unlink(file.path, () => {});
+    fs.unlink(file.path, () => { });
     throw new Error(`Invalid file type. Allowed types: ${allowedTypes.join(', ')}`);
   }
 
   // Validate file size
   if (file.size > maxSize) {
-    fs.unlink(file.path, () => {});
+    fs.unlink(file.path, () => { });
     throw new Error(`File size must be less than ${Math.round(maxSize / (1024 * 1024))}MB`);
   }
 
   // Get file path relative to uploads directory
   const relativePath = path.relative(uploadConfig.baseDir, file.path);
-  
+
   // Create URL for the file
   const fileUrl = `/uploads/${relativePath.replace(/\\/g, '/')}`;
 
@@ -98,7 +98,7 @@ router.post(
         uploadConfig.allowedTypes.pdf,
         uploadConfig.maxSizes.pdf
       );
-      
+
       res.status(201).json({
         error: false,
         data: fileData
@@ -121,19 +121,19 @@ router.post(
     try {
       const { projectId } = req.params;
       const { fileType, caption } = req.body;
-      
+
       // Check if project exists
       const project = await prisma.project.findUnique({
         where: { id: projectId }
       });
-      
+
       if (!project) {
         if (req.file) {
-          fs.unlink(req.file.path, () => {});
+          fs.unlink(req.file.path, () => { });
         }
         return res.status(404).json({ error: true, message: 'Project not found' });
       }
-      
+
       // Process the uploaded file
       const fileData = processUploadedFile(
         req.file,
@@ -144,13 +144,13 @@ router.post(
         ],
         Math.max(...Object.values(uploadConfig.maxSizes))
       );
-      
+
       // Determine media type
       let mediaType = 'document';
       if (req.file.mimetype.startsWith('image/')) {
         mediaType = 'image';
       }
-      
+
       // Create project media record
       const media = await prisma.projectMedia.create({
         data: {
@@ -162,7 +162,7 @@ router.post(
           caption
         }
       });
-      
+
       res.status(201).json({
         error: false,
         data: media
@@ -181,25 +181,25 @@ router.delete(
   async (req, res) => {
     try {
       const { projectId, mediaId } = req.params;
-      
+
       // Check if project exists
       const project = await prisma.project.findUnique({
         where: { id: projectId }
       });
-      
+
       if (!project) {
         return res.status(404).json({ error: true, message: 'Project not found' });
       }
-      
+
       // Get media record
       const media = await prisma.projectMedia.findUnique({
         where: { id: mediaId }
       });
-      
+
       if (!media) {
         return res.status(404).json({ error: true, message: 'Media not found' });
       }
-      
+
       // Delete file from filesystem
       const filePath = path.join(uploadConfig.baseDir, media.fileUrl.replace('/uploads/', ''));
       if (fs.existsSync(filePath)) {
@@ -209,12 +209,12 @@ router.delete(
           }
         });
       }
-      
+
       // Delete media record
       await prisma.projectMedia.delete({
         where: { id: mediaId }
       });
-      
+
       res.status(204).send();
     } catch (error) {
       console.error('Delete project media error:', error);

@@ -26,12 +26,12 @@ function mapProjectFields(project) {
     end_date: obj.endDate ?? rest.endDate,
     program_areas: programArea
       ? {
-          id: programArea.id,
-          name: programArea.name,
-          slug: programArea.slug,
-          description: programArea.description,
-          icon: programArea.icon,
-        }
+        id: programArea.id,
+        name: programArea.name,
+        slug: programArea.slug,
+        description: programArea.description,
+        icon: programArea.icon,
+      }
       : undefined,
   };
 }
@@ -53,18 +53,18 @@ function mapProjectContentFields(content) {
 router.get('/', async (req, res) => {
   try {
     const { programAreaId, status, limit, offset } = req.query;
-    
+
     // Build query
     const where = {};
-    
+
     if (programAreaId) {
       where.programAreaId = programAreaId;
     }
-    
+
     if (status && status !== 'all') {
       where.status = status;
     }
-    
+
     // Execute query
     const projects = await prisma.project.findMany({
       where,
@@ -79,7 +79,7 @@ router.get('/', async (req, res) => {
       skip: offset ? parseInt(offset) : undefined,
       take: limit ? parseInt(limit) : undefined
     });
-    
+
     res.json({ error: false, data: projects.map(mapProjectFields) });
   } catch (error) {
     console.error('Get projects error:', error);
@@ -91,7 +91,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const project = await prisma.project.findUnique({
       where: { id },
       include: {
@@ -106,11 +106,11 @@ router.get('/:id', async (req, res) => {
         customFields: true
       }
     });
-    
+
     if (!project) {
       return res.status(404).json({ error: true, message: 'Project not found' });
     }
-    
+
     res.json({ error: false, data: mapProjectFields(project) });
   } catch (error) {
     console.error('Get project error:', error);
@@ -122,7 +122,7 @@ router.get('/:id', async (req, res) => {
 router.get('/slug/:slug', async (req, res) => {
   try {
     const { slug } = req.params;
-    
+
     const project = await prisma.project.findUnique({
       where: { slug },
       include: {
@@ -137,11 +137,11 @@ router.get('/slug/:slug', async (req, res) => {
         customFields: true
       }
     });
-    
+
     if (!project) {
       return res.status(404).json({ error: true, message: 'Project not found' });
     }
-    
+
     res.json({ error: false, data: mapProjectFields(project) });
   } catch (error) {
     console.error('Get project by slug error:', error);
@@ -193,36 +193,36 @@ router.post('/', authenticateToken, [
     return res.status(400).json({ error: true, message: errorMessages });
   }
   try {
-    let { 
-      title, description, overview, location, duration, status, budget, 
+    let {
+      title, description, overview, location, duration, status, budget,
       beneficiaries, impactMetrics, programAreaId, program_area_id, orderIndex,
       startDate, endDate, slug, heroImage, hero_image, image, project_content
     } = req.body;
-    
+
     // Map hero_image (snake_case) to heroImage (camelCase) if present
     if (!heroImage && hero_image) heroImage = hero_image;
-    
+
     // Map program_area_id (snake_case) to programAreaId (camelCase) if present
     if (!programAreaId && program_area_id) programAreaId = program_area_id;
-    
+
     // Map impact_metrics (snake_case) to impactMetrics (camelCase) if present
     if (!impactMetrics && req.body.impact_metrics) impactMetrics = req.body.impact_metrics;
-    
+
     // Fix budget: always save as string
     if (budget !== undefined && budget !== null) budget = String(budget);
-    
+
     // Fix duration: always save as string
     if (duration !== undefined && duration !== null) duration = String(duration);
-    
+
     // Fix startDate/endDate: parse as Date if string
     if (startDate) startDate = new Date(startDate);
     if (endDate) endDate = new Date(endDate);
-    
+
     // Validate required fields (moved to express-validator)
     // if (!title) {
     //   return res.status(400).json({ error: true, message: 'Title is required' });
     // }
-    
+
     // Create project
     const project = await prisma.project.create({
       data: {
@@ -244,7 +244,7 @@ router.post('/', authenticateToken, [
         image
       }
     });
-    
+
     // Attach project_content to response if present (for demo, not DB)
     const responseProject = { ...mapProjectFields(project) };
     if (project_content) responseProject.project_content = project_content;
@@ -275,51 +275,51 @@ router.put('/:id', authenticateToken, [
   }
   try {
     const { id } = req.params;
-    let { 
-      title, description, overview, location, duration, status, budget, 
+    let {
+      title, description, overview, location, duration, status, budget,
       beneficiaries, impactMetrics, programAreaId, program_area_id, orderIndex,
       startDate, endDate, slug, heroImage, hero_image, image, project_content
     } = req.body;
-    
+
     // Map hero_image (snake_case) to heroImage (camelCase) if present
     if (!heroImage && hero_image) heroImage = hero_image;
-    
+
     // Map program_area_id (snake_case) to programAreaId (camelCase) if present
     if (!programAreaId && program_area_id) programAreaId = program_area_id;
-    
+
     // Map impact_metrics (snake_case) to impactMetrics (camelCase) if present
     if (!impactMetrics && req.body.impact_metrics) impactMetrics = req.body.impact_metrics;
-    
+
     // Fix budget: always save as string
     if (budget !== undefined && budget !== null) budget = String(budget);
-    
+
     // Fix duration: always save as string
     if (duration !== undefined && duration !== null) duration = String(duration);
-    
+
     // Fix startDate/endDate: parse as Date if string
     if (startDate) startDate = new Date(startDate);
     if (endDate) endDate = new Date(endDate);
-    
+
     // Check if project exists
     const existingProject = await prisma.project.findUnique({
       where: { id }
     });
-    
+
     if (!existingProject) {
       return res.status(404).json({ error: true, message: 'Project not found' });
     }
-    
+
     // Check if slug already exists (if changing slug)
     if (slug && slug !== existingProject.slug) {
       const slugExists = await prisma.project.findUnique({
         where: { slug }
       });
-      
+
       if (slugExists) {
         return res.status(400).json({ error: true, message: 'Slug already exists' });
       }
     }
-    
+
     // Update project
     const project = await prisma.project.update({
       where: { id },
@@ -342,7 +342,7 @@ router.put('/:id', authenticateToken, [
         image
       }
     });
-    
+
     const responseProject = { ...mapProjectFields(project) };
     if (project_content) responseProject.project_content = project_content;
     res.json({ error: false, data: responseProject });
@@ -363,21 +363,21 @@ router.put('/:id', authenticateToken, [
 router.delete('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     // Check if project exists
     const existingProject = await prisma.project.findUnique({
       where: { id }
     });
-    
+
     if (!existingProject) {
       return res.status(404).json({ error: true, message: 'Project not found' });
     }
-    
+
     // Delete project (will cascade delete related records)
     await prisma.project.delete({
       where: { id }
     });
-    
+
     res.status(204).send(); // No content for successful deletion
   } catch (error) {
     console.error('Delete project error:', error);
@@ -390,21 +390,21 @@ router.post('/:id/custom-fields', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { fieldName, fieldValue, fieldType } = req.body;
-    
+
     // Validate required fields
     if (!fieldName || !fieldValue) {
       return res.status(400).json({ error: true, message: 'Field name and value are required' });
     }
-    
+
     // Check if project exists
     const existingProject = await prisma.project.findUnique({
       where: { id }
     });
-    
+
     if (!existingProject) {
       return res.status(404).json({ error: true, message: 'Project not found' });
     }
-    
+
     // Create custom field
     const customField = await prisma.projectCustomField.create({
       data: {
@@ -414,7 +414,7 @@ router.post('/:id/custom-fields', authenticateToken, async (req, res) => {
         fieldType: fieldType || 'text'
       }
     });
-    
+
     res.status(201).json({ error: false, data: customField });
   } catch (error) {
     console.error('Add custom field error:', error);
@@ -427,21 +427,21 @@ router.post('/:id/stakeholders', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { name, email, phone, organization, role, type } = req.body;
-    
+
     // Validate required fields
     if (!name) {
       return res.status(400).json({ error: true, message: 'Name is required' });
     }
-    
+
     // Check if project exists
     const existingProject = await prisma.project.findUnique({
       where: { id }
     });
-    
+
     if (!existingProject) {
       return res.status(404).json({ error: true, message: 'Project not found' });
     }
-    
+
     // Create stakeholder
     const stakeholder = await prisma.projectStakeholder.create({
       data: {
@@ -454,7 +454,7 @@ router.post('/:id/stakeholders', authenticateToken, async (req, res) => {
         type: type || 'team_member'
       }
     });
-    
+
     res.status(201).json({ error: false, data: stakeholder });
   } catch (error) {
     console.error('Add stakeholder error:', error);
@@ -467,21 +467,21 @@ router.post('/:id/updates', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { title, description, updateDate, milestone } = req.body;
-    
+
     // Validate required fields
     if (!title) {
       return res.status(400).json({ error: true, message: 'Title is required' });
     }
-    
+
     // Check if project exists
     const existingProject = await prisma.project.findUnique({
       where: { id }
     });
-    
+
     if (!existingProject) {
       return res.status(404).json({ error: true, message: 'Project not found' });
     }
-    
+
     // Create update
     const update = await prisma.projectUpdate.create({
       data: {
@@ -493,7 +493,7 @@ router.post('/:id/updates', authenticateToken, async (req, res) => {
         createdBy: req.user.id
       }
     });
-    
+
     res.status(201).json({ error: false, data: update });
   } catch (error) {
     console.error('Add update error:', error);

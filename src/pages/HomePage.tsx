@@ -39,11 +39,11 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
       <Hero />
-      
+
       <Research />
 
       <ProjectsShowcase />
-     
+
       <Publications limit={5} />
       <Contact />
       <Footer />
