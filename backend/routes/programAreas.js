@@ -4,6 +4,7 @@ import { authenticateToken } from '../middleware/auth.js';
 import { body, validationResult } from 'express-validator'; // New import
 
 const router = express.Router();
+const prisma = new PrismaClient();
 
 // Utility to map project fields for frontend compatibility
 function mapProjectFields(project) {

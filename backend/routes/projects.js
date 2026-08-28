@@ -6,6 +6,7 @@ import fs from 'fs';
 import { body, validationResult } from 'express-validator'; // New import
 
 const router = express.Router();
+const prisma = new PrismaClient();
 
 // Utility to map fields for frontend compatibility
 function mapProjectFields(project) {

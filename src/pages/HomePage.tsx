@@ -63,10 +63,11 @@ const HomePage = () => {
             </button>
             <div className="mx-auto mb-4 w-48 overflow-hidden rounded-xl shadow" style={{ aspectRatio: '9 / 16' }}>
               <iframe
-                src="https://www.youtube.com/embed/1CsMx1ITO9w?autoplay=1&mute=1&loop=1&playlist=1CsMx1ITO9w&rel=0"
+                src="https://www.youtube.com/embed/1CsMx1ITO9w?autoplay=1&mute=1&loop=1&playlist=1CsMx1ITO9w&rel=0&origin=https%3A%2F%2Fgeiglobal.org"
                 title="Rasuwa flash floods, Nepal"
                 className="h-full w-full"
                 allow="autoplay; encrypted-media; picture-in-picture"
+                referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen
               />
             </div>

@@ -7,6 +7,7 @@ import { authenticateToken } from '../middleware/auth.js';
 import { PrismaClient } from "@prisma/client";
 
 const router = express.Router();
+const prisma = new PrismaClient();
 
 // Helper function to validate and process uploaded file
 const processUploadedFile = (file, allowedTypes, maxSize) => {

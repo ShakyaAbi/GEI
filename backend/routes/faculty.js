@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { body, validationResult } from 'express-validator'; // New import
 
 const router = express.Router();
+const prisma = new PrismaClient();
 
 // Map DB fields to API fields
 function mapFaculty(member) {

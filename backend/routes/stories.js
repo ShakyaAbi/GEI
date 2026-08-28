@@ -4,6 +4,7 @@ import { authenticateToken, isAdmin } from '../middleware/auth.js';
 import { body, validationResult } from 'express-validator'; // New import
 
 const router = express.Router();
+const prisma = new PrismaClient();
 
 // GET all stories
 router.get('/', async (req, res) => {

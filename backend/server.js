@@ -78,12 +78,21 @@ app.use(
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         imgSrc: ["'self'", "data:", "blob:", "https://images.unsplash.com"],
-        connectSrc: ["'self'", "https://geiglobal.org"],
-        frameSrc: ["'none'", "https://www.google.com"],
+        connectSrc: ["'self'", "https://geiglobal.org", "https://cdn.jsdelivr.net"],
+        frameSrc: [
+          "'self'",
+          "https://www.google.com",
+          "https://www.youtube.com",
+          "https://www.youtube-nocookie.com",
+        ],
         objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
+        frameAncestors: ["'self'"],
       },
     },
     crossOriginEmbedderPolicy: false,
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
   }),
 );
 

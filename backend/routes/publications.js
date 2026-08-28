@@ -4,6 +4,7 @@ import { authenticateToken } from '../middleware/auth.js';
 import { body, validationResult } from 'express-validator'; // New import
 
 const router = express.Router();
+const prisma = new PrismaClient();
 
 // Get all publications with optional filters
 router.get('/', async (req, res) => {
